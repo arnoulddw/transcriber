@@ -4,10 +4,10 @@
 {% block subtitle %}Models{% endblock %}
 
 {% block admin_content %}
-    <p class="text-sm text-text-muted mb-6">{{ _('Rename how models are displayed across the app.') }}</p>
+    <p class="page-intro">{{ _('Rename how models are displayed across the app.') }}</p>
 
     <div class="table-card p-6 space-y-4 mb-8">
-        <h2 class="card-title mb-6">{{ _('Model Display Names') }}</h2>
+        <h2 class="section-heading mb-5">{{ _('Model Display Names') }}</h2>
         <form id="models-form" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

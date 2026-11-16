@@ -27,17 +27,17 @@ function _handleEditWorkflowResult(operationId, workflowPanel) {
   if (readMoreLink) readMoreLink.style.display = "none";
 
   const textArea = document.createElement("textarea");
-  textArea.className = "form-textarea block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm workflow-edit-area min-h-[150px] text-sm";
+  textArea.className = "input-textarea workflow-edit-area mt-2 min-h-[150px]";
   textArea.value = currentText;
   resultTextElement.parentNode.insertBefore(textArea, resultTextElement);
   textArea.style.height = 'auto'; textArea.style.height = (textArea.scrollHeight) + 'px';
   textArea.focus();
 
   actionsDiv.innerHTML = `
-        <button class="save-edit-workflow-btn p-1.5 rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" title="Save Changes">
+        <button class="save-edit-workflow-btn icon-btn bg-primary text-white hover:bg-primary-dark hover:text-white" title="Save Changes">
           <i class="material-icons text-base">save</i>
         </button>
-        <button class="cancel-edit-workflow-btn p-1.5 rounded-full text-gray-500 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400" title="Cancel Edit">
+        <button class="cancel-edit-workflow-btn icon-btn bg-surface-muted" title="Cancel Edit">
           <i class="material-icons text-base">cancel</i>
         </button>
       `;
@@ -180,13 +180,13 @@ function _handleCancelWorkflowEdit(workflowPanel, updatedText = null) {
   }
   const canDownload = window.USER_PERMISSIONS?.allow_download_transcript ?? true;
   const downloadButtonHtml = canDownload
-    ? `<button class="download-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary" title="Download Result"><i class="material-icons text-base">download</i></button>`
+    ? `<button class="download-workflow-btn icon-btn" title="Download Result"><i class="material-icons text-base">download</i></button>`
     : "";
   actionsDiv.innerHTML = `
-        <button class="edit-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary" title="Edit Result"><i class="material-icons text-base">edit</i></button>
-        <button class="copy-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary" title="Copy Result"><i class="material-icons text-base">content_copy</i></button>
+        <button class="edit-workflow-btn icon-btn" title="Edit Result"><i class="material-icons text-base">edit</i></button>
+        <button class="copy-workflow-btn icon-btn" title="Copy Result"><i class="material-icons text-base">content_copy</i></button>
         ${downloadButtonHtml}
-        <button class="delete-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-red-600 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" title="Delete Result"><i class="material-icons text-base">delete</i></button>
+        <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete Result"><i class="material-icons text-base">delete</i></button>
       `;
 }
 window.Workflow.handleCancelWorkflowEdit = _handleCancelWorkflowEdit;

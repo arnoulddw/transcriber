@@ -274,7 +274,7 @@ function populateColorPicker(containerId, hiddenInputId) {
         // Base border is always visible: a border-transparent base loses the
         // cascade against .border-*color* rules in the compiled CSS (they come
         // earlier), which made the white swatch invisible on the card.
-        option.className = 'flex-shrink-0 w-6 h-6 rounded-full cursor-pointer border-2 border-gray-300 transition-all duration-200 ease-in-out';
+        option.className = 'flex-shrink-0 w-badge h-badge rounded-full cursor-pointer border border-black/10 transition-all duration-200 ease-in-out';
         option.dataset.color = color;
         option.style.backgroundColor = color;
         option.setAttribute('title', colorNameMap[color] || color); // Tooltip with color name
@@ -284,9 +284,9 @@ function populateColorPicker(containerId, hiddenInputId) {
             hiddenInput.value = selectedColor; // Update hidden input
             // Update visual selection state for all swatches
             container.querySelectorAll('div[data-color]').forEach(el => {
-                el.classList.remove('ring-2', 'ring-offset-1', 'ring-primary', 'border-gray-700');
+                el.classList.remove('ring-2', 'ring-offset-2', 'ring-primary', 'border-gray-700');
             });
-            this.classList.add('ring-2', 'ring-offset-1', 'ring-primary');
+            this.classList.add('ring-2', 'ring-offset-2', 'ring-primary');
             if (selectedColor === "#ffffff") { // Darker border keeps white visible inside its own ring
                 this.classList.add('border-gray-700');
             }
@@ -298,14 +298,14 @@ function populateColorPicker(containerId, hiddenInputId) {
     const initialColor = hiddenInput.value || '#ffffff';
     const initialOption = container.querySelector(`div[data-color="${initialColor}"]`);
     if (initialOption) {
-        initialOption.classList.add('ring-2', 'ring-offset-1', 'ring-primary');
+        initialOption.classList.add('ring-2', 'ring-offset-2', 'ring-primary');
         if (initialColor === "#ffffff") {
             initialOption.classList.add('border-gray-700');
         }
     } else { // Fallback if initialColor in hidden input is invalid
         const defaultWhiteOption = container.querySelector('div[data-color="#ffffff"]');
         if (defaultWhiteOption) {
-            defaultWhiteOption.classList.add('ring-2', 'ring-offset-1', 'ring-primary', 'border-gray-700');
+            defaultWhiteOption.classList.add('ring-2', 'ring-offset-2', 'ring-primary', 'border-gray-700');
         }
         hiddenInput.value = '#ffffff';
     }
@@ -379,7 +379,7 @@ function addPromptToList(prompt, prepend = false) {
     if (placeholder) placeholder.style.display = 'none';
 
     const listItem = document.createElement('li');
-    listItem.className = 'p-4 sm:p-6 flex items-center justify-between';
+    listItem.className = 'raised-card flex items-start justify-between gap-4 p-4 hover:shadow-raised-hover';
     listItem.dataset.promptId = prompt.id;
     const bgColor = prompt.color || '#ffffff';
     listItem.dataset.promptColor = bgColor;
@@ -399,19 +399,19 @@ function addPromptToList(prompt, prepend = false) {
 
     const actionButtonsHtml = isSystemDefined
         ? ''
-        : `<div class="flex-shrink-0 flex space-x-2">
-            <button class="edit-prompt-btn p-1.5 rounded-full text-gray-400 hover:text-blue-600 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" title="Edit Workflow">
+        : `<div class="flex-shrink-0 flex gap-0.5">
+            <button class="edit-prompt-btn icon-btn" title="Edit Workflow">
                 <span class="sr-only">Edit</span>
                 <i class="material-icons text-base">edit</i>
             </button>
-            <button class="delete-prompt-btn p-1.5 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" title="Delete Workflow">
+            <button class="delete-prompt-btn icon-btn icon-btn--danger" title="Delete Workflow">
                 <span class="sr-only">Delete</span>
                 <i class="material-icons text-base">delete</i>
             </button>
         </div>`;
 
     listItem.innerHTML = `
-        <div class="flex-grow min-w-0 mr-4">
+        <div class="flex-grow min-w-0">
             <div class="flex items-center">
                 <div class="prompt-label-pill inline-block px-3 py-1 text-xs font-semibold rounded-full"
                      style="background-color: ${escapeHtml(bgColor)}; color: ${escapeHtml(textColor)};">
@@ -419,7 +419,7 @@ function addPromptToList(prompt, prepend = false) {
                 </div>
                 ${templateIconHtml}
             </div>
-            <div class="prompt-text-display mt-1 text-sm text-gray-800 whitespace-pre-wrap break-words">${escapeHtml(prompt.prompt_text.trim())}</div>
+            <div class="prompt-text-display mt-1.5 text-sm text-text-strong whitespace-pre-wrap break-words">${escapeHtml(prompt.prompt_text.trim())}</div>
         </div>
         ${actionButtonsHtml}
     `;
@@ -483,11 +483,11 @@ async function handleAddPrompt(event) {
         const colorOptionsContainer = document.getElementById('newPromptColorOptions');
         if (colorOptionsContainer) {
             colorOptionsContainer.querySelectorAll('div[data-color]').forEach(el => {
-                el.classList.remove('ring-2', 'ring-offset-1', 'ring-primary', 'border-gray-700');
+                el.classList.remove('ring-2', 'ring-offset-2', 'ring-primary', 'border-gray-700');
             });
             const defaultWhiteOption = colorOptionsContainer.querySelector('div[data-color="#ffffff"]');
             if (defaultWhiteOption) {
-                defaultWhiteOption.classList.add('ring-2', 'ring-offset-1', 'ring-primary', 'border-gray-700');
+                defaultWhiteOption.classList.add('ring-2', 'ring-offset-2', 'ring-primary', 'border-gray-700');
             }
             colorInput.value = '#ffffff';
         }
@@ -535,18 +535,18 @@ function openEditPromptModal(promptId) {
     colorInput.value = color;
 
     colorOptionsContainer.querySelectorAll('div[data-color]').forEach(el => {
-        el.classList.remove('ring-2', 'ring-offset-1', 'ring-primary', 'border-gray-700');
+        el.classList.remove('ring-2', 'ring-offset-2', 'ring-primary', 'border-gray-700');
     });
     const selectedOption = colorOptionsContainer.querySelector(`div[data-color="${color}"]`);
     if (selectedOption) {
-        selectedOption.classList.add('ring-2', 'ring-offset-1', 'ring-primary');
+        selectedOption.classList.add('ring-2', 'ring-offset-2', 'ring-primary');
         if (color === "#ffffff") {
             selectedOption.classList.add('border-gray-700');
         }
     } else {
         const defaultWhiteOption = colorOptionsContainer.querySelector('div[data-color="#ffffff"]');
         if (defaultWhiteOption) {
-            defaultWhiteOption.classList.add('ring-2', 'ring-offset-1', 'ring-primary', 'border-gray-700');
+            defaultWhiteOption.classList.add('ring-2', 'ring-offset-2', 'ring-primary', 'border-gray-700');
         }
         colorInput.value = '#ffffff';
     }

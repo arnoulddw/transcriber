@@ -14,7 +14,7 @@
 
 {% block admin_content %}
     {% set form_intro = 'Define the details and permissions for the new role.' if 'Create' in title else 'Modify the details and permissions for this role.' %}
-    {% call form_layout.card(title='Role Details', description=form_intro) %}
+    {% call form_layout.card(title='Role Details', description=form_intro, title_classes='section-heading', body_classes='mt-8') %}
         <form method="POST" action="" class="space-y-8">
             {{ form.hidden_tag() }}
 
@@ -87,19 +87,19 @@
                     <div class="space-y-3">
                     <h4 class="section-title text-sm text-text-muted">API Access</h4>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.use_api_openai(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.use_api_openai(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.use_api_openai.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.use_api_assemblyai(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.use_api_assemblyai(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.use_api_assemblyai.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.use_api_google(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.use_api_google(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.use_api_google.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.use_api_openrouter(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.use_api_openrouter(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.use_api_openrouter.label.text }}</span>
                     </label>
                 </div>
@@ -108,27 +108,27 @@
                 <div class="space-y-3">
                     <h4 class="section-title text-sm text-text-muted">Feature Access</h4>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.allow_large_files(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.allow_large_files(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_large_files.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.allow_context_prompt(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.allow_context_prompt(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_context_prompt.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.allow_download_transcript(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.allow_download_transcript(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_download_transcript.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.allow_workflows(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.allow_workflows(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_workflows.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.allow_speaker_diarization(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.allow_speaker_diarization(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_speaker_diarization.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.allow_auto_title_generation(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.allow_auto_title_generation(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_auto_title_generation.label.text }}</span>
                     </label>
                 </div>
@@ -137,19 +137,19 @@
                 <div class="space-y-3">
                     <h4 class="section-title text-sm text-text-muted">Account & Admin</h4>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.allow_api_key_management(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.allow_api_key_management(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_api_key_management.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.allow_public_api_access(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.allow_public_api_access(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_public_api_access.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.access_admin_panel(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.access_admin_panel(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.access_admin_panel.label.text }}</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        {{ form.manage_workflow_templates(class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary") }}
+                        {{ form.manage_workflow_templates(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.manage_workflow_templates.label.text }}</span>
                     </label>
                 </div>

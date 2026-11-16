@@ -8,7 +8,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{% block title %}{{ _('Compass Platform') }}{% endblock %}</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2302566C'/%3E%3Ctext x='16' y='22' font-size='18' text-anchor='middle' fill='%23fff' font-family='Arial, sans-serif'%3EC%3C/text%3E%3C/svg%3E">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/tailwind_output.css', v=build_timestamp) if build_timestamp else url_for('static', filename='css/tailwind_output.css') }}">
     {# main.css is mostly empty after Tailwind migration, can be removed in Phase 6 if it remains so. #}
@@ -20,7 +23,7 @@
     <div id="notification-container" class="toast-container"></div>
 
     <header>
-        <nav class="bg-primary text-white shadow-md">
+        <nav class="bg-white text-text-strong">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <div class="flex items-center">
@@ -30,20 +33,23 @@
                                     id="mobile-menu-button"
                                     aria-expanded="false"
                                     aria-controls="mobile-nav"
-                                    class="-ml-2 mr-2 p-2 rounded-md text-gray-100 hover:text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white lg:hidden flex items-center">
+                                    class="-ml-2 mr-2 icon-btn h-10 w-10 lg:hidden">
                                 <span class="sr-only">{{ _('Open main menu') }}</span>
                                 <i class="material-icons">menu</i>
                             </button>
                             {% endif %}
                         {% endblock mobile_trigger %}
-                        <a href="{{ url_for('main.index') }}" class="text-xl font-semibold text-white {% block brand_logo_adjust_class %}{% endblock %}">
-                            {{ _('Compass Platform') }}
+                        <a href="{{ url_for('main.index') }}" class="inline-flex items-center gap-2.5 text-base font-semibold tracking-snug text-text-strong {% block brand_logo_adjust_class %}{% endblock %}">
+                            <span class="inline-flex h-7 w-7 flex-none items-center justify-center rounded-full bg-primary text-white" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 8.5 13.2 13.2 8.5 15.5l2.3-4.7z" fill="currentColor"/></svg>
+                            </span>
+                            <span>{{ _('Compass Platform') }}</span>
                         </a>
                     </div>
                     <div class="flex items-center">
                         {% if current_user.is_authenticated and (not is_multi_user or user_permissions.use_api_openai or user_permissions.use_api_openai_live_transcribe) %}
                             <a href="{{ url_for('main.live') }}"
-                               class="inline-flex items-center rounded-full bg-danger px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-white lg:hidden"
+                               class="inline-flex h-9 items-center rounded-full bg-primary-soft px-3.5 text-sm font-semibold text-primary hover:bg-primary-track focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 aria-[current=page]:bg-primary aria-[current=page]:text-white lg:hidden"
                                {% if request.endpoint == 'main.live' %}aria-current="page"{% endif %}>
                                 <i class="material-icons mr-1.5 text-base" aria-hidden="true">graphic_eq</i>
                                 {{ _('Live') }}
@@ -52,7 +58,7 @@
                         <div class="hidden lg:flex lg:items-center lg:space-x-4">
                             {% if current_user.is_authenticated and (not is_multi_user or user_permissions.use_api_openai or user_permissions.use_api_openai_live_transcribe) %}
                                 <a href="{{ url_for('main.live') }}"
-                                   class="inline-flex items-center rounded-full bg-danger px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-white"
+                                   class="inline-flex h-9 items-center rounded-full bg-primary-soft px-3.5 text-sm font-semibold text-primary hover:bg-primary-track focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 aria-[current=page]:bg-primary aria-[current=page]:text-white"
                                    {% if request.endpoint == 'main.live' %}aria-current="page"{% endif %}>
                                     <i class="material-icons mr-1.5 text-base" aria-hidden="true">graphic_eq</i>
                                     {{ _('Live') }}
@@ -62,44 +68,44 @@
                                 {% if current_user.is_authenticated %}
                                     <div class="relative" id="desktop-user-menu-container">
                                         <button type="button"
-                                                class="flex items-center text-sm rounded-full text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-dark focus:ring-white p-1 pr-2"
+                                                class="flex h-9 items-center gap-2 rounded-full py-1 pl-1 pr-2 text-sm font-medium text-text-strong hover:bg-surface-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
                                                 id="user-menu-button-desktop" aria-expanded="false" aria-haspopup="true">
                                             <span class="sr-only">{{ _('Open user menu') }}</span>
-                                            <i class="material-icons mr-1">account_circle</i>
-                                            {{ display_name | default(current_user.username) }}
-                                            <i class="material-icons ml-1">arrow_drop_down</i>
+                                            <span class="inline-flex h-7 w-7 flex-none items-center justify-center rounded-full bg-primary text-tag font-semibold uppercase text-white" aria-hidden="true">{{ (display_name | default(current_user.username))[:2] }}</span>
+                                            <span>{{ display_name | default(current_user.username) }}</span>
+                                            <i class="material-icons text-lg text-text-muted">expand_more</i>
                                         </button>
                                         <div id="user-dropdown-desktop"
-                                             class="hidden absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform opacity-0 scale-95 transition-ease-out duration-100 z-50"
+                                             class="hidden absolute right-0 mt-2 w-60 origin-top-right bg-white rounded-2xl shadow-menu p-1.5 focus:outline-none transform opacity-0 scale-95 transition-ease-out duration-100 z-50"
                                              role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button-desktop" tabindex="-1">
-                                            <div class="py-1" role="none">
-                                                <a href="#!" id="profileSettingsBtn" class="flex items-center px-4 py-2 text-sm text-text-muted hover:bg-surface-muted hover:text-text-strong" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">person_outline</i>{{ _('User Settings') }}</a>
+                                            <div role="none">
+                                                <a href="#!" id="profileSettingsBtn" class="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">person_outline</i>{{ _('User Settings') }}</a>
                                                 {% if current_user.role and current_user.role.allow_api_key_management %}
-                                                <a href="#!" id="apiKeysBtn" class="flex items-center px-4 py-2 text-sm text-text-muted hover:bg-surface-muted hover:text-text-strong" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">vpn_key</i>{{ _('Manage API Keys') }}</a>
+                                                <a href="#!" id="apiKeysBtn" class="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">vpn_key</i>{{ _('Manage API Keys') }}</a>
                                                 {% endif %}
                                                 {% if user_permissions.allow_workflows %}
-                                                <a href="{{ url_for('main.manage_prompts') }}" class="flex items-center px-4 py-2 text-sm text-text-muted hover:bg-surface-muted hover:text-text-strong" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">playlist_add_check</i>{{ _('Manage your Workflows') }}</a>
+                                                <a href="{{ url_for('main.manage_prompts') }}" class="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">playlist_add_check</i>{{ _('Manage your Workflows') }}</a>
                                                 {% endif %}
                                                 {% set is_admin_user = current_user.role and current_user.role.access_admin_panel %}
                                                 {% if is_admin_user %}
-                                                <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center px-4 py-2 text-sm text-text-muted hover:bg-surface-muted hover:text-text-strong" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">admin_panel_settings</i>{{ _('Admin Panel') }}</a>
+                                                <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">admin_panel_settings</i>{{ _('Admin Panel') }}</a>
                                                 {% endif %}
                                                 {% if current_user.role and (current_user.role.allow_api_key_management or is_admin_user or user_permissions.allow_workflows) %}
-                                                <div class="border-t border-border-default my-1" role="separator"></div>
+                                                <div class="border-t border-border-default my-1.5 mx-2" role="separator"></div>
                                                 {% endif %}
                                                 <form action="{{ url_for('auth.logout') }}" method="post">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                    <button type="submit" class="w-full flex items-center px-4 py-2 text-sm text-text-muted hover:bg-surface-muted hover:text-text-strong" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">exit_to_app</i>{{ _('Logout') }}</button>
+                                                    <button type="submit" class="w-full flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">exit_to_app</i>{{ _('Logout') }}</button>
                                                 </form>
                                             </div>
                                         </div>
                                     </div>
                                 {% else %}
                                     {% if request.endpoint != 'auth.login' %}
-                                    <a href="{{ url_for('auth.login') }}" class="text-gray-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">{{ _('Login') }}</a>
+                                    <a href="{{ url_for('auth.login') }}" class="rounded-full px-3 py-2 text-sm font-semibold text-text-strong hover:bg-surface-muted">{{ _('Login') }}</a>
                                     {% endif %}
                                     {% if request.endpoint != 'auth.register' %}
-                                    <a href="{{ url_for('auth.register') }}" class="text-gray-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">{{ _('Register') }}</a>
+                                    <a href="{{ url_for('auth.register') }}" class="rounded-full px-3 py-2 text-sm font-semibold text-text-strong hover:bg-surface-muted">{{ _('Register') }}</a>
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
@@ -109,7 +115,7 @@
                         {% if not current_user.is_authenticated and request.endpoint in ['auth.login', 'auth.register'] %}
                         <div class="relative ml-3" id="language-menu-container">
                             <button type="button"
-                                    class="flex items-center text-sm text-gray-100 hover:text-white px-3 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-dark focus:ring-white"
+                                    class="flex items-center rounded-full px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
                                     id="language-menu-button" aria-expanded="false" aria-haspopup="true">
                                 <i class="material-icons mr-1 text-base">language</i>
                                 {% set lang_map_short = {'en': 'EN', 'es': 'ES', 'fr': 'FR', 'nl': 'NL'} %}
@@ -118,12 +124,12 @@
                                 <i class="material-icons ml-1 text-base">arrow_drop_down</i>
                             </button>
                             <div id="language-dropdown"
-                                 class="hidden absolute right-0 mt-2 w-40 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform opacity-0 scale-95 transition-ease-out duration-100 z-50"
+                                 class="hidden absolute right-0 mt-2 w-40 origin-top-right bg-white rounded-2xl shadow-menu p-1.5 focus:outline-none transform opacity-0 scale-95 transition-ease-out duration-100 z-50"
                                  role="menu" aria-orientation="vertical" aria-labelledby="language-menu-button" tabindex="-1">
-                                <div class="py-1" role="none">
+                                <div role="none">
                                 {% set lang_map_full = {'en': 'English', 'es': _('Español'), 'fr': _('Français'), 'nl': _('Nederlands')} %}
                                     {% for lang_code in config.SUPPORTED_LANGUAGES %}
-                                        <a href="{{ url_for('main.set_language', lang=lang_code) }}" class="text-text-muted block px-4 py-2 text-sm hover:bg-surface-muted" role="menuitem" tabindex="-1">{{ lang_map_full.get(lang_code, lang_code) }}</a>
+                                        <a href="{{ url_for('main.set_language', lang=lang_code) }}" class="block rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1">{{ lang_map_full.get(lang_code, lang_code) }}</a>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -137,14 +143,14 @@
         {% if is_multi_user %}
         {# Mobile Sidenav - Implemented with Tailwind and Vanilla JS #}
         <div id="mobile-nav"
-             class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-50 lg:hidden"
+             class="fixed inset-y-0 left-0 w-72 bg-white shadow-surface-xl rounded-r-modal transform -translate-x-full transition-transform duration-300 ease-in-out z-50 lg:hidden"
              role="dialog" aria-modal="true" aria-labelledby="mobile-nav-title" aria-hidden="true" tabindex="-1">
             <div class="p-4">
-                <div class="flex items-center justify-between mb-4 pb-2 border-b border-border-default">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-border-default">
                     <h2 id="mobile-nav-title" class="text-lg font-medium text-text-strong">
                         {% if current_user.is_authenticated %}{{ display_name | default(current_user.username) }}{% else %}{{ _('Menu') }}{% endif %}
                     </h2>
-                    <button type="button" id="close-mobile-nav-button" class="p-1 rounded-md text-text-muted hover:text-text-strong hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-primary flex items-center">
+                    <button type="button" id="close-mobile-nav-button" class="modal-close">
                         <span class="sr-only">{{ _('Close menu') }}</span>
                         <i class="material-icons">close</i>
                     </button>
@@ -152,29 +158,29 @@
 
                 {% if current_user.is_authenticated %}
                     <nav class="mt-2 space-y-1">
-                        <a href="#!" id="profileSettingsBtnMobile" class="flex items-center px-3 py-2 text-text-muted hover:bg-surface-muted hover:text-text-strong rounded-md text-sm font-medium">
+                        <a href="#!" id="profileSettingsBtnMobile" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">
                             <i class="material-icons mr-3 text-text-muted">person_outline</i>{{ _('User Settings') }}
                         </a>
                         {% if current_user.role and current_user.role.allow_api_key_management %}
-                        <a href="#!" id="apiKeysBtnMobile" class="flex items-center px-3 py-2 text-text-muted hover:bg-surface-muted hover:text-text-strong rounded-md text-sm font-medium">
+                        <a href="#!" id="apiKeysBtnMobile" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">
                             <i class="material-icons mr-3 text-text-muted">vpn_key</i>{{ _('Manage API Keys') }}
                         </a>
                         {% endif %}
                         {% if user_permissions.allow_workflows %}
-                        <a href="{{ url_for('main.manage_prompts') }}" class="flex items-center px-3 py-2 text-text-muted hover:bg-surface-muted hover:text-text-strong rounded-md text-sm font-medium">
+                        <a href="{{ url_for('main.manage_prompts') }}" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">
                             <i class="material-icons mr-3 text-text-muted">playlist_add_check</i>{{ _('Manage your Workflows') }}
                         </a>
                         {% endif %}
                         {% set is_admin_user = current_user.role and current_user.role.access_admin_panel %}
                         {% if is_admin_user %}
-                        <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center px-3 py-2 text-text-muted hover:bg-surface-muted hover:text-text-strong rounded-md text-sm font-medium">
+                        <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">
                             <i class="material-icons mr-3 text-text-muted">admin_panel_settings</i>{{ _('Admin Panel') }}
                         </a>
                         {% endif %}
                         <div class="border-t border-border-default my-2"></div>
                         <form action="{{ url_for('auth.logout') }}" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="w-full flex items-center px-3 py-2 text-text-muted hover:bg-surface-muted hover:text-text-strong rounded-md text-sm font-medium">
+                            <button type="submit" class="w-full flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">
                                 <i class="material-icons mr-3 text-text-muted">exit_to_app</i>{{ _('Logout') }}
                             </button>
                         </form>
@@ -182,20 +188,20 @@
                 {% else %}
                     <nav class="mt-2 space-y-1">
                         {% if request.endpoint != 'auth.login' %}
-                        <a href="{{ url_for('auth.login') }}" class="flex items-center px-3 py-2 text-text-muted hover:bg-surface-muted hover:text-text-strong rounded-md text-sm font-medium">{{ _('Login') }}</a>
+                        <a href="{{ url_for('auth.login') }}" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">{{ _('Login') }}</a>
                         {% endif %}
                         {% if request.endpoint != 'auth.register' %}
-                        <a href="{{ url_for('auth.register') }}" class="flex items-center px-3 py-2 text-text-muted hover:bg-surface-muted hover:text-text-strong rounded-md text-sm font-medium">{{ _('Register') }}</a>
+                        <a href="{{ url_for('auth.register') }}" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">{{ _('Register') }}</a>
                         {% endif %}
                     </nav>
                 {% endif %}
             </div>
         </div>
-        <div id="sidenav-overlay" class="fixed inset-0 bg-gray-600 bg-opacity-75 hidden z-40 lg:hidden transition-opacity duration-300 ease-in-out opacity-0"></div>
+        <div id="sidenav-overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-scrim hidden z-40 lg:hidden transition-opacity duration-300 ease-in-out opacity-0"></div>
         {% endif %}
     </header>
 
-    <main class="{% block main_class %}flex-grow pt-5 pb-10{% endblock %}">
+    <main class="{% block main_class %}flex-grow pt-6 pb-12{% endblock %}">
         {% block flash_messages %}
         <div class="flash-messages-wrapper">
             {% include 'layout/components/flash_messages.html' %}
@@ -214,7 +220,7 @@
     </main>
 
     {% block footer %}
-    <footer class="bg-gray-200 text-gray-700 text-sm">
+    <footer class="text-text-muted text-xs">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="text-center">
                 {{ _('Compass Platform App') }} - © {{ now.year }}

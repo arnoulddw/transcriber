@@ -68,20 +68,17 @@ function formatSecondsForDisplay(seconds) {
  * Updates the progress activity display (icon and message).
  * @param {string} icon - Material Icons name (e.g., 'hourglass_empty', 'check_circle').
  * @param {string|object} message - Plain text or a structured actionable error.
- * @param {string} [iconColorClass=''] - Optional Tailwind color class for the icon (e.g., 'text-green-600').
+ * @param {string} [iconColorClass=''] - Optional Tailwind color class for the icon (e.g., 'text-success').
  */
 function updateProgressActivity(icon, message, iconColorClass = '') {
     const progressElement = document.getElementById('progressActivity');
     if (progressElement) {
         const isError = iconColorClass.includes('text-red');
         const progressContainer = document.getElementById('progressContainer');
-        progressElement.classList.toggle('text-red-800', isError);
-        progressElement.classList.toggle('text-blue-700', !isError);
+        progressElement.classList.toggle('text-danger', isError);
+        progressElement.classList.toggle('text-text-muted', !isError);
         if (progressContainer) {
-            progressContainer.classList.toggle('bg-red-50', isError);
-            progressContainer.classList.toggle('border-red-200', isError);
-            progressContainer.classList.toggle('bg-blue-50', !isError);
-            progressContainer.classList.toggle('border-blue-200', !isError);
+            progressContainer.classList.toggle('is-error', isError);
         }
 
         const iconElement = document.createElement('i');
@@ -96,14 +93,13 @@ function updateProgressActivity(icon, message, iconColorClass = '') {
             const text = message && typeof message === 'object'
                 ? (message.messageText ?? message.message ?? '')
                 : message;
-            messageElement.textContent = text === undefined || text === null ? '' : String(text);
-            if (message && typeof message === 'object' && message.action) {
-                const actionButton = document.createElement('button');
-                actionButton.type = 'button';
-                actionButton.dataset.transcriptionErrorAction = message.action.action;
-                actionButton.className = 'ml-2 underline font-medium';
-                actionButton.textContent = message.action.label;
-                messageElement.appendChild(actionButton);
+            const inlineAction = message && typeof message === 'object' && message.action
+                ? { label: message.action.label, dataset: { transcriptionErrorAction: message.action.action } }
+                : null;
+            if (typeof window.renderTextWithInlineAction === 'function') {
+                window.renderTextWithInlineAction(messageElement, text, inlineAction);
+            } else {
+                messageElement.textContent = text === undefined || text === null ? '' : String(text);
             }
         }
 
@@ -130,17 +126,20 @@ function translateBackendErrorMessage(backendMessage) {
     let iconColorClass = 'text-red-600'; // Default error color (Tailwind)
     const canManageKeys = window.USER_PERMISSIONS?.allow_api_key_management;
     const keyAction = canManageKeys
-        ? '<a href="#!" data-transcription-error-action="manage-key" class="text-primary hover:text-primary-dark underline">Manage API Keys</a>'
+        ? '<a href="#!" data-transcription-error-action="manage-key" class="inline-action">Manage API Keys</a>'
         : 'contact your administrator';
-    const keyActionText = canManageKeys ? 'Manage API Keys' : 'contact your administrator';
+    // Plain-text versions name "Manage API Keys" once; the UI turns that phrase
+    // into the link (renderTextWithInlineAction), so the label is never repeated.
+    const keyFixText = (verb) => canManageKeys ? `${verb} in Manage API Keys.` : 'Please contact your administrator.';
+    const keyFixHtml = (verb) => canManageKeys ? `${verb} in ${keyAction}.` : 'Please contact your administrator.';
 
     if (lowerMessage.startsWith('error:')) {
         const errorContent = backendMessage.substring(6).trim();
         const lowerErrorContent = errorContent.toLowerCase();
 
         if (lowerErrorContent.includes('no api keys configured')) {
-            message = `No API Keys configured. Please ${keyAction}.`;
-            messageText = `No API Keys configured. Please ${keyActionText}.`;
+            message = `No API keys configured. ${keyFixHtml('Add one')}`;
+            messageText = `No API keys configured. ${keyFixText('Add one')}`;
             action = canManageKeys ? { action: 'manage-key', label: 'Manage API Keys' } : null;
             icon = 'vpn_key_off';
         } else if (lowerErrorContent.includes('api key not configured')) {
@@ -148,8 +147,8 @@ function translateBackendErrorMessage(backendMessage) {
             if (lowerErrorContent.includes('openai')) serviceNameGuess = 'OpenAI';
             else if (lowerErrorContent.includes('assemblyai')) serviceNameGuess = 'AssemblyAI';
             else if (lowerErrorContent.includes('gemini')) serviceNameGuess = 'Gemini';
-            message = `${serviceNameGuess} API key is not configured. Please ${keyAction}.`;
-            messageText = `${serviceNameGuess} API key is not configured. Please ${keyActionText}.`;
+            message = `${serviceNameGuess} API key is not configured. ${keyFixHtml('Add it')}`;
+            messageText = `${serviceNameGuess} API key is not configured. ${keyFixText('Add it')}`;
             action = canManageKeys ? { action: 'manage-key', label: 'Manage API Keys' } : null;
             icon = 'vpn_key_off';
         } else if (lowerErrorContent.includes('permission denied')) {
@@ -180,15 +179,15 @@ function translateBackendErrorMessage(backendMessage) {
             messageText = `${providerName} quota exceeded. Please check your plan/billing with the provider.`;
             message = `${escapeHtml(providerName)} quota exceeded. Please check your plan/billing with the provider.`;
             icon = 'account_balance_wallet';
-            iconColorClass = 'text-orange-500'; // Tailwind orange
+            iconColorClass = 'text-warning';
         } else if (lowerErrorContent.includes('authentication failed') || lowerErrorContent.includes('invalid api key') || lowerErrorContent.includes('incorrect api key')) {
-            message = `The provider rejected your API key. Please ${keyAction}.`;
-            messageText = `The provider rejected your API key. Please ${keyActionText}.`;
+            message = `The provider rejected your API key. ${keyFixHtml('Update it')}`;
+            messageText = `The provider rejected your API key. ${keyFixText('Update it')}`;
             action = canManageKeys ? { action: 'manage-key', label: 'Manage API Keys' } : null;
             icon = 'error';
         } else if (lowerErrorContent.includes('rate limit exceeded') || lowerErrorContent.includes('rate limit hit')) {
              message = "API rate limit hit. Please wait and try again later.";
-             icon = 'history'; iconColorClass = 'text-orange-500';
+             icon = 'history'; iconColorClass = 'text-warning';
         } else if (lowerErrorContent.includes('audio duration') && lowerErrorContent.includes('is longer than')) {
             const durationMatch = errorContent.match(/audio duration\s+(\d+(?:\.\d+)?)\s+seconds\s+is\s+longer\s+than\s+(\d+(?:\.\d+)?)/i);
             const maxDurationSeconds = durationMatch ? parseFloat(durationMatch[2]) : 1400;
@@ -209,13 +208,13 @@ function translateBackendErrorMessage(backendMessage) {
              icon = 'broken_image';
         } else if (lowerErrorContent.includes('connection error') || lowerErrorContent.includes('network error') || lowerErrorContent.includes('could not connect')) {
              message = "Connection error communicating with the transcription service. Please check your internet connection.";
-             icon = 'wifi_off'; iconColorClass = 'text-orange-500';
+             icon = 'wifi_off'; iconColorClass = 'text-warning';
         } else if (lowerErrorContent.includes('service unavailable') || lowerErrorContent.includes('server error') || errorContent.includes('503')) {
              message = "The external transcription service is temporarily unavailable. Please try again later.";
-             icon = 'cloud_off'; iconColorClass = 'text-orange-500';
+             icon = 'cloud_off'; iconColorClass = 'text-warning';
         } else if (lowerErrorContent.includes('chunk transcription failed') || lowerErrorContent.includes('failed exporting audio chunk')) {
              message = "Part of the transcription failed. The result might be incomplete.";
-             icon = 'warning'; iconColorClass = 'text-orange-500';
+             icon = 'warning'; iconColorClass = 'text-warning';
         } else if (lowerErrorContent.includes('transcription failed via api client')) {
              message = "Transcription failed. Please check the API service status or your API key.";
              icon = 'error_outline';
@@ -230,16 +229,16 @@ function translateBackendErrorMessage(backendMessage) {
     }
     else if (lowerMessage.includes("cancelled") || lowerMessage.includes("cancelling")) {
         message = "Transcription cancelled by user.";
-        icon = 'cancel'; iconColorClass = 'text-orange-500';
+        icon = 'cancel'; iconColorClass = 'text-warning';
     }
     else if (lowerMessage.includes("transcription completed") || lowerMessage.includes("finalized job") || lowerMessage.includes("transcription successful")) {
         message = "Transcription completed successfully!";
-        icon = 'check_circle'; iconColorClass = 'text-green-600'; // Tailwind green
+        icon = 'check_circle'; iconColorClass = 'text-success'; // Tailwind green
     }
     else {
         messageText = backendMessage || "An unknown error occurred.";
         message = escapeHtml(messageText);
-        icon = 'info_outline'; iconColorClass = 'text-blue-600'; // Tailwind info blue
+        icon = 'info_outline'; iconColorClass = 'text-primary'; // Tailwind info blue
     }
 
     return { message, messageText: messageText ?? message, action, icon, iconColorClass };
@@ -356,7 +355,7 @@ function renderActionableErrorContent(error, container) {
     wrapper.appendChild(headline);
 
     const reference = document.createElement('div');
-    reference.className = 'mt-1 text-xs text-red-700';
+    reference.className = 'mt-1 text-xs text-danger';
     reference.textContent = `Code: ${error.diagnosticCode || ''} · Reference: ${error.reference || ''}`;
     wrapper.appendChild(reference);
 
@@ -366,7 +365,7 @@ function renderActionableErrorContent(error, container) {
         const button = document.createElement('button');
         button.type = 'button';
         button.dataset.transcriptionErrorAction = action.action;
-        button.className = `inline-flex min-h-[40px] w-full sm:w-auto items-center justify-center rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${action.primary ? 'border-red-700 bg-red-700 text-white hover:bg-red-800 focus:ring-red-600' : 'border-red-300 bg-white text-red-800 hover:bg-red-100 focus:ring-red-500'}`;
+        button.className = `ui-btn ui-btn--sm w-full sm:w-auto ${action.primary ? 'ui-btn--primary' : 'ui-btn--secondary'}`;
         button.textContent = action.label;
         actions.appendChild(button);
     });
@@ -385,7 +384,7 @@ function renderActionableErrorContent(error, container) {
     const diagnosticsButton = document.createElement('button');
     diagnosticsButton.type = 'button';
     diagnosticsButton.dataset.transcriptionErrorAction = 'diagnostics';
-    diagnosticsButton.className = 'mt-2 min-h-[36px] underline font-medium';
+    diagnosticsButton.className = 'inline-action mt-2';
     diagnosticsButton.textContent = 'Download diagnostics';
     details.appendChild(diagnosticsButton);
     wrapper.appendChild(details);
@@ -605,9 +604,9 @@ function pollProgress(jobId, initialJobData = null) {
             let activityMessage = 'Processing...';
             let activityColor = ''; // Tailwind color class
             if (isCancellationPending) {
-                activityIcon = 'cancel'; activityMessage = 'Cancellation requested. Waiting for process to stop...'; activityColor = 'text-orange-500';
+                activityIcon = 'cancel'; activityMessage = 'Cancellation requested. Waiting for process to stop...'; activityColor = 'text-warning';
             } else if (currentPhase === 'waiting') {
-                activityIcon = 'hourglass_empty'; activityMessage = 'Waiting for an available transcription slot...'; activityColor = 'text-blue-600';
+                activityIcon = 'hourglass_empty'; activityMessage = 'Waiting for an available transcription slot...'; activityColor = 'text-primary';
             } else if (currentPhase === 'upload') {
                 activityIcon = 'cloud_upload'; activityMessage = `Uploading audio for ${currentJobApiName}...`;
             } else if (currentPhase === 'processing') {
@@ -615,13 +614,13 @@ function pollProgress(jobId, initialJobData = null) {
             } else if (currentPhase === 'transcribing') {
                 activityIcon = 'record_voice_over'; activityMessage = `Transcribing with ${currentJobApiName}...`;
             } else if (currentPhase === 'finished') {
-                activityIcon = 'check_circle'; activityMessage = 'Transcription completed successfully!'; activityColor = 'text-green-600';
+                activityIcon = 'check_circle'; activityMessage = 'Transcription completed successfully!'; activityColor = 'text-success';
             } else if (currentPhase === 'error' || currentPhase === 'interrupted') {
                 const backendError = jobData.error_message || "An unknown error occurred.";
                 const actionableError = renderActionableError(backendError, jobData);
                 activityIcon = actionableError.icon; activityMessage = actionableError; activityColor = actionableError.iconColorClass;
             } else if (currentPhase === 'cancelled') {
-                activityIcon = 'cancel'; activityMessage = 'Transcription cancelled by user.'; activityColor = 'text-orange-500';
+                activityIcon = 'cancel'; activityMessage = 'Transcription cancelled by user.'; activityColor = 'text-warning';
             }
 
             if (
@@ -739,7 +738,7 @@ function pollProgress(jobId, initialJobData = null) {
                 const progressActivityElem = document.getElementById('progressActivity');
                 const isAlreadyShowingFinalState = progressActivityElem && (progressActivityElem.textContent.includes('completed') || progressActivityElem.textContent.includes('Error:') || progressActivityElem.textContent.includes('cancelled'));
                 if (!isAlreadyShowingFinalState) {
-                    updateProgressActivity('sync_problem', 'Connection issue checking status. Retrying...', 'text-orange-500');
+                    updateProgressActivity('sync_problem', 'Connection issue checking status. Retrying...', 'text-warning');
                 }
             }
         }
@@ -780,7 +779,7 @@ async function resumeActiveTranscription() {
             stopBtn.classList.remove('hidden');
             stopBtn.disabled = job.status === 'cancelling';
             if (job.status === 'cancelling') {
-                stopBtn.innerHTML = 'CANCELLING... <i class="material-icons right">hourglass_empty</i>';
+                stopBtn.innerHTML = '<i class="material-icons text-base">hourglass_empty</i><span>Cancelling...</span>';
                 window.cancellationRequestedForJobId = job.job_id;
             }
         }
@@ -814,7 +813,7 @@ async function resumeActiveTranscription() {
                 : job.status === 'pending'
                 ? 'Waiting for an available transcription slot...'
                 : `Reconnected to transcription of ${job.filename || 'audio'}...`,
-            job.status === 'cancelling' ? 'text-orange-500' : 'text-blue-600'
+            job.status === 'cancelling' ? 'text-warning' : 'text-primary'
         );
         window.logger.info(mainPollLogPrefix, `Reconnected to active transcription ${job.job_id}.`);
     } catch (error) {
@@ -847,13 +846,13 @@ function resetTranscribeUI(keepProgressBox = false, isErrorState = false) {
     } else if (progressContainer) {
         const isCancellationPending = window.cancellationRequestedForJobId === currentJobId;
         if (isCancellationPending) {
-            if (progressActivity) updateProgressActivity('cancel', 'Cancellation requested. Waiting for process to stop...', 'text-orange-500');
+            if (progressActivity) updateProgressActivity('cancel', 'Cancellation requested. Waiting for process to stop...', 'text-warning');
             if (progressBar) setProgressBarWidth(progressBar, lastProgressValue);
             if (progressPercentage) progressPercentage.textContent = `${lastProgressValue}%`;
         } else if (!jobIsFinishedOrErrored) {
             if (progressBar) setProgressBarWidth(progressBar, 0);
             if (progressPercentage) progressPercentage.textContent = '0%';
-            if (progressActivity) updateProgressActivity('info_outline', 'Ready for next job.', 'text-blue-600');
+            if (progressActivity) updateProgressActivity('info_outline', 'Ready for next job.', 'text-primary');
         } else if (isErrorState) {
             if (progressBar) setProgressBarWidth(progressBar, lastProgressValue);
             if (progressPercentage) progressPercentage.textContent = `${lastProgressValue}%`;
@@ -877,7 +876,7 @@ function resetTranscribeUI(keepProgressBox = false, isErrorState = false) {
     }
     if (stopBtn) {
         stopBtn.disabled = false;
-        stopBtn.innerHTML = 'STOP <i class="material-icons right">cancel</i>';
+        stopBtn.innerHTML = '<i class="material-icons text-base">close</i><span>Stop</span>';
         stopBtn.classList.add('hidden');
     }
 

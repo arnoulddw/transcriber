@@ -53,7 +53,7 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
 
     const listItem = document.createElement('li');
     const isPinned = !!transcription.is_pinned;
-    listItem.className = 'py-4' + (isPinned ? ' border-l-2 border-amber-400 pl-2' : '');
+    listItem.className = 'history-item' + (isPinned ? ' is-pinned' : '');
     listItem.dataset.transcriptionId = transcription.id;
     listItem.dataset.isPinned = isPinned ? 'true' : 'false';
     const hasFullTranscript = typeof transcription.transcription_text === 'string';
@@ -100,12 +100,12 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
     const metaText = metaSegments.map(segment => window.escapeHtml(segment)).join(' | ');
 
     const downloadButtonHtml = canDownload ? `
-        <button type="button" class="download-btn p-2 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary flex items-center" title="Download Transcript">
+        <button type="button" class="download-btn icon-btn" title="Download Transcript">
             <i class="material-icons text-base">download</i>
         </button>
     ` : '';
     const pinButtonHtml = `
-        <button type="button" class="pin-btn p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary flex items-center ${isPinned ? 'text-amber-500 hover:text-amber-600 hover:bg-amber-50' : 'text-gray-500 hover:text-primary hover:bg-gray-100'}" title="${isPinned ? (window.i18n.unpin || 'Unpin') : (window.i18n.pinToTop || 'Pin to top')}">
+        <button type="button" class="pin-btn icon-btn${isPinned ? ' is-pinned' : ''}" title="${isPinned ? (window.i18n.unpin || 'Unpin') : (window.i18n.pinToTop || 'Pin to top')}">
             <i class="material-icons text-base">push_pin</i>
         </button>
     `;
@@ -113,7 +113,7 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
     const historyItemContentClasses = ['history-item-content', 'flex', 'flex-col'];
     
     const transcriptPanelClasses = ['transcript-panel', 'w-full', 'relative', 'p-4'];
-    const workflowPanelClasses = ['workflow-panel', 'w-full', 'mt-4', 'p-4', 'border', 'border-gray-300', 'rounded-md', 'bg-gray-50', 'relative', 'pb-11'];
+    const workflowPanelClasses = ['workflow-panel'];
     
     if (!hadPendingWorkflow) { 
         workflowPanelClasses.push('hidden');
@@ -124,9 +124,9 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
     let startWorkflowButtonHtml = '';
     if (canRunWorkflow && !hadPendingWorkflow) {
         startWorkflowButtonHtml = `
-            <div class="start-workflow-action text-right mt-2.5">
-                <button type="button" class="start-workflow-btn ui-btn ui-btn--primary text-xs px-2.5 py-1 rounded-full inline-flex items-center">
-                    <i class="material-icons tiny -ml-0.5 mr-1">auto_awesome</i>${window.i18n.startWorkflow || 'Start Workflow'}
+            <div class="start-workflow-action text-right mt-1">
+                <button type="button" class="start-workflow-btn ui-btn ui-btn--link ui-btn--sm">
+                    <i class="material-icons text-base">auto_awesome</i>${window.i18n.startWorkflow || 'Start Workflow'}
                 </button>
             </div>
         `;
@@ -150,29 +150,29 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
                                 ${window.escapeHtml(initialTitleText)}<i class="material-icons tiny text-primary align-middle ml-1 ${showInitialTitleIcon ? '' : 'hidden'}" id="title-icon-${transcription.id}">auto_awesome</i>${transcriptionWarningIconHtml}
                             </b>
                         </div>
-                        <p class="meta text-xs text-gray-500">
+                        <p class="meta history-meta">
                             ${metaText}
                             ${transcription.status === 'error' ? '<span class="text-red-600"> (Failed)</span>' : ''}
                         </p>
                     </div>
-                    <div class="secondary-content history-item-actions flex-shrink-0 flex space-x-1">
-                        <button type="button" class="copy-btn p-2 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary flex items-center" title="Copy Transcript">
+                    <div class="secondary-content history-item-actions flex-shrink-0 flex gap-0.5">
+                        <button type="button" class="copy-btn icon-btn" title="Copy Transcript">
                             <i class="material-icons text-base">content_copy</i>
                         </button>
                         ${downloadButtonHtml}
                         ${pinButtonHtml}
-                        <button type="button" class="delete-btn p-2 rounded-full text-gray-500 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center" title="Delete Transcript">
+                        <button type="button" class="delete-btn icon-btn icon-btn--danger" title="Delete Transcript">
                             <i class="material-icons text-base">delete</i>
                         </button>
                     </div>
                 </div>
-                <p class="transcription-text text-sm text-gray-700 mt-2 mb-2"></p>
+                <p class="transcription-text text-sm text-text-muted leading-relaxed mt-2 mb-1"></p>
                 ${startWorkflowButtonHtml}
             </div>
             <div class="${workflowPanelClasses.join(' ')}"
                  ${transcription.llm_operation_id ? `data-operation-id="${transcription.llm_operation_id}"` : ''}>
                 ${hadPendingWorkflow ? `
-                    <div class="flex flex-col items-center justify-center text-gray-500 min-h-[100px]">
+                    <div class="flex flex-col items-center justify-center text-text-muted min-h-[100px]">
                       <span class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mb-2"></span>
                       <span>Loading Workflow...</span>
                    </div>` : ''}
@@ -243,7 +243,7 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
         } else {
             window.logger.error(logPrefix, "Workflow.startWorkflowPollingForTranscription function is missing.");
             const workflowPanel = listItem.querySelector(".workflow-panel");
-            if (workflowPanel) workflowPanel.innerHTML = '<p class="text-red-600 text-center">Error: Could not start workflow polling.</p>';
+            if (workflowPanel) workflowPanel.innerHTML = '<p class="text-danger text-center">Error: Could not start workflow polling.</p>';
         }
     }
 }

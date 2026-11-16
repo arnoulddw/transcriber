@@ -6,6 +6,8 @@
 
 {% block title %}{{ _('Compass Platform') }}{% endblock %}
 
+{% block content_container_class %}mx-auto w-full max-w-page px-4 sm:px-6{% endblock %}
+
 {% block content %}
 <div class="space-y-8">
     {% call form_layout.card(title=_('Upload Audio File')) %}
@@ -13,25 +15,27 @@
             {# File Input #}
             <div>
                 <label for="audioFile" class="form-label mb-1">{{ _('Audio File') }}</label>
+                {# Audio file zone stays light purple on purpose, to highlight it #}
                 <div id="audioDropZone" role="button" tabindex="0"
-                     class="mt-1 flex items-center rounded-md border-2 border-dashed border-gray-300 p-4 transition hover:border-primary hover:bg-blue-50/40 focus:outline-none focus:ring-2 focus:ring-primary"
+                     class="audio-drop-zone mt-1"
                      aria-describedby="audioFileHint audioFileError">
-                    <label for="audioFile"
-                           class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary inline-flex items-center">
-                        <i class="material-icons tiny -ml-1 mr-2 align-middle">audiotrack</i>
-                        <span>{{ _('Choose File') }}</span>
-                    </label>
+                    <span class="audio-drop-zone__icon" aria-hidden="true"><i class="material-icons">music_note</i></span>
                     <input type="file" id="audioFile" name="audio_file" required
                            accept=".mp3,.m4a,.wav,.ogg,.webm,.mpga,.mpeg"
                            class="sr-only">
-                    <span id="audioFilePath" class="ml-3 text-sm text-text-muted truncate"
+                    <span id="audioFilePath" class="min-w-0 flex-1 truncate text-sm font-medium text-text-strong"
                           data-placeholder-long="{{ _('Select an audio file (mp3, wav, m4a...)') }}"
                           data-placeholder-short="{{ _('Select audio file…') }}">{{ _('Select an audio file (mp3, wav, m4a...)') }}</span>
+                    <label for="audioFile"
+                           class="ui-btn--raised ui-btn--sm flex-none cursor-pointer">
+                        <span>{{ _('Choose File') }}</span>
+                    </label>
                 </div>
                 <p id="audioFileHint" class="form-hint">{{ _('Choose a file or drag and drop it here. Max file size: 200 MB. Supported formats: MP3, M4A, WAV, OGG, WEBM, MPGA, MPEG.') }}</p>
                 <p id="audioFileError" class="form-error hidden" aria-live="polite"></p>
             </div>
 
+            <div class="grid grid-cols-1 items-start gap-5 sm:grid-cols-2">
             {# API Select #}
             <div>
                 <label for="apiSelect" class="form-label">{{ _('Transcription Model') }}</label>
@@ -55,19 +59,6 @@
                     </select>
                     <p id="modelDescription" class="form-hint" aria-live="polite"></p>
                 </div>
-                {# First-run empty state: no usable keys/models yet #}
-                {% if not transcription_models %}
-                    {% if user_permissions.allow_api_key_management %}
-                        {% call ui.alert(level='warning', title=_('No transcription models configured'), extra_classes='mb-2') %}
-                            <p>{{ _('You need to go to Manage API Keys to add models.') }}</p>
-                            <p class="mt-1"><a href="#" id="emptyStateApiKeysLink" class="font-semibold underline hover:text-primary-dark">{{ _('Go to Manage API Keys') }}</a></p>
-                        {% endcall %}
-                    {% else %}
-                        {% call ui.alert(level='warning', title=_('No transcription models configured'), extra_classes='mb-2') %}
-                            <p>{{ _('No transcription models are available yet. Contact your administrator to enable them.') }}</p>
-                        {% endcall %}
-                    {% endif %}
-                {% endif %}
             </div>
 
             {# Language Select #}
@@ -82,28 +73,43 @@
                     </select>
                 </div>
             </div>
+            </div>
+            {# First-run empty state: no usable keys/models yet (spans both columns) #}
+            {% if not transcription_models %}
+                {% if user_permissions.allow_api_key_management %}
+                    {% call ui.alert(level='warning', title=_('No transcription models configured'), extra_classes='') %}
+                        {# The link sits inside the sentence instead of being repeated below it #}
+                        {% set manage_keys_link %}<a href="#" id="emptyStateApiKeysLink" class="inline-action">{{ _('Manage API Keys') }}</a>{% endset %}
+                        <p>{{ _('Add a model in %(link)s to start transcribing.', link=manage_keys_link) | safe }}</p>
+                    {% endcall %}
+                {% else %}
+                    {% call ui.alert(level='warning', title=_('No transcription models configured'), extra_classes='') %}
+                        <p>{{ _('No transcription models are available yet. Contact your administrator to enable them.') }}</p>
+                    {% endcall %}
+                {% endif %}
+            {% endif %}
 
             {# Context Prompt & Workflow Buttons #}
-            <div class="flex flex-wrap items-center gap-3 mt-4">
+            <div class="flex flex-wrap items-center gap-2">
                 {% if user_permissions.allow_context_prompt %}
                 <button type="button" id="toggleContextPromptBtn"
-                        class="ui-btn ui-btn--secondary text-xs rounded-full px-3 py-1.5 focus:ring-offset-2">
-                    <i class="material-icons tiny -ml-0.5 mr-1.5">add_circle_outline</i>{{ _('Context Prompt') }}
+                        class="chip-toggle">
+                    <i class="material-icons text-base">add_circle_outline</i>{{ _('Context Prompt') }}
                 </button>
                 {% endif %}
                 {% if user_permissions.use_api_assemblyai and user_permissions.allow_speaker_diarization %}
                 <button type="button" id="speakerDiarizationBtn"
-                        class="ui-btn ui-btn--secondary text-xs rounded-full px-3 py-1.5 focus:ring-offset-2 transition hidden"
+                        class="chip-toggle hidden"
                         aria-pressed="false">
-                    <i class="material-icons tiny -ml-0.5 mr-1.5">record_voice_over</i>{{ _('Identify Speakers') }}
+                    <i class="material-icons text-base">record_voice_over</i>{{ _('Identify Speakers') }}
                 </button>
                 {% endif %}
                 {% if user_permissions.allow_workflows %}
                 <button type="button" id="applyWorkflowBtn"
-                        class="ui-btn ui-btn--secondary text-xs rounded-full px-3 py-1.5 focus:ring-offset-2 transition">
-                    <i class="material-icons tiny -ml-0.5 mr-1.5" id="applyWorkflowBtnIcon">add_circle_outline</i>
+                        class="chip-toggle">
+                    <i class="material-icons text-base" id="applyWorkflowBtnIcon">add_circle_outline</i>
                     <span id="applyWorkflowBtnText">{{ _('Apply Workflow') }}</span>
-                    <span id="removeWorkflowBtn" class="ml-1.5 hidden cursor-pointer text-current hover:text-red-500 hover:bg-red-100 rounded-sm p-0.5 leading-none text-sm" title="{{ _('Remove applied workflow') }}">×</span>
+                    <span id="removeWorkflowBtn" class="ml-0.5 hidden cursor-pointer rounded-full px-1 leading-none text-sm text-current hover:bg-white/20" title="{{ _('Remove applied workflow') }}">×</span>
                 </button>
                 <span id="selectedWorkflowInfo"
                       class="badge badge-primary hidden text-xs font-medium"></span>
@@ -112,7 +118,7 @@
 
             {# Context Prompt Textarea #}
             {% if user_permissions.allow_context_prompt %}
-            <div id="contextPromptSection" class="hidden mt-4">
+            <div id="contextPromptSection" class="hidden">
                 <div>
                     <label for="contextPrompt" class="form-label">{{ _('Context Prompt (Max 120 words)') }}</label>
                     <div class="mt-1">
@@ -135,35 +141,38 @@
             <input type="hidden" id="speakerDiarizationInput" name="speaker_diarization" value="">
 
             {# Submit Button #}
-            <div class="mt-6">
-                {{ ui.button(_('TRANSCRIBE'), variant='primary', icon='send', block=True, id='transcribeBtn', attrs='disabled') }}
+            <div>
+                {{ ui.button(_('TRANSCRIBE'), variant='primary', icon='graphic_eq', block=True, id='transcribeBtn', extra_classes='ui-btn--hero sentence-case', attrs='disabled') }}
                 <p id="transcribeBtnStatus" class="form-error text-center"></p>
             </div>
         </form>
 
         {# Progress Display #}
-        <div id="progressContainer" class="hidden mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div id="progressBarContainer" class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+        {# Progress: outlined white panel (workflow results are filled lilac, so the two never look alike) #}
+        <div id="progressContainer" class="progress-panel hidden mt-5">
+            <div class="flex items-center justify-between gap-4">
+                <div id="progressActivity" class="flex min-w-0 flex-1 items-start text-sm text-text-muted min-h-[24px]" role="status" aria-live="polite">
+                    <i class="material-icons tiny mr-2">hourglass_empty</i> {{ _('Waiting...') }}
+                </div>
+                <strong id="progressPercentage" class="progress-panel__pct">0%</strong>
+            </div>
+            <div id="progressBarContainer" class="mt-3 h-1 w-full overflow-hidden rounded-full bg-primary-track">
                 <div id="progressBar" class="progress-bar"></div>
             </div>
-            <p class="text-center text-sm font-medium text-primary mb-2"><strong id="progressPercentage">0%</strong></p>
-            <div id="progressActivity" class="flex items-start sm:items-center justify-center text-sm text-blue-700 min-h-[24px]" role="status" aria-live="polite">
-                <i class="material-icons tiny mr-2">hourglass_empty</i> {{ _('Waiting...') }}
-            </div>
-            <div class="mt-4 text-center">
+            <div class="mt-3 flex justify-end border-t border-border-default pt-3">
                 <button type="button" id="stopBtn"
-                        class="hidden ui-btn ui-btn--danger px-4">
-                    {{ _('STOP') }} <i class="material-icons text-base ml-2">cancel</i>
+                        class="hidden ui-btn ui-btn--danger ui-btn--sm">
+                    <i class="material-icons text-base">close</i><span class="sentence-case">{{ _('STOP') }}</span>
                 </button>
             </div>
         </div>
     {% endcall %}
 
-    {% set history_actions = ui.button(_('Clear All'), variant='secondary', id='clearAllBtn', icon='delete_forever', extra_classes='px-4 text-red-600 border border-red-500 hover:bg-danger/10 focus:ring-red-400') if transcriptions else '' %}
+    {% set history_actions = ui.button(_('Clear All'), variant='danger', id='clearAllBtn', icon='delete_forever', extra_classes='ui-btn--sm') if transcriptions else '' %}
     {% call form_layout.card(title=_('Transcription History'), actions=history_actions) %}
         {# Search input #}
         {% if transcriptions or request.args.get('q') %}
-        <div class="mb-4 relative flex items-center">
+        <div class="relative flex items-center">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                 <i class="material-icons text-text-muted text-base" aria-hidden="true">search</i>
             </div>
@@ -178,13 +187,13 @@
                 <i class="material-icons text-base">close</i>
             </button>
         </div>
-        <div id="searchStatus" class="mb-2 text-xs text-text-muted hidden" aria-live="polite"></div>
+        <div id="searchStatus" class="text-xs text-text-muted hidden" aria-live="polite"></div>
         {% endif %}
 
-        <ul class="divide-y divide-border-default" id="transcriptionHistory">
+        <ul class="history-list" id="transcriptionHistory">
                 {% if transcriptions %}
                     {% for transcription in transcriptions %}
-                        <li class="py-4{% if transcription.is_pinned %} border-l-2 border-amber-400 pl-2{% endif %}"
+                        <li class="history-item{% if transcription.is_pinned %} is-pinned{% endif %}"
                             data-transcription-id="{{ transcription.id }}"
                             data-is-pinned="{{ 'true' if transcription.is_pinned else 'false' }}"
                             data-full-text="{{ transcription.transcription_preview | default('', true) }}"
@@ -217,7 +226,7 @@
                                                     {{ transcription.generated_title if show_generated_title_icon else transcription.filename | e }}<i class="material-icons tiny text-primary align-middle ml-1 {{ 'hidden' if not show_generated_title_icon }}" id="title-icon-{{ transcription.id }}">auto_awesome</i><i class="material-icons tiny text-red-600 align-middle ml-1 {{ 'hidden' if not show_transcription_warning_icon }}" id="title-warning-icon-{{ transcription.id }}" title="{{ _('Transcript may be incomplete') }}" aria-label="{{ _('Transcript may be incomplete') }}">error_outline</i>
                                                 </b>
                                             </div>
-                                            <p class="meta text-xs text-text-muted">
+                                            <p class="meta history-meta">
                                                 {% set api_name = API_NAME_MAP_FRONTEND.get(transcription.api_used, transcription.api_used) %}
                                                 {% set lang_code = transcription.detected_language.strip() if transcription.detected_language else '' %}
                                                 {% set language_available = lang_code and lang_code | lower not in ['unknown', 'und'] %}
@@ -230,34 +239,34 @@
                                                 {% if transcription.status == 'error' %}<span class="text-red-600"> {{ _('(Failed)') }}</span>{% endif %}
                                             </p>
                                         </div>
-                                        <div class="secondary-content history-item-actions flex-shrink-0 flex space-x-1">
-                                            <button type="button" class="copy-btn p-2 rounded-full text-text-muted hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary flex items-center" title="{{ _('Copy Transcript') }}">
+                                        <div class="secondary-content history-item-actions flex-shrink-0 flex gap-0.5">
+                                            <button type="button" class="copy-btn icon-btn" title="{{ _('Copy Transcript') }}">
                                                 <i class="material-icons text-base">content_copy</i>
                                             </button>
                                             {% if user_permissions.allow_download_transcript %}
-                                            <button type="button" class="download-btn p-2 rounded-full text-text-muted hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary flex items-center" title="{{ _('Download Transcript') }}">
+                                            <button type="button" class="download-btn icon-btn" title="{{ _('Download Transcript') }}">
                                                 <i class="material-icons text-base">download</i>
                                             </button>
                                             {% endif %}
-                                            <button type="button" class="pin-btn p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary flex items-center {% if transcription.is_pinned %}text-amber-500 hover:text-amber-600 hover:bg-amber-50{% else %}text-text-muted hover:text-primary hover:bg-primary/10{% endif %}" title="{{ _('Unpin') if transcription.is_pinned else _('Pin to top') }}">
+                                            <button type="button" class="pin-btn icon-btn{% if transcription.is_pinned %} is-pinned{% endif %}" title="{{ _('Unpin') if transcription.is_pinned else _('Pin to top') }}">
                                                 <i class="material-icons text-base">push_pin</i>
                                             </button>
-                                            <button type="button" class="delete-btn p-2 rounded-full text-text-muted hover:text-danger hover:bg-danger/10 focus:outline-none focus:ring-2 focus:ring-danger flex items-center" title="{{ _('Delete Transcript') }}">
+                                            <button type="button" class="delete-btn icon-btn icon-btn--danger" title="{{ _('Delete Transcript') }}">
                                                 <i class="material-icons text-base">delete</i>
                                             </button>
                                         </div>
                                     </div>
-                                    <p class="transcription-text text-sm text-text-muted mt-2 mb-2"></p> {# Content populated by JS #}
+                                    <p class="transcription-text text-sm text-text-muted leading-relaxed mt-2 mb-1"></p> {# Content populated by JS #}
                                     {% if user_permissions.allow_workflows %}
                                     {# MODIFICATION: Removed conditional hidden class #}
-                                    <div class="start-workflow-action text-right mt-2.5">
-                                        <button type="button" class="start-workflow-btn ui-btn ui-btn--primary text-xs px-2.5 py-1 rounded-full inline-flex items-center">
-                                            <i class="material-icons tiny -ml-0.5 mr-1">auto_awesome</i>{{ _('Start Workflow') }}
+                                    <div class="start-workflow-action text-right mt-1">
+                                        <button type="button" class="start-workflow-btn ui-btn ui-btn--link ui-btn--sm">
+                                            <i class="material-icons text-base">auto_awesome</i>{{ _('Start Workflow') }}
                                         </button>
                                     </div>
                                     {% endif %}
                                 </div>
-                                <div class="workflow-panel w-full mt-4 p-4 border border-border-default rounded-md bg-surface-muted relative pb-11 {{ 'hidden' if not should_display_workflow_panel }}"
+                                <div class="workflow-panel{{ ' is-error' if llm_status == 'error' }} {{ 'hidden' if not should_display_workflow_panel }}"
                                      {% if transcription.llm_operation_id %}data-operation-id="{{ transcription.llm_operation_id }}"{% endif %}>
                                     {% if should_display_workflow_panel %}
                                         {% if llm_status == 'pending' or llm_status == 'processing' %}
@@ -268,10 +277,10 @@
                                         {% elif llm_status == 'finished' and has_meaningful_result %}
                                             <div class="flex justify-between items-start gap-4">
                                                 <div class="flex-grow min-w-0">
-                                                    <div class="panel-title flex-grow flex items-center font-medium text-primary-dark text-lg leading-tight">
-                                                        <i class="material-icons text-xl mr-2">auto_awesome</i>{{ _('Workflow Result') }}
+                                                    <div class="panel-title">
+                                                        <i class="material-icons text-lg">auto_awesome</i>{{ _('Workflow Result') }}
                                                     </div>
-                                                    <div class="workflow-meta text-xs text-text-muted leading-snug">
+                                                    <div class="workflow-meta mt-1 text-xs text-text-muted leading-snug">
                                                         {{ _('Ran:') }} {% if transcription.llm_operation_ran_at %}<time datetime="{{ transcription.llm_operation_ran_at | datetime_tz }}">{{ transcription.llm_operation_ran_at | datetime_tz }}</time>{% else %}-{% endif %} |
                                                         {% if transcription.matched_workflow_title %}
                                                             {{ _('Workflow Label:') }} <span class="prompt-label-pill inline-block px-2 py-0.5 rounded-full text-xs font-medium ml-1 align-middle overflow-hidden text-ellipsis whitespace-nowrap max-w-[60%]" data-background-color="{{ transcription.matched_workflow_color | e }}">{{ transcription.matched_workflow_title | e }}</span>
@@ -282,25 +291,25 @@
                                                         {% endif %}
                                                     </div>
                                                 </div>
-                                                <div class="workflow-actions flex-shrink-0 flex space-x-1">
-                                                    <button class="edit-workflow-btn p-1.5 rounded-full text-text-muted hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary" title="Edit Result"><i class="material-icons text-base">edit</i></button>
-                                                    <button class="copy-workflow-btn p-1.5 rounded-full text-text-muted hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary" title="Copy Result"><i class="material-icons text-base">content_copy</i></button>
+                                                <div class="workflow-actions flex-shrink-0 flex gap-0.5">
+                                                    <button class="edit-workflow-btn icon-btn" title="Edit Result"><i class="material-icons text-base">edit</i></button>
+                                                    <button class="copy-workflow-btn icon-btn" title="Copy Result"><i class="material-icons text-base">content_copy</i></button>
                                                     {% if user_permissions.allow_download_transcript %}
-                                                    <button class="download-workflow-btn p-1.5 rounded-full text-text-muted hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary" title="Download Result"><i class="material-icons text-base">download</i></button>
+                                                    <button class="download-workflow-btn icon-btn" title="Download Result"><i class="material-icons text-base">download</i></button>
                                                     {% endif %}
-                                                    <button class="delete-workflow-btn p-1.5 rounded-full text-text-muted hover:text-danger hover:bg-danger/10 focus:outline-none focus:ring-2 focus:ring-red-500" title="Delete Result"><i class="material-icons text-base">delete</i></button>
+                                                    <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete Result"><i class="material-icons text-base">delete</i></button>
                                                 </div>
                                             </div>
-                                            <div class="workflow-result-text text-sm text-text-muted leading-relaxed break-words mt-2" data-full-text="{{ transcription.llm_operation_result | e }}">
+                                            <div class="workflow-result-text text-sm text-text-strong leading-relaxed break-words mt-2" data-full-text="{{ transcription.llm_operation_result | e }}">
                                                 {# Content populated by JS using marked.js if available, or preformatted text #}
                                             </div>
                                         {% elif llm_status == 'error' and has_meaningful_error %}
                                             <div class="flex justify-between items-start gap-4">
                                                 <div class="flex-grow min-w-0">
-                                                    <div class="panel-title flex-grow flex items-center font-medium text-red-700 text-lg leading-tight">
-                                                        <i class="material-icons text-xl mr-2">error_outline</i>{{ _('Workflow Error') }}
+                                                    <div class="panel-title">
+                                                        <i class="material-icons text-lg">error_outline</i>{{ _('Workflow Error') }}
                                                     </div>
-                                                    <div class="workflow-meta text-xs text-text-muted leading-snug">
+                                                    <div class="workflow-meta mt-1 text-xs text-text-muted leading-snug">
                                                         {{ _('Attempted:') }} {% if transcription.llm_operation_ran_at %}<time datetime="{{ transcription.llm_operation_ran_at | datetime_tz }}">{{ transcription.llm_operation_ran_at | datetime_tz }}</time>{% else %}<time datetime="{{ transcription.created_at | datetime_tz }}">{{ transcription.created_at | datetime_tz }}</time>{% endif %} |
                                                         {% if transcription.matched_workflow_title %}
                                                             {{ _('Workflow Label:') }} <span class="prompt-label-pill inline-block px-2 py-0.5 rounded-full text-xs font-medium ml-1 align-middle overflow-hidden text-ellipsis whitespace-nowrap max-w-[60%]" data-background-color="{{ transcription.matched_workflow_color | e }}">{{ transcription.matched_workflow_title | e }}</span>
@@ -311,11 +320,11 @@
                                                         {% endif %}
                                                     </div>
                                                 </div>
-                                                <div class="workflow-actions flex-shrink-0 flex space-x-1">
-                                                    <button class="delete-workflow-btn p-1.5 rounded-full text-text-muted hover:text-danger hover:bg-danger/10 focus:outline-none focus:ring-2 focus:ring-red-500" title="Delete Result"><i class="material-icons text-base">delete</i></button>
+                                                <div class="workflow-actions flex-shrink-0 flex gap-0.5">
+                                                    <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete Result"><i class="material-icons text-base">delete</i></button>
                                                 </div>
                                             </div>
-                                            <div class="workflow-result-text text-sm text-red-700 leading-relaxed break-words mt-2">{{ transcription.llm_operation_error | e }}</div>
+                                            <div class="workflow-result-text text-sm text-danger leading-relaxed break-words mt-2">{{ transcription.llm_operation_error | e }}</div>
                                         {% endif %}
                                     {% endif %}
                                 </div>
@@ -323,19 +332,19 @@
                         </li>
                     {% endfor %}
                 {% else %}
-                    <li class="py-4 text-center text-text-muted" id="history-placeholder">{{ _('No completed transcriptions yet.') }}</li>
+                    <li class="py-6 text-center text-sm text-text-muted" id="history-placeholder">{{ _('No completed transcriptions yet.') }}</li>
                 {% endif %}
             </ul>
 
             {# Pagination #}
             {% if pagination %}
-            <div class="mt-6 border-t border-border-default pt-4 pagination-container">
-                <div class="flex flex-col items-center"> {# Centering container for pagination and text #}
-                    <nav class="relative z-0 inline-flex flex-wrap justify-center rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <div class="mt-4 pagination-container">
+                <div class="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <nav class="pager" aria-label="Pagination">
                         <a href="{{ url_for('main.index', page=pagination.current_page - 1) if pagination.has_prev else '#' }}"
-                           class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border-default bg-surface text-sm font-medium text-text-muted hover:bg-surface-muted {{ 'pointer-events-none opacity-50' if not pagination.has_prev }}">
+                           class="pager__item {{ 'pointer-events-none opacity-40' if not pagination.has_prev }}">
                             <span class="sr-only">{{ _('Previous') }}</span>
-                            <i class="material-icons text-sm">chevron_left</i>
+                            <i class="material-icons text-lg">chevron_left</i>
                         </a>
                         {% set ns = namespace(prev_show_page=false) %} {# Initialize namespace for ellipsis logic #}
                         {% for page_num in range(1, pagination.total_pages + 1) %}
@@ -354,22 +363,21 @@
                             {% if show_page %}
                                 <a href="{{ url_for('main.index', page=page_num) }}"
                                    aria-current="{{ 'page' if page_num == pagination.current_page else 'false' }}"
-                                   class="relative inline-flex items-center px-4 py-2 border text-sm font-medium
-                                          {% if page_num == pagination.current_page %} z-10 bg-primary-light border-primary text-white {% else %} bg-surface border-border-default text-text-muted hover:bg-surface-muted {% endif %}">
+                                   class="pager__item{% if page_num == pagination.current_page %} is-current{% endif %}">
                                     {{ page_num }}
                                 </a>
                             {% elif ns.prev_show_page and not show_page %} {# Use ns.prev_show_page #}
-                                <span class="relative inline-flex items-center px-4 py-2 border border-border-default bg-surface text-sm font-medium text-text-muted">...</span>
+                                <span class="pager__item pointer-events-none">…</span>
                             {% endif %}
                             {% set ns.prev_show_page = show_page %} {# Update namespace variable #}
                         {% endfor %}
                         <a href="{{ url_for('main.index', page=pagination.current_page + 1) if pagination.has_next else '#' }}"
-                           class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border-default bg-surface text-sm font-medium text-text-muted hover:bg-surface-muted {{ 'pointer-events-none opacity-50' if not pagination.has_next }}">
+                           class="pager__item {{ 'pointer-events-none opacity-40' if not pagination.has_next }}">
                             <span class="sr-only">{{ _('Next') }}</span>
-                            <i class="material-icons text-sm">chevron_right</i>
+                            <i class="material-icons text-lg">chevron_right</i>
                         </a>
                     </nav>
-                    <div class="mt-3 text-sm text-text-muted">
+                    <div class="text-xs text-text-muted">
                         {{ _('Showing %(length)s of %(total)s items', length=transcriptions|length, total=pagination.total_items) }}
                     </div>
                 </div>
@@ -413,7 +421,7 @@
              console.error("checkTranscribeButtonState function not found.");
         }
 
-        // First-run empty state: clicking "Go to Manage API Keys" opens the modal
+        // First-run empty state: the "Manage API Keys" link in the warning opens the modal
         const emptyStateApiKeysLink = document.getElementById('emptyStateApiKeysLink');
         if (emptyStateApiKeysLink && typeof window.openApiKeyModalDialog === 'function') {
             emptyStateApiKeysLink.addEventListener('click', function (event) {

@@ -186,7 +186,7 @@ function showNotification(message, type = 'info', duration, persistent, id = nul
     }
 
     // Base classes shared with inline alerts for consistent styling
-    const baseNotificationClasses = 'alert w-full max-w-full shadow-lg transition-all duration-300 ease-in-out transform opacity-0 translate-y-2 pointer-events-auto';
+    const baseNotificationClasses = 'alert toast w-full max-w-full transition-all duration-300 ease-in-out transform opacity-0 translate-y-2 pointer-events-auto';
     const wrapperClasses = typeConfig.alertClass ? `${typeConfig.alertClass}` : '';
     notificationDiv.className = wrapperClasses ? `${baseNotificationClasses} ${wrapperClasses}` : baseNotificationClasses;
     notificationDiv.setAttribute('role', 'alert');
@@ -215,7 +215,7 @@ function showNotification(message, type = 'info', duration, persistent, id = nul
     if (finalPersistent || finalDuration === 0 || finalDuration > 10000) {
         const closeButton = document.createElement('button');
         closeButton.type = 'button';
-        closeButton.className = 'ml-auto -mr-1 flex-shrink-0 self-center p-1 rounded-md hover:bg-black hover:bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-white text-current';
+        closeButton.className = 'alert-close';
         closeButton.setAttribute('aria-label', 'Close notification');
         const closeIcon = document.createElement('i');
         closeIcon.className = 'material-icons text-base';
@@ -243,6 +243,57 @@ function showNotification(message, type = 'info', duration, persistent, id = nul
 window.showNotification = showNotification; // Expose globally
 
 /**
+ * Renders a message with an inline action link inside one text element.
+ *
+ * The action is placed inside the sentence: if the message text contains the
+ * action label (e.g. "Add one in Manage API Keys."), that phrase becomes the
+ * link; otherwise the link follows the text inline after a space. Every
+ * toast, progress line and status message uses this, so actions never sit in
+ * a separate block with their own margins, and the label is never repeated.
+ * Text is always set with textContent (never parsed as markup).
+ * @param {HTMLElement} target - Element that receives the text (e.g. a <p>).
+ * @param {string} text - Plain message text.
+ * @param {{label: string, onClick?: function, dataset?: object, className?: string}} action
+ *   className is for JS hooks only (e.g. 'undo-delete-action'); styling comes
+ *   from the shared .inline-action class.
+ * @returns {HTMLButtonElement|null} The action button, or null when there is no action.
+ */
+function renderTextWithInlineAction(target, text, action) {
+    const messageText = text === undefined || text === null ? '' : String(text);
+    target.textContent = '';
+    if (!action || !action.label) {
+        target.textContent = messageText;
+        return null;
+    }
+    const label = String(action.label);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = ['inline-action', action.className].filter(Boolean).join(' ');
+    button.textContent = label;
+    Object.entries(action.dataset || {}).forEach(([key, value]) => { button.dataset[key] = value; });
+    if (typeof action.onClick === 'function') {
+        button.addEventListener('click', event => action.onClick(event, button));
+    }
+    const appendText = value => {
+        if (!value) return;
+        const span = document.createElement('span');
+        span.textContent = value;
+        target.appendChild(span);
+    };
+    const index = messageText.indexOf(label);
+    if (index >= 0) {
+        appendText(messageText.slice(0, index));
+        target.appendChild(button);
+        appendText(messageText.slice(index + label.length));
+    } else {
+        appendText(messageText ? `${messageText} ` : '');
+        target.appendChild(button);
+    }
+    return button;
+}
+window.renderTextWithInlineAction = renderTextWithInlineAction;
+
+/**
  * Displays a text notification with one structured action button.
  *
  * This is intentionally separate from showNotification so ordinary messages
@@ -261,17 +312,14 @@ function showNotificationWithAction(message, action, type = 'info', duration, pe
         return notification;
     }
 
-    const messageElement = notification.querySelector('.alert-content');
-    if (!messageElement) return notification;
+    const textElement = notification.querySelector('.alert-content p');
+    if (!textElement) return notification;
 
-    const actionButton = document.createElement('button');
-    actionButton.type = 'button';
-    actionButton.className = action.className || 'ml-3';
-    actionButton.textContent = action.label === undefined || action.label === null
-        ? ''
-        : String(action.label);
-    actionButton.addEventListener('click', event => action.onClick(event, notification, actionButton));
-    messageElement.appendChild(actionButton);
+    renderTextWithInlineAction(textElement, message, {
+        label: action.label,
+        className: action.className,
+        onClick: (event, button) => action.onClick(event, notification, button),
+    });
     return notification;
 }
 window.showNotificationWithAction = showNotificationWithAction;

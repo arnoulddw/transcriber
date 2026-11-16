@@ -6,6 +6,8 @@
 
 {% block title %}{{ _('Manage your Workflows') }}{% endblock %}
 
+{% block content_container_class %}mx-auto w-full max-w-page px-4 sm:px-6{% endblock %}
+
 {% block head_extra %}
     {{ super() }}
     {# Custom styles for this page are minimal and handled by Tailwind utilities or inline styles where necessary #}
@@ -13,16 +15,17 @@
 {% endblock %}
 
 {% block content %}
-<div class="py-8">
+<div>
     {% call form_layout.card(
         title=_('Manage your Workflows'),
         description=_('Create, edit, or delete your reusable workflow prompts.'),
         wrapper_classes='w-full',
-        padding_classes='p-6 md:p-8'
+        padding_classes='',
+        body_classes='mt-8 space-y-8'
     ) %}
-        {% call form_layout.section(title=_('Add New Workflow'), body_classes='space-y-6', divider=True) %}
-            <form id="addPromptForm" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+        {% call form_layout.section(title=_('Add New Workflow'), body_classes='space-y-5', divider=True) %}
+            <form id="addPromptForm" class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
                     <div class="md:col-span-2">
                         <label for="newPromptTitle" class="form-label">{{ _('Workflow Label') }}</label>
                         <input type="text" id="newPromptTitle" name="title" required maxlength="100"
@@ -30,7 +33,7 @@
                     </div>
                     <div>
                         <label class="form-label">{{ _('Label Color') }}</label>
-                        <div class="mt-1 flex items-center flex-wrap gap-2" id="newPromptColorOptions">
+                        <div class="mt-1 flex min-h-control items-center flex-wrap gap-2" id="newPromptColorOptions">
                             {# Color options populated by JS #}
                         </div>
                         <input type="hidden" id="newPromptColor" name="color" value="#ffffff">
@@ -50,15 +53,15 @@
                         type='submit',
                         icon='add',
                         icon_position='start',
-                        extra_classes='disabled:opacity-50 disabled:cursor-not-allowed'
+                        extra_classes=''
                     ) }}
                 </div>
             </form>
         {% endcall %}
 
         {% call form_layout.section(title=_('Your Saved Workflows')) %}
-            <ul class="divide-y divide-border-default -mx-6 md:-mx-8" id="savedPromptsList">
-                <li class="p-6 text-center text-text-muted" id="prompts-placeholder"
+            <ul class="flex flex-col gap-2.5" id="savedPromptsList">
+                <li class="py-6 text-center text-sm text-text-muted" id="prompts-placeholder"
                     data-loading-text="{{ _('Loading workflows...') }}"
                     data-empty-text="{{ _('You have no saved workflows yet.') }}"
                     data-error-text="{{ _('Error loading workflows:') }}"
@@ -73,7 +76,7 @@
                 {{ _('Edit Workflow') }}
             </h3>
             <button type="button" id="editPromptModalCloseButtonHeader"
-                    class="ui-btn ui-btn--muted px-2 py-2 rounded-full"
+                    class="modal-close"
                     aria-label="Close modal">
                 <i class="material-icons">close</i>
             </button>
@@ -81,7 +84,7 @@
         <div class="modal-body space-y-6 overflow-y-auto">
             <form id="editPromptForm" class="space-y-6">
                 <input type="hidden" id="editPromptId" name="prompt_id">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
                     <div class="md:col-span-2">
                         <label for="editPromptTitle" class="form-label">{{ _('Workflow Label') }}</label>
                         <input type="text" id="editPromptTitle" name="title" required maxlength="100"
@@ -89,7 +92,7 @@
                     </div>
                     <div>
                         <label class="form-label">{{ _('Label Color') }}</label>
-                        <div class="mt-1 flex items-center flex-wrap gap-2" id="editPromptColorOptions">
+                        <div class="mt-1 flex min-h-control items-center flex-wrap gap-2" id="editPromptColorOptions">
                             {# Color options populated by JS #}
                         </div>
                         <input type="hidden" id="editPromptColor" name="color" value="#ffffff">

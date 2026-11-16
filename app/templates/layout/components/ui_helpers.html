@@ -15,13 +15,11 @@
             class="ui-btn {{ variant_class }} {{ 'w-full' if block else '' }} {{ extra_classes }}"
             {% if id %}id="{{ id }}"{% endif %}
             {{ attrs|safe }}>
-        {% if icon and icon_position == 'start' %}
-            <i class="material-icons text-base mr-2">{{ icon }}</i>
+        {# Design language: icons always lead the label (icon_position kept for compatibility) #}
+        {% if icon %}
+            <i class="material-icons text-lg leading-none" aria-hidden="true">{{ icon }}</i>
         {% endif %}
         <span>{{ label }}</span>
-        {% if icon and icon_position != 'start' %}
-            <i class="material-icons text-base ml-2">{{ icon }}</i>
-        {% endif %}
     </button>
 {%- endmacro %}
 

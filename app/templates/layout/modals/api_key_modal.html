@@ -8,7 +8,7 @@
             {{ _('Manage API Keys') }}
         </h3>
         <button type="button" id="apiKeyModalCloseButtonHeader"
-                class="ui-btn ui-btn--muted px-2 py-2 rounded-full"
+                class="modal-close"
                 aria-label="Close modal">
             <i class="material-icons">close</i>
         </button>
@@ -17,8 +17,8 @@
         <p class="text-sm text-text-muted">
             {{ _('Enter your personal API keys for the transcription and workflow services. These keys are stored securely and used only for your transcription requests.') }}
             {{ _('You can get your keys here:') }}
-            <ul class="list-disc list-inside ml-4 mt-1 space-y-1">
-                <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">OpenAI</a></li>
+            <ul class="list-disc list-inside ml-1 mt-1 space-y-0.5">
+                <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="font-medium text-primary hover:underline">OpenAI</a></li>
                 <li><a href="https://www.assemblyai.com/dashboard/signup" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">AssemblyAI</a></li>
                 <li><a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google</a></li>
                 <li><a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">OpenRouter</a></li>
@@ -48,25 +48,25 @@
             </div>
             <fieldset>
                 <legend class="form-label">{{ _('Use this model for') }}</legend>
-                <div id="modelPurpose" class="grid grid-cols-1 gap-2 sm:grid-cols-3" role="radiogroup" aria-label="{{ _('Model purpose') }}">
-                    <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-md border border-border-default px-2 py-2 text-sm text-text-muted transition hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:font-semibold has-[:checked]:text-primary">
+                <div id="modelPurpose" class="mt-1 grid grid-cols-1 gap-1 rounded-xl bg-surface-muted p-1 sm:grid-cols-3" role="radiogroup" aria-label="{{ _('Model purpose') }}">
+                    <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-segment px-2 py-1.5 text-sm font-medium text-text-muted transition hover:text-text-strong has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-primary has-[:checked]:shadow-raised has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-primary/20">
                         <input class="peer sr-only" type="radio" name="model_purpose" value="transcription" checked>
-                        <span class="w-full rounded-md px-2 py-1 text-center leading-5 transition">{{ _('Transcription') }}</span>
+                        <span class="w-full px-2 py-0.5 text-center leading-5">{{ _('Transcription') }}</span>
                     </label>
-                    <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-md border border-border-default px-2 py-2 text-sm text-text-muted transition hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:font-semibold has-[:checked]:text-primary">
+                    <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-segment px-2 py-1.5 text-sm font-medium text-text-muted transition hover:text-text-strong has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-primary has-[:checked]:shadow-raised has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-primary/20">
                         <input class="peer sr-only" type="radio" name="model_purpose" value="live">
-                        <span class="w-full rounded-md px-2 py-1 text-center leading-5 transition">{{ _('Live') }}</span>
+                        <span class="w-full px-2 py-0.5 text-center leading-5">{{ _('Live') }}</span>
                     </label>
-                    <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-md border border-border-default px-2 py-2 text-sm text-text-muted transition hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:font-semibold has-[:checked]:text-primary">
+                    <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-segment px-2 py-1.5 text-sm font-medium text-text-muted transition hover:text-text-strong has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-primary has-[:checked]:shadow-raised has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-primary/20">
                         <input class="peer sr-only" type="radio" name="model_purpose" value="llm">
-                        <span class="w-full rounded-md px-2 py-1 text-center leading-5 transition">{{ _('LLM') }}</span>
+                        <span class="w-full px-2 py-0.5 text-center leading-5">{{ _('LLM') }}</span>
                     </label>
                 </div>
             </fieldset>
-            {{ ui.button(_('Save Key'), variant='primary', type='submit', icon='save', icon_position='end', extra_classes='btn-save') }}
+            <div>{{ ui.button(_('Save Key'), variant='primary', type='submit', icon='save', extra_classes='btn-save') }}</div>
         </form>
-        <div class="border-t-2 border-border-strong"></div>
-        <h5 class="text-lg font-medium text-text-strong">{{ _('Configured Keys') }}</h5>
+        <div class="surface-divider"></div>
+        <h4 class="section-title">{{ _('Configured Keys') }}</h4>
         <ul id="configuredApiKeyRows" class="divide-y divide-border-default">
             {% if user_permissions.use_api_openai_whisper
                   or user_permissions.use_api_openai_gpt_4o_transcribe
@@ -85,13 +85,13 @@
             {% endif %}
         </ul>
         {% if user_permissions.allow_public_api_access %}
-            <div class="border-t-2 border-border-strong"></div>
+            <div class="surface-divider"></div>
             <div class="space-y-3" id="publicApiKeySection">
                 <div>
-                    <p class="text-base font-semibold text-text-strong">{{ _('Public API Access') }}</p>
-                    <p class="text-sm text-text-muted">
+                    <h4 class="section-title">{{ _('Public API Access') }}</h4>
+                    <p class="mt-1 text-sm text-text-muted">
                         {{ _('Use this key to call the transcription API without logging in. Send it as') }}
-                        <code class="bg-gray-100 text-gray-800 px-1 py-0.5 rounded">Authorization: Bearer &lt;{{ _('YOUR_KEY') }}&gt;</code>
+                        <code class="bg-surface-muted text-text-strong px-1.5 py-0.5 rounded-md text-xs">Authorization: Bearer &lt;{{ _('YOUR_KEY') }}&gt;</code>
                     </p>
                 </div>
                 <form id="publicApiKeyForm" class="space-y-3">
@@ -99,21 +99,21 @@
                         <label for="publicApiKeyName" class="form-label">{{ _('Key Name') }}</label>
                         <input id="publicApiKeyName" name="name" type="text" maxlength="120" class="input-control" placeholder="{{ _('Production upload script') }}" autocomplete="off">
                     </div>
-                    {{ ui.button(_('Create Key'), variant='primary', type='button', id='createPublicApiKeyBtn', icon='add', extra_classes='w-full justify-center') }}
+                    <div>{{ ui.button(_('Create Key'), variant='primary', type='button', id='createPublicApiKeyBtn', icon='add') }}</div>
                 </form>
                 <div id="publicApiKeyCreatedPanel" class="space-y-2 hidden">
                     <p class="text-sm font-medium text-text-strong">{{ _('New key created') }}</p>
                     <div class="flex gap-2">
                         <input id="publicApiKeyValue" type="text" readonly class="input-control flex-1" placeholder="{{ _('Generate a key to view it') }}">
                         <button id="copyPublicApiKeyBtn" type="button" class="ui-btn ui-btn--muted" disabled>
-                            <i class="material-icons text-base mr-1">content_copy</i>{{ _('Copy') }}
+                            <i class="material-icons text-lg">content_copy</i>{{ _('Copy') }}
                         </button>
                     </div>
                     <p class="text-xs text-text-muted">{{ _('For security, the full key is shown only immediately after generation.') }}</p>
                 </div>
                 <div>
-                    <h6 class="text-sm font-medium text-text-strong mb-1">{{ _('Configured Public API Keys') }}</h6>
-                    <ul id="publicApiKeyList" class="divide-y divide-border-default border-y border-border-default"></ul>
+                    <h5 class="text-sm font-semibold text-text-strong mb-1">{{ _('Configured Public API Keys') }}</h5>
+                    <ul id="publicApiKeyList" class="divide-y divide-border-default"></ul>
                 </div>
             </div>
         {% endif %}

@@ -6,7 +6,7 @@
 {% block subtitle %}Dashboard Overview{% endblock %}
 
 {% block admin_content %}
-    <p class="text-sm text-text-muted mb-6">{{ _('Quick, high-level snapshot of current activity and health.') }}</p>
+    <p class="page-intro">{{ _('Quick, high-level snapshot of current activity and health.') }}</p>
 
     {% if metrics.get('error') %}
         {% call ui.alert(level='danger', title=_('Warning:'), extra_classes='mb-6') %}
@@ -14,26 +14,22 @@
         {% endcall %}
     {% endif %}
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div class="stat-card bg-primary text-white border-none relative overflow-hidden">
-            <i class="material-icons absolute top-4 right-4 text-4xl opacity-30">people</i>
-            <span class="stat-value text-white">{{ format_number(metrics.get('total_users', 0), locale=formatting_locale) }}</span>
-            <p class="text-base opacity-80">{{ _('Total Users') }}</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="stat-tile is-featured">
+            <div class="stat-tile__top"><p>{{ _('Total Users') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">people</i></span></div>
+            <span class="stat-tile__value">{{ format_number(metrics.get('total_users', 0), locale=formatting_locale) }}</span>
         </div>
-        <div class="stat-card bg-success text-white border-none relative overflow-hidden">
-            <i class="material-icons absolute top-4 right-4 text-4xl opacity-30">person_pin</i>
-            <span class="stat-value text-white">{{ format_number(metrics.get('active_users', {}).get('24h', 0), locale=formatting_locale) }}</span>
-            <p class="text-base opacity-80">{{ _('Active Users (24h)') }}</p>
+        <div class="stat-tile">
+            <div class="stat-tile__top"><p>{{ _('Active Users (24h)') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">person_pin</i></span></div>
+            <span class="stat-tile__value">{{ format_number(metrics.get('active_users', {}).get('24h', 0), locale=formatting_locale) }}</span>
         </div>
-        <div class="stat-card bg-warning text-text-strong border-none relative overflow-hidden">
-            <i class="material-icons absolute top-4 right-4 text-4xl opacity-30">graphic_eq</i>
-            <span class="stat-value">{{ format_number(metrics.get('jobs_submitted', {}).get('24h', 0), locale=formatting_locale) }}</span>
-            <p class="text-base opacity-80">{{ _('Transcriptions (24h)') }}</p>
+        <div class="stat-tile">
+            <div class="stat-tile__top"><p>{{ _('Transcriptions (24h)') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">graphic_eq</i></span></div>
+            <span class="stat-tile__value">{{ format_number(metrics.get('jobs_submitted', {}).get('24h', 0), locale=formatting_locale) }}</span>
         </div>
-        <div class="stat-card bg-accent text-white border-none relative overflow-hidden">
-            <i class="material-icons absolute top-4 right-4 text-4xl opacity-30">auto_awesome</i>
-            <span class="stat-value text-white">{{ format_number(metrics.get('workflows_run', {}).get('24h', 0), locale=formatting_locale) }}</span>
-            <p class="text-base opacity-80">{{ _('Workflows Run (24h)') }}</p>
+        <div class="stat-tile">
+            <div class="stat-tile__top"><p>{{ _('Workflows Run (24h)') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">auto_awesome</i></span></div>
+            <span class="stat-tile__value">{{ format_number(metrics.get('workflows_run', {}).get('24h', 0), locale=formatting_locale) }}</span>
         </div>
     </div>
 

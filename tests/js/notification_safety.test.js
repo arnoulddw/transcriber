@@ -172,10 +172,30 @@ test('showNotificationWithAction keeps the action structured and text-safe', () 
     const body = notification.querySelector('.alert-content p');
     const action = notification.querySelector('.undo-delete-action');
 
-    assert.equal(body.textContent, '<b>Deleted</b>');
+    // The action sits inline inside the message text, after a space.
+    assert.equal(body.textContent, '<b>Deleted</b> <Undo>');
+    assert.equal(action.parentNode, body);
+    assert.equal(action.className.split(' ').includes('inline-action'), true);
     assert.equal(action.textContent, '<Undo>');
     action.dispatchEvent({ type: 'click' });
     assert.equal(clicked, true);
+});
+
+test('showNotificationWithAction turns the label inside the sentence into the link', () => {
+    const notification = showNotificationWithAction(
+        'API key needed. Add one in Manage API Keys to use all features.',
+        { label: 'Manage API Keys', onClick: () => {} },
+        'warning',
+        0,
+        true,
+    );
+    const body = notification.querySelector('.alert-content p');
+    const action = notification.querySelector('.inline-action');
+
+    // The label appears once: the phrase in the sentence is the action itself.
+    assert.equal(body.textContent, 'API key needed. Add one in Manage API Keys to use all features.');
+    assert.equal(action.textContent, 'Manage API Keys');
+    assert.equal(action.parentNode, body);
 });
 
 test('updateProgressActivity renders ordinary progress text without HTML interpretation', () => {

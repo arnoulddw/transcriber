@@ -9,6 +9,20 @@ These are processed by PostCSS with the Tailwind plugin.
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    /* Lighter outlined icon style; same icon names as Material Icons */
+    .material-icons {
+        font-family: 'Material Icons Outlined', 'Material Icons';
+    }
+    ::selection {
+        background: theme('colors.primary.DEFAULT / 16%');
+    }
+}
+
 @layer components {
     .live-page {
         @apply overflow-hidden;
@@ -19,82 +33,82 @@ These are processed by PostCSS with the Tailwind plugin.
         @apply flex-shrink-0;
     }
     .live-workspace {
-        @apply relative min-h-0 flex flex-1 flex-col bg-slate-50 text-slate-950;
+        @apply relative min-h-0 flex flex-1 flex-col bg-white text-text-strong;
     }
     .live-toolbar {
-        @apply flex flex-col gap-4 border-b border-slate-200 bg-white px-4 py-3 shadow-sm lg:flex-row lg:items-end lg:justify-between lg:px-8;
+        @apply flex flex-col gap-4 border-b border-border-default bg-white px-4 py-4 lg:flex-row lg:items-end lg:justify-between lg:px-8;
     }
     .live-toolbar__heading {
         @apply flex-shrink-0;
     }
     .live-eyebrow {
-        @apply mb-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate-500;
+        @apply mb-1 text-xs font-semibold uppercase tracking-caps text-text-muted;
     }
     .live-status {
-        @apply inline-flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600;
+        @apply inline-flex items-center gap-2 rounded-full bg-surface-muted px-3 py-1 text-sm font-semibold text-text-muted;
     }
     .live-status__dot {
-        @apply h-2 w-2 rounded-full bg-slate-400;
+        @apply h-2.5 w-2.5 rounded-full bg-gray-400;
     }
     .live-status.is-live {
-        @apply bg-cyan-50 text-cyan-950;
+        @apply bg-primary-soft text-primary-dark;
     }
     .live-status.is-live .live-status__dot {
-        @apply bg-cyan-500;
+        @apply bg-primary;
         animation: live-pulse 1.6s ease-in-out infinite;
     }
     .live-status__timer {
-        @apply border-l border-slate-300 pl-2 font-mono tabular-nums;
+        @apply border-l border-primary/20 pl-2 font-medium tabular-nums;
     }
     .live-controls {
         @apply flex min-w-0 flex-wrap items-end gap-2;
     }
     .live-control {
-        @apply flex min-w-[8rem] flex-col gap-1 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500;
+        @apply flex min-w-[8rem] flex-col gap-1 text-xs font-medium text-text-muted;
     }
     .live-control--microphone {
         @apply min-w-[12rem] flex-1 lg:max-w-[18rem];
     }
     .live-select {
-        @apply form-select h-10 rounded-lg border-slate-300 bg-white py-1.5 pl-3 pr-8 text-sm font-medium normal-case tracking-normal text-slate-800 shadow-none focus:border-primary focus:ring-primary;
+        @apply form-select h-control rounded-field border-transparent bg-white py-1.5 pl-3 pr-9 text-sm font-medium normal-case tracking-normal text-text-strong shadow-raised focus:border-primary focus:shadow-focus focus:ring-0;
     }
     .live-icon-button,
     .live-text-action {
-        @apply inline-flex items-center justify-center gap-1.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-primary disabled:pointer-events-none disabled:opacity-40;
+        @apply inline-flex items-center justify-center gap-1.5 rounded-full text-sm font-semibold text-text-strong hover:bg-gray-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:pointer-events-none disabled:opacity-40;
     }
     .live-icon-button {
-        @apply h-10 px-3;
+        @apply h-control bg-surface-muted px-4;
     }
     .live-text-action {
-        @apply h-full rounded-none px-3;
+        @apply h-full rounded-none px-4;
     }
     .live-transcript-actions {
-        @apply flex h-10 flex-none items-stretch overflow-hidden rounded-lg border border-slate-200 bg-white;
+        @apply flex h-control flex-none items-stretch overflow-hidden rounded-full bg-surface-muted;
     }
     .live-transcript-actions .live-text-action:not(.hidden) ~ .live-text-action:not(.hidden) {
-        @apply border-l border-slate-200;
+        @apply border-l border-border-strong;
     }
     .live-meter {
-        @apply flex h-10 min-w-[7rem] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-slate-500;
+        @apply flex h-control min-w-[7rem] items-center gap-2 rounded-full bg-surface-muted px-4 text-text-muted;
     }
     .live-meter__track {
-        @apply h-1.5 w-16 overflow-hidden rounded-full bg-slate-200;
+        @apply h-1.5 w-16 overflow-hidden rounded-full bg-primary-track;
     }
     .live-meter__level {
-        @apply h-full origin-left rounded-full bg-cyan-500 transition-transform duration-75;
+        @apply h-full origin-left rounded-full bg-primary transition-transform duration-75;
         transform: scaleX(0);
     }
     .live-action-button {
-        @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-danger px-4 text-sm font-semibold text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-danger focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60;
+        @apply inline-flex h-control items-center justify-center gap-2 rounded-full bg-primary px-btn text-sm font-semibold text-white shadow-cta hover:bg-primary-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:cursor-wait disabled:opacity-60;
     }
     .live-action-button.is-live {
-        @apply bg-slate-950 hover:bg-slate-800 focus:ring-slate-700;
+        @apply bg-gray-900 shadow-none hover:bg-gray-800;
     }
     .live-context-panel {
-        @apply border-b border-slate-200 bg-white px-4 py-3 lg:px-8;
+        @apply border-b border-border-default bg-white px-4 py-3 lg:px-8;
     }
     .live-error {
-        @apply border-b border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800 lg:px-8;
+        @apply border-b border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-danger lg:px-8;
     }
     .live-transcript-scroll {
         @apply min-h-0 flex-1 overflow-y-auto px-5 pb-16 pt-4 sm:px-8 lg:px-14;
@@ -102,7 +116,7 @@ These are processed by PostCSS with the Tailwind plugin.
         touch-action: pan-y;
     }
     .live-transcript {
-        @apply mx-auto max-w-[92rem] pb-[30vh] font-sans font-medium tracking-[-0.025em] text-black;
+        @apply mx-auto max-w-[92rem] pb-[30vh] font-sans font-medium tracking-live text-text-strong;
         font-size: clamp(1.1rem, 2.3vw, 2.75rem);
         line-height: 1.18;
     }
@@ -113,13 +127,13 @@ These are processed by PostCSS with the Tailwind plugin.
         content: " ";
     }
     .live-transcript__turn.is-partial {
-        @apply text-black;
+        @apply text-text-strong;
     }
     .live-transcript__empty {
-        @apply max-w-4xl font-normal tracking-[-0.025em] text-slate-300;
+        @apply max-w-4xl font-normal tracking-live text-gray-300;
     }
     .live-follow-button {
-        @apply absolute bottom-5 right-5 z-20 inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700 focus:ring-offset-2 sm:bottom-7 sm:right-7;
+        @apply absolute bottom-5 right-5 z-20 inline-flex h-control items-center gap-2 rounded-full bg-primary px-btn text-sm font-semibold text-white shadow-cta hover:bg-primary-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 sm:bottom-7 sm:right-7;
     }
 
     @keyframes live-pulse {
@@ -139,29 +153,36 @@ These are processed by PostCSS with the Tailwind plugin.
         }
     }
 
+    /* ================= Lilac design language =================
+       Controls: 42px default, 34px small, 50px hero CTA.
+       Buttons are pills. Primary = solid purple; secondary = neutral grey fill.
+       Fields are white and "raised" (faint ring + soft shadow); focus = purple border + soft ring.
+       Type scale: page 32 · modal 24 · section 20 · group 17 · overline 12 caps.
+       Spacing: 32 between page sections, 20 inside a section, 16 heading -> content. */
+
     .btn-base {
-        @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+        @apply inline-flex min-h-control items-center justify-center gap-2 rounded-full px-btn py-2 text-sm font-semibold leading-5 transition-colors duration-150 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50;
     }
     .btn-primary {
-        @apply btn-base border border-transparent text-white bg-primary hover:bg-primary-dark focus:ring-primary;
+        @apply btn-base border border-transparent bg-primary text-white shadow-cta hover:bg-primary-dark;
     }
     .btn-secondary {
-        @apply btn-base border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-primary;
+        @apply btn-base border border-transparent bg-surface-muted text-text-strong hover:bg-gray-200;
     }
     .btn-success {
-        @apply btn-base border border-transparent text-white bg-green-600 hover:bg-green-700 focus:ring-green-500;
+        @apply btn-primary;
     }
     .btn-danger {
-        @apply btn-base border border-transparent text-white bg-red-600 hover:bg-red-700 focus:ring-red-500;
+        @apply btn-base border border-transparent bg-red-50 text-danger hover:bg-red-100 focus-visible:ring-danger/20;
     }
     .btn-muted {
-        @apply btn-base border border-transparent text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-gray-400;
+        @apply btn-secondary;
     }
     .btn-save {
         @apply btn-primary;
     }
     .btn-create {
-        @apply btn-success;
+        @apply btn-primary;
     }
     .ui-btn {
         @apply btn-base;
@@ -173,17 +194,201 @@ These are processed by PostCSS with the Tailwind plugin.
         @apply btn-secondary;
     }
     .ui-btn--success {
-        @apply btn-success;
+        @apply btn-primary;
     }
     .ui-btn--danger {
         @apply btn-danger;
     }
     .ui-btn--muted {
-        @apply btn-muted;
+        @apply btn-secondary;
     }
     .ui-btn--link {
-        @apply btn-base bg-transparent text-primary hover:bg-primary/10 focus:ring-primary;
+        @apply btn-base bg-transparent px-2 text-primary shadow-none hover:bg-primary-soft;
     }
+    /* Small control (34px): chips, Stop, Choose File, inline actions */
+    .ui-btn--sm,
+    .btn-sm {
+        @apply min-h-control-sm px-3 py-1.5 text-control;
+    }
+    /* Hero call to action (50px): Transcribe */
+    .ui-btn--hero {
+        @apply min-h-control-lg text-hero;
+    }
+    /* Raised white button (used on tinted surfaces, e.g. Choose File) */
+    .ui-btn--raised {
+        @apply btn-base bg-white text-text-strong shadow-raised hover:shadow-raised-hover;
+    }
+    /* Toggle chip (Context Prompt, Apply Workflow, Identify Speakers) */
+    .chip-toggle {
+        @apply inline-flex min-h-control-sm items-center gap-1.5 rounded-full border border-border-strong bg-transparent px-3 py-1.5 text-control font-medium text-text-strong transition-colors hover:bg-surface-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    .chip-toggle.is-active,
+    .chip-toggle[aria-pressed="true"] {
+        @apply border-primary bg-primary text-white hover:bg-primary-dark;
+    }
+    /* Icon button: one size and shape everywhere (32px circle) */
+    .icon-btn {
+        @apply inline-flex h-8 w-8 flex-none items-center justify-center rounded-full text-text-muted transition-colors hover:bg-surface-muted hover:text-text-strong focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    .icon-btn--danger {
+        @apply hover:bg-red-50 hover:text-danger;
+    }
+    .icon-btn:disabled {
+        @apply cursor-not-allowed opacity-50 hover:bg-transparent hover:text-text-muted;
+    }
+    /* Pinned: purple, filled pin */
+    .pin-btn.is-pinned {
+        @apply text-primary hover:bg-primary-soft hover:text-primary-dark;
+    }
+    .pin-btn.is-pinned .material-icons {
+        font-family: 'Material Icons';
+    }
+
+    /* Audio file zone: light purple on purpose, to highlight it */
+    .audio-drop-zone {
+        @apply flex cursor-pointer items-center gap-4 rounded-card bg-primary-tint p-4 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    .audio-drop-zone:hover,
+    .audio-drop-zone.is-dragover {
+        @apply ring-2 ring-primary/30;
+    }
+    .audio-drop-zone__icon {
+        @apply inline-flex h-10 w-10 flex-none items-center justify-center rounded-field bg-white text-primary shadow-raised;
+    }
+    /* Progress: outlined white panel with large percentage */
+    .progress-panel {
+        @apply rounded-card border-1.5 border-border-strong bg-white px-btn pb-3.5 pt-4 shadow-progress;
+    }
+    .progress-panel.is-error {
+        @apply border-red-200 bg-red-50;
+    }
+    .progress-panel.is-error .progress-panel__pct {
+        @apply text-danger;
+    }
+    .progress-panel__pct {
+        @apply flex-none text-pct font-medium leading-none tracking-title text-primary tabular-nums;
+    }
+    /* Sentence case for legacy upper-case labels (keeps existing translations) */
+    .sentence-case > span,
+    span.sentence-case {
+        @apply inline-block lowercase;
+    }
+    .sentence-case > span::first-letter,
+    span.sentence-case::first-letter {
+        @apply uppercase;
+    }
+    /* Pagination (history) */
+    .pager {
+        @apply flex flex-wrap items-center gap-1;
+    }
+    .pager__item {
+        @apply inline-flex h-9 min-w-[2.25rem] items-center justify-center rounded-full px-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-muted hover:text-text-strong;
+    }
+    .pager__item.is-current {
+        @apply bg-primary text-white hover:bg-primary-dark hover:text-white;
+    }
+
+    /* Off-canvas drawers: no shadow spill while closed */
+    #admin-sidebar.-translate-x-full,
+    #mobile-nav.-translate-x-full {
+        box-shadow: none;
+    }
+
+    /* Admin sidebar */
+    .admin-nav-link {
+        @apply flex items-center gap-3 rounded-field px-3 py-2 text-nav font-medium text-text-strong transition-colors hover:bg-gray-50;
+    }
+    .admin-nav-link .material-icons {
+        @apply text-xl text-gray-400;
+    }
+    .admin-nav-link.is-active {
+        @apply bg-primary-soft font-semibold text-primary-dark;
+    }
+    .admin-nav-link.is-active .material-icons {
+        @apply text-primary;
+    }
+    .admin-nav-sep {
+        @apply mx-3 my-2.5 border-t border-border-default;
+    }
+    @media (min-width: theme('screens.lg')) {
+        html.admin-collapsed .admin-sidebar {
+            width: theme('spacing.rail');
+        }
+        html.admin-collapsed .admin-nav-label {
+            @apply sr-only;
+        }
+        html.admin-collapsed .admin-sidebar-head {
+            @apply justify-center px-0;
+        }
+        html.admin-collapsed .admin-nav-link {
+            @apply justify-center px-0;
+        }
+        html.admin-collapsed .admin-nav-sep {
+            @apply mx-2;
+        }
+        html.admin-collapsed .admin-main,
+        html.admin-collapsed .admin-brand {
+            margin-left: theme('spacing.rail');
+        }
+        html.admin-collapsed body.admin-panel .flash-messages-wrapper {
+            padding-left: theme('spacing.rail');
+        }
+        .admin-main,
+        .admin-brand {
+            transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    }
+
+    .page-intro {
+        @apply -mt-6 mb-8 text-sm text-text-muted;
+    }
+    /* Dashboard stat tiles: neutral, the first one solid purple */
+    .stat-tile {
+        @apply flex flex-col gap-6 rounded-card bg-surface-muted p-4 text-text-strong;
+    }
+    .stat-tile__top {
+        @apply flex items-start justify-between gap-2 text-control text-text-muted;
+    }
+    .stat-tile__icon {
+        @apply inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-white text-primary;
+    }
+    .stat-tile__value {
+        @apply text-stat font-medium leading-none tracking-stat tabular-nums;
+    }
+    .stat-tile.is-featured {
+        @apply bg-primary text-white;
+    }
+    .stat-tile.is-featured .stat-tile__top {
+        @apply text-white/80;
+    }
+    .stat-tile.is-featured .stat-tile__icon {
+        @apply bg-white/20 text-white;
+    }
+
+    /* Transcription history */
+    .history-list {
+        @apply flex flex-col gap-1;
+    }
+    .history-item {
+        @apply -mx-4 rounded-card transition-colors hover:bg-gray-50;
+    }
+    .history-meta {
+        @apply mt-0.5 text-xs text-text-muted;
+    }
+    /* Workflow results: soft lilac so generated output stands apart */
+    .workflow-panel {
+        @apply relative mx-4 mb-4 rounded-card bg-primary-soft p-4;
+    }
+    .workflow-panel.is-error {
+        @apply bg-red-50;
+    }
+    .workflow-panel .panel-title {
+        @apply flex items-center gap-1.5 text-hero font-semibold leading-tight text-primary;
+    }
+    .workflow-panel.is-error .panel-title {
+        @apply text-danger;
+    }
+
 
     .surface-card {
         @apply bg-transparent border-0 shadow-none rounded-none;
@@ -197,31 +402,55 @@ These are processed by PostCSS with the Tailwind plugin.
     .surface-divider {
         @apply border-t border-border-default;
     }
+    /* Raised card: white, faint ring + soft shadow (saved workflows, panels) */
+    .raised-card {
+        @apply rounded-card bg-white shadow-raised transition-shadow;
+    }
 
     .card-header {
-        @apply flex items-start justify-between gap-4;
+        @apply flex flex-wrap items-center justify-between gap-4;
     }
     .card-title {
-        @apply text-xl font-semibold text-text-strong;
+        @apply text-page-sm font-semibold leading-tight tracking-display text-text-strong sm:text-page;
     }
+    .material-icons.tiny {
+        font-size: 1rem;
+    }
+    .card-title::after,
+    .page-title::after,
+    .modal-title::after {
+        content: ".";
+        @apply text-primary;
+    }
+    .page-title {
+        @apply text-page-sm font-semibold leading-tight tracking-display text-text-strong sm:text-page;
+    }
+    .page-subtitle,
     .card-subtitle {
-        @apply text-sm text-text-muted;
+        @apply mt-1 text-sm text-text-muted;
     }
     .card-body {
-        @apply mt-6 space-y-6;
+        @apply mt-5 space-y-5;
     }
     .card-actions {
         @apply flex items-center gap-2;
     }
+    /* Section heading (20px) and group heading (17px) */
+    .section-heading {
+        @apply text-section font-semibold tracking-heading text-text-strong;
+    }
     .section-title {
-        @apply text-lg font-semibold text-text-strong;
+        @apply text-group font-semibold tracking-snug text-text-strong;
     }
     .section-description {
         @apply text-sm text-text-muted;
     }
+    .eyebrow {
+        @apply text-xs font-semibold uppercase tracking-caps text-text-muted;
+    }
 
     .form-label {
-        @apply block text-sm font-medium text-gray-700;
+        @apply block text-control font-medium text-text-muted;
     }
     .form-hint {
         @apply mt-1 text-xs text-text-muted;
@@ -230,39 +459,55 @@ These are processed by PostCSS with the Tailwind plugin.
         @apply mt-1 text-xs text-danger;
     }
     .input-control {
-        @apply form-input block w-full rounded-md border border-border-default shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors duration-150;
+        @apply form-input min-h-control px-3;
     }
     .input-select {
-        @apply form-select block w-full rounded-md border border-border-default shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors duration-150;
+        @apply form-select min-h-control pl-3 pr-9;
     }
     .input-textarea {
-        @apply form-textarea block w-full rounded-md border border-border-default shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition-colors duration-150;
+        @apply form-textarea px-3 py-2.5;
+    }
+    /* Declared after the form-* resets so the raised look wins */
+    .input-control,
+    .input-select,
+    .input-textarea {
+        @apply block w-full rounded-field border border-transparent bg-white text-sm text-text-strong shadow-raised transition-[box-shadow,border-color] duration-150 placeholder:text-gray-400 focus:border-primary focus:shadow-focus focus:outline-none focus:ring-0 disabled:bg-surface-muted disabled:text-text-muted;
+    }
+    /* Purple chevron on every dropdown */
+    .input-select,
+    .live-select,
+    .form-select-lilac {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235A2BD6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    }
+    /* Checkboxes: purple when checked */
+    .checkbox-control {
+        @apply form-checkbox h-check w-check rounded-md border-border-strong bg-white text-primary focus:ring-primary/30 focus:ring-offset-0;
     }
 
     .toolbar {
         @apply flex flex-wrap items-center gap-3 justify-between;
     }
     .toolbar-title {
-        @apply text-lg font-semibold text-text-strong;
+        @apply section-heading;
     }
 
     .badge {
-        @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
     }
     .badge-primary {
-        @apply bg-primary/10 text-primary;
+        @apply bg-primary-soft text-primary;
     }
     .badge-success {
-        @apply bg-success/10 text-success;
+        @apply bg-green-50 text-success;
     }
     .badge-warning {
-        @apply bg-warning/10 text-warning;
+        @apply bg-amber-50 text-warning;
     }
     .badge-danger {
-        @apply bg-danger/10 text-danger;
+        @apply bg-red-50 text-danger;
     }
     .badge-muted {
-        @apply bg-gray-100 text-gray-700;
+        @apply bg-surface-muted text-text-muted;
     }
     .flash-messages-wrapper {
         @apply px-4 sm:px-6 lg:px-8;
@@ -271,50 +516,68 @@ These are processed by PostCSS with the Tailwind plugin.
         @apply lg:pl-64;
     }
 
+    /* Alerts and toasts: icon aligned with the first line of text, so
+       one-line and multi-line messages read the same way. */
     .alert {
-        @apply rounded-lg px-4 py-3 flex items-center gap-3 border;
+        @apply rounded-card px-4 py-3 flex items-start gap-3 border;
     }
     .alert-icon {
-        @apply text-xl flex-shrink-0 self-center leading-none;
+        @apply flex h-5 flex-shrink-0 items-center text-xl leading-none;
     }
     .alert-content {
-        @apply text-sm;
+        @apply min-w-0 flex-1 text-sm leading-5;
+    }
+    .alert-close {
+        @apply -my-1 -mr-1.5 inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-current opacity-70 transition hover:bg-black/5 hover:opacity-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    /* Inline action inside a message (toasts, alerts, progress, status lines):
+       part of the sentence, no margins of its own. */
+    .inline-action {
+        @apply inline cursor-pointer rounded-sm p-0 font-semibold text-current underline underline-offset-2 hover:opacity-80 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    /* Toasts are raised alerts */
+    .toast {
+        @apply shadow-menu;
     }
     .alert-info {
-        @apply alert bg-accent-soft border-accent-border text-info;
+        @apply alert bg-primary-soft border-transparent text-primary-dark;
     }
     .alert-success {
-        @apply alert bg-green-50 border-green-200 text-success;
+        @apply alert bg-green-50 border-transparent text-success;
     }
     .alert-warning {
-        @apply alert bg-yellow-50 border-yellow-200 text-warning;
+        @apply alert bg-amber-50 border-transparent text-warning;
     }
     .alert-danger {
-        @apply alert bg-red-50 border-red-200 text-danger;
+        @apply alert bg-red-50 border-transparent text-danger;
     }
 
     .modal-shell {
         @apply fixed inset-0 z-50 flex items-center justify-center p-4;
     }
     .modal-overlay {
-        @apply fixed inset-0 bg-gray-900/70 transition-opacity duration-300 ease-in-out;
+        @apply fixed inset-0 bg-gray-900/40 backdrop-blur-scrim transition-opacity duration-300 ease-in-out;
     }
     .modal-panel {
-        @apply relative bg-white rounded-xl shadow-surface-xl transform transition-all duration-300 ease-out sm:max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden;
+        @apply relative bg-white rounded-modal shadow-surface-xl transform transition-all duration-300 ease-out sm:max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden;
     }
     .modal-header {
-        @apply px-6 py-4 border-b border-border-default flex items-start justify-between gap-4;
+        @apply px-6 pt-6 pb-2 flex items-center justify-between gap-4 sm:px-modal;
     }
     .modal-title {
-        @apply text-lg font-semibold text-text-strong;
+        @apply flex text-modal font-semibold tracking-title text-text-strong;
+    }
+    .modal-close {
+        @apply inline-flex h-9 w-9 flex-none items-center justify-center rounded-full bg-surface-muted text-text-muted transition-colors hover:bg-gray-200 hover:text-text-strong focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
     }
     .modal-body {
-        @apply px-6 py-5 overflow-y-auto space-y-6;
+        @apply px-6 py-4 overflow-y-auto space-y-5 sm:px-modal;
     }
     .modal-footer {
-        @apply px-6 py-4 border-t border-border-default flex items-center justify-end gap-3;
+        @apply px-6 py-4 border-t border-border-default flex items-center justify-end gap-2 sm:px-modal;
     }
 
+    /* Tables: structure unchanged, only colours + font */
     .table-shell {
         @apply w-full text-left;
     }
@@ -337,7 +600,7 @@ These are processed by PostCSS with the Tailwind plugin.
     }
 
     .progress-bar {
-        @apply bg-primary h-2.5 rounded-full transition-all duration-500 ease-out;
+        @apply bg-primary h-full rounded-full transition-all duration-500 ease-out;
         width: var(--progress, 0%);
     }
 
@@ -363,7 +626,7 @@ These are processed by PostCSS with the Tailwind plugin.
 }
 @layer components {
     .page-section + .page-section {
-        @apply border-t border-border-default pt-8 mt-8;
+        @apply mt-8;
     }
 }
 @layer components {

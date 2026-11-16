@@ -129,6 +129,23 @@ const MODEL_PURPOSE_LABELS = {
     live: 'Live',
 };
 
+// Status badge shared by provider keys and public keys: same width so the
+// "Configured" / "Not Configured" column lines up.
+function createKeyStatusBadge(configured) {
+    const status = document.createElement('span');
+    status.className = configured
+        ? 'inline-flex h-badge w-32 flex-none items-center justify-center gap-1 rounded-full bg-green-50 text-badge font-semibold text-success'
+        : 'inline-flex h-badge w-32 flex-none items-center justify-center gap-1 rounded-full bg-amber-50 text-badge font-semibold text-warning';
+    const icon = document.createElement('i');
+    icon.className = 'material-icons text-hero leading-none';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = configured ? 'check_circle' : 'error';
+    const text = document.createElement('span');
+    text.textContent = configured ? 'Configured' : 'Not Configured';
+    status.append(icon, text);
+    return status;
+}
+
 function createModelPurposeBadges(purposes) {
     const badges = document.createElement('span');
     badges.className = 'inline-flex flex-wrap items-center gap-1';
@@ -138,7 +155,7 @@ function createModelPurposeBadges(purposes) {
     normalized.forEach(purpose => {
         const label = MODEL_PURPOSE_LABELS[purpose] || MODEL_PURPOSE_LABELS.transcription;
         const badge = document.createElement('span');
-        badge.className = 'badge badge-muted text-xs';
+        badge.className = 'badge badge-primary text-tag px-2';
         badge.textContent = label;
         badge.dataset.modelPurpose = purpose;
         badges.appendChild(badge);
@@ -148,11 +165,16 @@ function createModelPurposeBadges(purposes) {
 
 function appendModelLabel(content, modelName, purposes, providerLabel) {
     const model = document.createElement('span');
-    model.className = 'text-sm text-text-strong';
-    model.textContent = modelName === providerLabel
-        ? modelName
-        : `${modelName} (${providerLabel})`;
-    content.append(model, createModelPurposeBadges(purposes));
+    model.className = 'text-sm font-medium text-text-strong';
+    model.textContent = modelName;
+    if (modelName === providerLabel) {
+        content.append(model, createModelPurposeBadges(purposes));
+        return;
+    }
+    const provider = document.createElement('span');
+    provider.className = 'text-sm text-text-muted';
+    provider.textContent = `· ${providerLabel}`;
+    content.append(model, provider, createModelPurposeBadges(purposes));
 }
 
 function openApiKeyModalDialog() {
@@ -359,8 +381,8 @@ function updatePublicApiKeySection(publicStatus) {
     if (publicApiKeyStatusEl) {
         publicApiKeyStatusEl.textContent = enabled ? 'Configured' : 'Not Configured';
         publicApiKeyStatusEl.className = enabled
-            ? 'text-sm text-green-600 font-medium'
-            : 'text-sm text-orange-600 font-medium';
+            ? 'text-sm text-success font-medium'
+            : 'text-sm text-warning font-medium';
     }
 
     if (lastGeneratedPublicApiKey) {
@@ -403,17 +425,15 @@ function updatePublicApiKeySection(publicStatus) {
                 const actions = document.createElement('div');
                 actions.className = 'flex items-center gap-2 flex-none';
 
-                const active = document.createElement('span');
-                active.className = 'text-sm text-green-600 mr-1';
-                active.textContent = 'Configured';
+                const active = createKeyStatusBadge(true);
 
                 const revokeBtn = document.createElement('button');
                 revokeBtn.type = 'button';
-                revokeBtn.className = 'revoke-public-key-btn p-1.5 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500';
+                revokeBtn.className = 'revoke-public-key-btn icon-btn icon-btn--danger';
                 revokeBtn.dataset.keyId = key.id;
                 revokeBtn.dataset.keyName = key.name || 'Public API key';
                 revokeBtn.setAttribute('aria-label', `Revoke ${key.name || 'public API key'}`);
-                revokeBtn.innerHTML = '<i class="material-icons text-base">delete</i>';
+                revokeBtn.innerHTML = '<i class="material-icons text-lg">delete</i>';
 
                 actions.appendChild(active);
                 actions.appendChild(revokeBtn);
@@ -558,17 +578,19 @@ function renderProviderKeyRows(service, keys) {
 
     if (entries.length === 0) {
         const row = document.createElement('div');
-        row.className = 'flex justify-between items-center';
+        row.className = 'flex justify-between items-center gap-3';
         const label = document.createElement('span');
-        label.className = 'text-sm text-text-strong';
+        label.className = 'text-sm font-medium text-text-strong';
         label.textContent = providerLabels[service] || service;
-        // Reserve the same trailing space as configured rows (their status
-        // margin plus delete-button width) so 'Not Configured' aligns
-        // with 'Configured'.
-        const status = document.createElement('span');
-        status.className = 'text-sm text-orange-500 pr-10';
-        status.textContent = 'Not Configured';
-        row.append(label, status);
+        // Reserve the delete-button slot so 'Not Configured' lines up
+        // with 'Configured' (both badges share one fixed width).
+        const actions = document.createElement('div');
+        actions.className = 'flex items-center gap-2';
+        const spacer = document.createElement('span');
+        spacer.className = 'h-8 w-8 flex-none';
+        spacer.setAttribute('aria-hidden', 'true');
+        actions.append(createKeyStatusBadge(false), spacer);
+        row.append(label, actions);
         container.appendChild(row);
         return;
     }
@@ -579,7 +601,7 @@ function renderProviderKeyRows(service, keys) {
 
         const modelName = entry.model_name || entry.model_slug || providerLabels[service] || service;
         const label = document.createElement('div');
-        label.className = 'flex min-w-0 flex-wrap items-center';
+        label.className = 'flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1';
         appendModelLabel(
             label,
             modelName,
@@ -588,21 +610,19 @@ function renderProviderKeyRows(service, keys) {
         );
 
         const actions = document.createElement('div');
-        actions.className = 'flex items-center';
-        const status = document.createElement('span');
-        status.className = 'text-sm text-green-600 mr-3';
-        status.textContent = 'Configured';
+        actions.className = 'flex items-center gap-2';
+        const status = createKeyStatusBadge(true);
 
         const deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
-        deleteBtn.className = 'delete-key-btn p-1.5 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500';
+        deleteBtn.className = 'delete-key-btn icon-btn icon-btn--danger';
         deleteBtn.dataset.service = service;
         if (entry.key_id) deleteBtn.dataset.keyId = entry.key_id;
         if (!entry.provider_wide && (entry.model_name || entry.model_slug)) {
             deleteBtn.dataset.modelSlug = entry.model_name || entry.model_slug;
         }
         deleteBtn.setAttribute('aria-label', `Delete ${modelName} key`);
-        deleteBtn.innerHTML = '<i class="material-icons text-base">delete</i>';
+        deleteBtn.innerHTML = '<i class="material-icons text-lg">delete</i>';
         actions.append(status, deleteBtn);
         row.append(label, actions);
         container.appendChild(row);

@@ -8,7 +8,7 @@
     title_tag='h2',
     title_classes='card-title',
     description_classes='card-subtitle',
-    divider=True,
+    divider=False,
     divider_classes='surface-divider',
     body_classes='card-body',
     surface=True,
@@ -44,18 +44,22 @@
 {%- endmacro %}
 
 {% macro section(title=None, description=None, divider=False, body_classes='space-y-4') -%}
-<section class="space-y-3">
-    {% if title %}
-        <h3 class="section-title">{{ title }}</h3>
-    {% endif %}
-    {% if description %}
-        <p class="section-description">{{ description }}</p>
+<section class="space-y-4">
+    {% if title or description %}
+    <div>
+        {% if title %}
+            <h3 class="section-heading">{{ title }}</h3>
+        {% endif %}
+        {% if description %}
+            <p class="section-description mt-1">{{ description }}</p>
+        {% endif %}
+    </div>
     {% endif %}
     <div class="{{ body_classes }}">
         {{ caller() }}
     </div>
     {% if divider %}
-        <div class="surface-divider pt-3"></div>
+        <div class="surface-divider !mt-8"></div>
     {% endif %}
 </section>
 {%- endmacro %}

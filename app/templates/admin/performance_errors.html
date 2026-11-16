@@ -12,7 +12,7 @@
 {% block admin_content %}
     <section class="page-section space-y-6">
         {% set period_labels = {'24h': 'Last 24h', '7d': 'Last 7 Days', '30d': 'Last 30 Days', 'all': 'All Time'} %}
-        <p class="text-sm text-text-muted">Monitor the reliability of the transcription process and workflow analysis.</p>
+        <p class="page-intro">Monitor the reliability of the transcription process and workflow analysis.</p>
 
         {% if metrics.get('error') %}
             <div class="alert alert-danger" role="alert">
@@ -22,7 +22,7 @@
         {% endif %}
 
         {# Transcription Error Metrics #}
-        <h2 class="card-title">Transcription Performance</h2>
+        <h2 class="section-heading">Transcription Performance</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# Overall Transcription Error Rate Table #}
         <div class="table-card p-6">
@@ -157,7 +157,7 @@
 
     {# Workflow Error Metrics #}
     <section class="page-section space-y-6">
-    <h2 class="card-title">Workflow Performance</h2>
+    <h2 class="section-heading">Workflow Performance</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# Overall Workflow Error Rate Table #}

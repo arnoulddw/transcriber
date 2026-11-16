@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block admin_content %}
-    <p class="text-sm text-text-muted mb-6">{{ 'Define the details for the new workflow template.' if 'Create' in title else 'Modify the details for this workflow template.' }}</p>
+    <p class="page-intro">{{ 'Define the details for the new workflow template.' if 'Create' in title else 'Modify the details for this workflow template.' }}</p>
 
     <form id="templateWorkflowForm" method="POST" action="" class="space-y-6">
         {{ form.hidden_tag() }}
@@ -20,15 +20,15 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             <div class="md:col-span-2">
-                <label for="{{ form.title.id }}" class="block text-sm font-medium text-text-strong">{{ form.title.label.text }}</label>
-                {{ form.title(class="form-input mt-1 block w-full rounded-md border-border-default shadow-sm focus:border-primary focus:ring-primary sm:text-sm" + (" border-red-500" if form.title.errors else ""), required=True, autofocus=True, id=form.title.id) }}
+                <label for="{{ form.title.id }}" class="form-label">{{ form.title.label.text }}</label>
+                {{ form.title(class="input-control mt-1" + (" border-red-500" if form.title.errors else ""), required=True, autofocus=True, id=form.title.id) }}
                 {% if form.title.errors %}
                     <p class="mt-2 text-sm text-danger">{{ form.title.errors[0] }}</p>
                 {% endif %}
             </div>
             <div>
-                <label for="{{ form.language.id }}" class="block text-sm font-medium text-text-strong">{{ form.language.label.text }}</label>
-                {{ form.language(class="form-select mt-1 block w-full rounded-md border-border-default shadow-sm focus:border-primary focus:ring-primary sm:text-sm", id=form.language.id) }}
+                <label for="{{ form.language.id }}" class="form-label">{{ form.language.label.text }}</label>
+                {{ form.language(class="input-select mt-1", id=form.language.id) }}
                 {% if form.language.errors %}
                     <p class="mt-2 text-sm text-danger">{{ form.language.errors[0] }}</p>
                 {% endif %}
@@ -36,7 +36,7 @@
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-text-strong">Label Color</label>
+            <label class="form-label">Label Color</label>
             <div class="mt-1 flex items-center space-x-2" id="templateColorOptions">
                 {# Color options will be added by JS #}
             </div>
@@ -48,8 +48,8 @@
         </div>
 
         <div>
-            <label for="{{ form.prompt_text.id }}" class="block text-sm font-medium text-text-strong">{{ form.prompt_text.label.text }}</label>
-            {{ form.prompt_text(class="form-textarea mt-1 block w-full rounded-md border-border-default shadow-sm focus:border-primary focus:ring-primary sm:text-sm" + (" border-red-500" if form.prompt_text.errors else ""), rows="6", required=True, id=form.prompt_text.id) }}
+            <label for="{{ form.prompt_text.id }}" class="form-label">{{ form.prompt_text.label.text }}</label>
+            {{ form.prompt_text(class="input-textarea mt-1" + (" border-red-500" if form.prompt_text.errors else ""), rows="6", required=True, id=form.prompt_text.id) }}
             {% if form.prompt_text.errors %}
                 <p class="mt-2 text-sm text-danger">{{ form.prompt_text.errors[0] }}</p>
             {% endif %}
@@ -58,10 +58,10 @@
         <div class="flex items-center space-x-4 pt-4">
             <button type="button" id="saveTemplateWorkflowBtn"
                     class="btn-save disabled:opacity-50 disabled:cursor-not-allowed">
-                <i class="material-icons left tiny -ml-1 mr-2">save</i>{{ 'Save Workflow Template' if 'Create' in title else 'Save Changes' }}
+                <i class="material-icons text-lg">save</i>{{ 'Save Workflow Template' if 'Create' in title else 'Save Changes' }}
             </button>
             <a href="{{ url_for('admin_panel.manage_template_workflows') }}"
-               class="inline-flex items-center px-4 py-2 border border-border-default rounded-md shadow-sm text-sm font-medium text-text-strong bg-surface hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+               class="ui-btn ui-btn--secondary">
                 Cancel
             </a>
         </div>

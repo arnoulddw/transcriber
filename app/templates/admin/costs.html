@@ -4,10 +4,10 @@
 {% block subtitle %}Costs{% endblock %}
 
 {% block admin_content %}
-    <p class="text-sm text-text-muted mb-6">{{ _('Manage the costs of the different services and view cost analytics.') }}</p>
+    <p class="page-intro">{{ _('Manage the costs of the different services and view cost analytics.') }}</p>
 
     <div class="table-card p-6 space-y-4 mb-8">
-        <h2 class="card-title mb-6">{{ _('Pricing Configuration') }}</h2>
+        <h2 class="section-heading mb-5">{{ _('Pricing Configuration') }}</h2>
         <form id="pricing-form" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -54,7 +54,7 @@
     </div>
 
     <div class="table-card p-6 space-y-4">
-        <h2 class="card-title mb-6">{{ _('Cost Analytics') }}</h2>
+        <h2 class="section-heading mb-5">{{ _('Cost Analytics') }}</h2>
 
         <!-- By Component -->
         <h3 class="section-title mb-4">{{ _('By Component') }}</h3>

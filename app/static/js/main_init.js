@@ -6,8 +6,9 @@ const initLogger = window.logger.scoped("MainInitJS");
 const LARGE_FILE_THRESHOLD_MB = 25; 
 const CONTEXT_PROMPT_SUPPORTED_APIS = ['gpt-transcribe', 'gpt-4o-transcribe', 'assemblyai'];
 const SPEAKER_DIARIZATION_SUPPORTED_APIS = ['assemblyai'];
-const SPEAKER_BTN_DEFAULT_CLASSES = ['bg-white', 'text-gray-700', 'hover:bg-gray-50', 'border-gray-300'];
-const SPEAKER_BTN_ACTIVE_CLASSES = ['bg-green-600', 'text-white', 'hover:bg-green-700', 'border-green-600'];
+// Toggle chips use the shared .chip-toggle component; .is-active is the selected state.
+const SPEAKER_BTN_DEFAULT_CLASSES = [];
+const SPEAKER_BTN_ACTIVE_CLASSES = ['is-active'];
 
 let speakerDiarizationBtnRef = null;
 let speakerDiarizationInputRef = null;
@@ -294,7 +295,8 @@ async function checkTranscribeButtonState() {
                     contextPromptInput.value = '';
                 }
             }
-            toggleContextPromptBtn.innerHTML = '<i class="material-icons left tiny -ml-0.5 mr-1.5">add_circle_outline</i>Context Prompt';
+            toggleContextPromptBtn.classList.remove('is-active');
+            toggleContextPromptBtn.innerHTML = '<i class="material-icons text-base">add_circle_outline</i>Context Prompt';
         }
     }
 
@@ -386,20 +388,21 @@ async function checkTranscribeButtonState() {
                 } else {
                     initLogger.warn("translateBackendErrorMessage function not found.");
                 }
-                statusSpan.textContent = translatedReason.messageText || translatedReason.message || '';
-                if (translatedReason.action) {
-                    const actionButton = document.createElement('button');
-                    actionButton.type = 'button';
-                    actionButton.dataset.transcriptionErrorAction = translatedReason.action.action;
-                    actionButton.className = 'ml-1 underline font-medium';
-                    actionButton.textContent = translatedReason.action.label;
-                    actionButton.addEventListener('click', event => {
+                const statusText = translatedReason.messageText || translatedReason.message || '';
+                const statusAction = translatedReason.action ? {
+                    label: translatedReason.action.label,
+                    dataset: { transcriptionErrorAction: translatedReason.action.action },
+                    onClick: event => {
                         event.preventDefault();
                         if (typeof window.openApiKeyModal === 'function') {
                             window.openApiKeyModal(event);
                         }
-                    });
-                    statusSpan.appendChild(actionButton);
+                    },
+                } : null;
+                if (typeof window.renderTextWithInlineAction === 'function') {
+                    window.renderTextWithInlineAction(statusSpan, statusText, statusAction);
+                } else {
+                    statusSpan.textContent = statusText;
                 }
                 statusSpan.className = `mt-2 text-xs ${translatedReason.iconColorClass || 'text-red-600'} text-center`;
             } else {
@@ -428,13 +431,11 @@ function validateContextPrompt() {
     if (wordCount > maxWords) {
         errorSpan.classList.add("text-red-600"); 
         errorSpan.classList.remove("text-gray-500");
-        contextField.classList.add("border-red-500", "focus:border-red-500", "focus:ring-red-500"); 
-        contextField.classList.remove("border-gray-300", "focus:border-primary", "focus:ring-primary");
+        contextField.classList.add("border-red-500", "focus:border-red-500");
     } else {
         errorSpan.classList.remove("text-red-600");
         errorSpan.classList.add("text-gray-500"); 
-        contextField.classList.remove("border-red-500", "focus:border-red-500", "focus:ring-red-500");
-        contextField.classList.add("border-gray-300", "focus:border-primary", "focus:ring-primary"); 
+        contextField.classList.remove("border-red-500", "focus:border-red-500");
     }
     checkTranscribeButtonState();
 }
@@ -467,10 +468,9 @@ function updateApiKeyNotificationVisibility(keyStatus, permissions) {
             const canManageKeys = normalizedPermissions.allow_api_key_management === true;
             if (canManageKeys && typeof window.showNotificationWithAction === 'function') {
                 window.showNotificationWithAction(
-                    'API key needed. Add a key to use all features:',
+                    'API key needed. Add one in Manage API Keys to use all features.',
                     {
                         label: 'Manage API Keys',
-                        className: 'ml-3 underline font-medium',
                         onClick: event => {
                             event.preventDefault();
                             if (typeof window.openApiKeyModal === 'function') {
@@ -630,11 +630,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (audioDropZone && fileInput) {
         ['dragenter', 'dragover'].forEach(eventName => audioDropZone.addEventListener(eventName, event => {
             event.preventDefault();
-            audioDropZone.classList.add('border-primary', 'bg-blue-50');
+            audioDropZone.classList.add('is-dragover');
         }));
         ['dragleave', 'drop'].forEach(eventName => audioDropZone.addEventListener(eventName, event => {
             event.preventDefault();
-            audioDropZone.classList.remove('border-primary', 'bg-blue-50');
+            audioDropZone.classList.remove('is-dragover');
         }));
         audioDropZone.addEventListener('drop', event => {
             const files = event.dataTransfer?.files;
@@ -681,6 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleContextPromptBtn.addEventListener('click', function() {
             const isHidden = contextPromptSection.classList.contains('hidden');
             contextPromptSection.classList.toggle('hidden', !isHidden);
+            toggleContextPromptBtn.classList.toggle('is-active', isHidden);
 
             const icon = toggleContextPromptBtn.querySelector('i.material-icons');
             const textNode = Array.from(toggleContextPromptBtn.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0);
@@ -742,8 +743,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Revert button appearance
             if (applyWorkflowBtnEl) {
-                applyWorkflowBtnEl.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700', 'border-green-600');
-                applyWorkflowBtnEl.classList.add('bg-white', 'text-gray-700', 'hover:bg-gray-50', 'border-gray-300');
+                applyWorkflowBtnEl.classList.remove('is-active');
                 // applyWorkflowBtnIcon.textContent = 'add_circle_outline'; // Icon does not change
                 this.classList.add('hidden'); // Hide the cross
             }
