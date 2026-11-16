@@ -5,6 +5,7 @@ import logging
 import math
 from flask import render_template, current_app, g, abort, request, redirect, session, url_for
 from flask_login import current_user, login_required
+from flask_babel import gettext as _
 
 # Import the main blueprint defined in app/main/__init__.py
 from . import main_bp
@@ -16,6 +17,8 @@ from app.models import llm_operation as llm_operation_model
 # Import services for prompt matching
 from app.services import user_service, admin_management_service
 from app.core.decorators import check_permission
+from app.services import history_filter_service
+from app.models.transcription_utils.history_filters import DURATION_MAX, DURATION_STEP, PER_PAGE_OPTIONS
 
 @main_bp.route('/')
 @login_required
@@ -94,38 +97,39 @@ def index():
         logging.debug(f"{log_prefix} Using system defaults (Lang: {effective_default_language}, API: {effective_default_api})")
     # --- End Determine Effective Defaults ---
 
-    # --- Pagination Logic ---
+    # --- Pagination, filters and rows per page ---
     page = request.args.get('page', 1, type=int)
-    per_page = 5
+    per_page, _from_request = history_filter_service.resolve_session_per_page(request.args, session)
     pagination = None
     transcriptions = []
-    all_prompts_lookup = {} # Dictionary to store prompts for quick lookup
+    all_prompts_lookup = history_filter_service.build_prompt_lookup(current_user)
+    history_filters = history_filter_service.resolve_filters(request.args, current_user, all_prompts_lookup)
+    filtered_total = 0
+    unfiltered_total = 0
+    filter_options = {'models': [], 'languages': [], 'workflows': []}
 
     try:
-        # Fetch user and template prompts for workflow matching
-        if current_user.has_permission('allow_workflows'):
-            try:
-                user_prompts = user_service.get_user_prompts(current_user.id)
-                # --- MODIFIED: Fetch all template prompts, regardless of user's current default language ---
-                # This ensures that if a workflow was run with a template (e.g., specific language, or "all languages")
-                # it can still be found for display even if the user's current default language is different.
-                template_prompts = admin_management_service.get_template_prompts(language=None)
-                # --- END MODIFIED ---
-                for p in user_prompts:
-                    all_prompts_lookup[p.id] = {'title': p.title, 'color': p.color} # Use raw ID as key
-                for t_template in template_prompts:
-                    # Use a prefixed key for templates to avoid collision with user prompt IDs
-                    all_prompts_lookup[f"template_{t_template.id}"] = {'title': t_template.title, 'color': t_template.color}
-                logging.debug(f"{log_prefix} Loaded {len(user_prompts)} user prompts and {len(template_prompts)} template prompts for matching.")
-            except Exception as prompt_err:
-                logging.error(f"{log_prefix} Error fetching user/template prompts: {prompt_err}", exc_info=True)
-
         # Fetch paginated transcriptions (now includes llm_operation_id)
-        total_items = transcription_utils.count_visible_user_transcriptions(current_user.id)
+        total_items = transcription_utils.count_visible_user_transcriptions(
+            current_user.id, filters=history_filters
+        )
+        filtered_total = total_items
+        unfiltered_total = (
+            transcription_utils.count_visible_user_transcriptions(current_user.id)
+            if history_filters.is_active else total_items
+        )
+        if unfiltered_total > 0:
+            filter_options = history_filter_service.build_filter_options(
+                current_user,
+                all_prompts_lookup,
+                language_names=supported_languages,
+            )
         if total_items > 0:
             total_pages = math.ceil(total_items / per_page)
             page = max(1, min(page, total_pages))
-            transcriptions = transcription_utils.get_paginated_transcriptions(current_user.id, page, per_page)
+            transcriptions = transcription_utils.get_paginated_transcriptions(
+                current_user.id, page, per_page, filters=history_filters
+            )
 
             user_can_poll_title = current_user.enable_auto_title_generation and current_user.has_permission('allow_auto_title_generation')
             for t in transcriptions:
@@ -186,7 +190,7 @@ def index():
                     t['llm_operation_provider'] = None
 
 
-            if total_pages > 1:
+            if total_pages > 1 or total_items > min(PER_PAGE_OPTIONS):
                 pagination = {
                     'current_page': page, 'total_pages': total_pages,
                     'has_prev': page > 1, 'has_next': page < total_pages,
@@ -201,13 +205,36 @@ def index():
     except Exception as e:
         logging.error(f"{log_prefix} Error fetching paginated transcriptions: {e}", exc_info=True)
 
+    filter_query = history_filters.to_query()
+
+    def history_url(**changes):
+        """URL of the history with the current filters, changed by ``changes``.
+        A value of None removes that parameter. The page resets to 1 unless given."""
+        params = dict(filter_query)
+        params.update(changes)
+        if 'page' in params and (params['page'] is None or params['page'] <= 1):
+            params.pop('page')
+        params = {key: value for key, value in params.items() if value is not None}
+        return url_for('main.index', **params) + '#history'
+
     return render_template(
         'index.html',
         effective_default_api=effective_default_api,
         effective_default_language=effective_default_language,
         supported_languages=supported_languages,
         transcriptions=transcriptions,
-        pagination=pagination
+        pagination=pagination,
+        history_filters=history_filters,
+        history_filter_query=filter_query,
+        history_filter_options=filter_options,
+        history_date_presets=history_filter_service.date_preset_options(_),
+        history_duration_max=DURATION_MAX,
+        history_duration_step=DURATION_STEP,
+        history_per_page=per_page,
+        history_per_page_options=PER_PAGE_OPTIONS,
+        history_filtered_total=filtered_total,
+        history_unfiltered_total=unfiltered_total,
+        history_url=history_url,
     )
 
 

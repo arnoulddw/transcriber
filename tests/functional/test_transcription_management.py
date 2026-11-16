@@ -79,7 +79,8 @@ class TestTranscriptionManagement:
         Test case for successful pagination of the transcription history.
         """
         # Mock the functions to simulate a user with more than one page of transcriptions
-        mock_count_transcriptions.return_value = 10
+        # (the default page size is 10 rows, the smallest "Rows per page" option)
+        mock_count_transcriptions.return_value = 30
         mock_get_paginated_transcriptions.return_value = [
             {"id": i, "filename": f"test_{i}.mp3", "status": "finished", "audio_length_minutes": 1} for i in range(5)
         ]

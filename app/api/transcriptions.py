@@ -29,6 +29,7 @@ from app.models import user as user_model
 from app.models import role as role_model
 from app.models.user import User # For type hinting
 from app.services.user_service import MissingApiKeyError
+from app.services import history_filter_service
 from app.services.api_clients.exceptions import TranscriptionApiError
 from app.core.decorators import check_permission
 from app.extensions import limiter, build_user_limit_key, csrf
@@ -774,7 +775,9 @@ def get_transcriptions():
 @transcriptions_bp.route('/transcriptions/search', methods=['GET'])
 @login_required
 def search_transcriptions():
-    """Search user's transcription history. Returns paginated JSON results."""
+    """Search user's transcription history. Returns paginated JSON results.
+    Accepts the same filter parameters as the main page history
+    (date, model, lang, dur_min, dur_max, workflow)."""
     user_id = current_user.id
     q = request.args.get('q', '').strip()
     page = request.args.get('page', 1, type=int)
@@ -782,8 +785,9 @@ def search_transcriptions():
     log_prefix = f"[API:Search:User:{user_id}]"
 
     try:
+        filters = history_filter_service.resolve_filters(request.args, current_user)
         total = transcription_utils.count_visible_user_transcriptions(
-            user_id, search_query=q or None
+            user_id, search_query=q or None, filters=filters
         )
         items = []
         total_pages = 0
@@ -791,7 +795,7 @@ def search_transcriptions():
             total_pages = math.ceil(total / per_page)
             page = max(1, min(page, total_pages))
             items = transcription_utils.get_paginated_transcriptions(
-                user_id, page, per_page, search_query=q or None
+                user_id, page, per_page, search_query=q or None, filters=filters
             )
         logging.debug("%s Search q=%r returned %s/%s results (page %s).", log_prefix, q, len(items), total, page)
         return jsonify({
@@ -803,6 +807,7 @@ def search_transcriptions():
             'has_prev': page > 1,
             'has_next': page < total_pages,
             'query': q,
+            'filters': filters.to_query(),
         }), 200
     except Exception:
         logging.exception("%s Error searching transcriptions:", log_prefix)

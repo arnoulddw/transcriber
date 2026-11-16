@@ -156,6 +156,7 @@ module.exports = {
         'cta': '0 10px 24px -14px rgba(90, 43, 214, 0.9)',
         'menu': '0 24px 50px -22px rgba(40, 20, 90, 0.5), 0 0 0 1px rgba(22, 18, 31, 0.06)',
         'progress': '0 12px 28px -22px rgba(90, 43, 214, 0.55)',
+        'thumb': '0 2px 6px rgba(90, 43, 214, 0.35)',     // range slider handles
       },
       borderWidth: {
         '1.5': '1.5px',

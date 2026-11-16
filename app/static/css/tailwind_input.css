@@ -287,6 +287,140 @@ These are processed by PostCSS with the Tailwind plugin.
     .pager__item.is-current {
         @apply bg-primary text-white hover:bg-primary-dark hover:text-white;
     }
+    /* Rows per page sits on the pagination row, pushed to the right */
+    .pager-row {
+        @apply flex flex-wrap items-center gap-x-4 gap-y-2;
+    }
+    .pager-rows {
+        @apply ml-auto inline-flex items-center gap-2.5 whitespace-nowrap text-control text-text-muted;
+    }
+    /* Scoped so it wins over the full-width .input-select declared further down */
+    .pager-rows .pager-rows__select {
+        @apply min-h-control-sm w-auto min-w-[72px] rounded-full py-1 pl-3.5 text-control font-medium;
+    }
+
+    /* History filters: Filters toggle, chip row, chip menus, duration popover */
+    .history-tools {
+        @apply flex items-center gap-2;
+    }
+    .filter-toggle {
+        @apply inline-flex h-control flex-none items-center gap-1.5 whitespace-nowrap rounded-full bg-primary-soft pl-3.5 pr-3 text-control font-semibold text-primary transition-colors hover:bg-primary-track focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    .filter-toggle[aria-expanded="true"] {
+        @apply bg-primary text-white hover:bg-primary-dark;
+    }
+    .filter-toggle__count {
+        @apply badge grid h-[18px] min-w-[18px] place-items-center bg-primary px-[5px] py-0 text-tag text-white;
+    }
+    .filter-toggle[aria-expanded="true"] .filter-toggle__count {
+        @apply bg-white text-primary;
+    }
+    .filter-row {
+        @apply flex flex-wrap items-center gap-2;
+    }
+    .filter-row[hidden] {
+        display: none;
+    }
+    .filter-wrap {
+        @apply relative inline-flex;
+    }
+    .filter-chip {
+        @apply chip-toggle min-h-[32px] gap-1.5 whitespace-nowrap bg-white py-0 pl-3 pr-2.5 text-badge;
+    }
+    .filter-chip b {
+        @apply font-medium text-text-muted;
+    }
+    .filter-chip .material-icons {
+        @apply text-base text-text-muted;
+    }
+    /* Active chip: lilac fill, label opens the menu, x removes the filter */
+    .filter-chip.is-active {
+        @apply badge-primary border-transparent p-0 hover:bg-primary-track;
+    }
+    .filter-chip.is-active b {
+        @apply text-primary opacity-70;
+    }
+    .filter-chip__body {
+        @apply inline-flex h-[32px] items-center gap-1.5 rounded-l-full pl-3 pr-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    .filter-chip__remove {
+        @apply inline-flex h-[32px] items-center rounded-r-full pl-0.5 pr-2.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    .filter-chip.is-active .material-icons {
+        @apply text-primary;
+    }
+    .filter-row__meta {
+        @apply ml-auto inline-flex items-center gap-2.5 whitespace-nowrap text-badge text-text-muted tabular-nums;
+    }
+    .filter-link {
+        @apply cursor-pointer border-0 bg-transparent p-0 text-control font-medium text-text-muted underline-offset-2 hover:text-primary hover:underline;
+    }
+    .filter-menu,
+    .filter-pop {
+        @apply absolute left-0 top-[calc(100%+8px)] z-30 rounded-card bg-white shadow-menu;
+    }
+    .filter-menu[hidden],
+    .filter-pop[hidden] {
+        display: none;
+    }
+    .filter-menu {
+        @apply flex max-h-72 min-w-[200px] flex-col overflow-y-auto p-1.5;
+    }
+    .filter-menu__item {
+        @apply flex items-center justify-between gap-3 rounded-field px-3 py-2 text-control text-text-strong hover:bg-surface-muted focus:bg-surface-muted focus:outline-none;
+    }
+    .filter-menu__item[aria-checked="true"] {
+        @apply bg-primary-soft font-medium text-primary;
+    }
+    .filter-pop {
+        @apply flex w-[320px] max-w-[calc(100vw-32px)] flex-col gap-3 px-btn pb-3.5 pt-4;
+    }
+    .filter-pop__head {
+        @apply flex items-baseline justify-between text-control font-semibold text-text-strong;
+    }
+    .filter-pop__value {
+        @apply font-normal text-primary tabular-nums;
+    }
+    .filter-pop__foot {
+        @apply flex items-center justify-between border-t border-border-default pt-3;
+    }
+    /* Two-handle range slider: two stacked range inputs, only the thumbs take pointer events */
+    .range-dual {
+        @apply relative h-7;
+    }
+    .range-dual__track,
+    .range-dual__fill {
+        @apply absolute top-3 h-1 rounded-full;
+    }
+    .range-dual__track {
+        @apply left-2.5 right-2.5 bg-primary-track;
+    }
+    .range-dual__fill {
+        @apply bg-primary;
+    }
+    .range-dual input[type="range"] {
+        @apply pointer-events-none absolute inset-0 m-0 h-7 w-full appearance-none bg-transparent;
+    }
+    .range-dual input[type="range"]::-webkit-slider-runnable-track {
+        @apply h-7 bg-transparent;
+    }
+    .range-dual input[type="range"]::-moz-range-track {
+        @apply bg-transparent;
+    }
+    .range-dual input[type="range"]::-webkit-slider-thumb {
+        @apply pointer-events-auto mt-1 h-5 w-5 cursor-grab appearance-none rounded-full border-2 border-primary bg-white;
+        box-shadow: theme('boxShadow.thumb');
+    }
+    .range-dual input[type="range"]::-moz-range-thumb {
+        @apply pointer-events-auto h-4 w-4 cursor-grab rounded-full border-2 border-primary bg-white;
+        box-shadow: theme('boxShadow.thumb');
+    }
+    .range-dual input[type="range"]:focus-visible::-webkit-slider-thumb {
+        outline: 3px solid theme('colors.accent-border');
+    }
+    .range-dual__scale {
+        @apply -mt-1.5 flex justify-between px-0.5 text-tag text-text-muted;
+    }
 
     /* Off-canvas drawers: no shadow spill while closed */
     #admin-sidebar.-translate-x-full,

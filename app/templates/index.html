@@ -170,22 +170,130 @@
 
     {% set history_actions = ui.button(_('Clear All'), variant='danger', id='clearAllBtn', icon='delete_forever', extra_classes='ui-btn--sm') if transcriptions else '' %}
     {% call form_layout.card(title=_('Transcription History'), actions=history_actions) %}
-        {# Search input #}
-        {% if transcriptions or request.args.get('q') %}
-        <div class="relative flex items-center">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                <i class="material-icons text-text-muted text-base" aria-hidden="true">search</i>
+        {% set hf = history_filters %}
+        {% macro fmt_minutes(m) -%}
+            {%- if m >= history_duration_max -%}{{ (history_duration_max // 60) }} h+
+            {%- elif m < 60 -%}{{ m }} min
+            {%- else -%}{{ m // 60 }} h{% if m % 60 %} {{ m % 60 }}{% endif %}
+            {%- endif -%}
+        {%- endmacro %}
+        {% macro filter_chip(key, label, value_label, any_label, options, current, param) %}
+            <span class="filter-wrap">
+                {% if current %}
+                <span class="filter-chip is-active">
+                    <button type="button" class="filter-chip__body" data-filter-trigger
+                            aria-haspopup="true" aria-expanded="false" aria-controls="historyFilterMenu-{{ key }}">
+                        <b>{{ label }}</b>{{ value_label }}
+                    </button>
+                    <a href="{{ history_url(**{param: None}) }}" class="filter-chip__remove"
+                       aria-label="{{ _('Remove filter: %(name)s', name=label) }}" title="{{ _('Remove filter') }}">
+                        <i class="material-icons" aria-hidden="true">close</i>
+                    </a>
+                </span>
+                {% else %}
+                <button type="button" class="filter-chip" data-filter-trigger
+                        aria-haspopup="true" aria-expanded="false" aria-controls="historyFilterMenu-{{ key }}">
+                    <b>{{ label }}</b>{{ any_label }}<i class="material-icons" aria-hidden="true">expand_more</i>
+                </button>
+                {% endif %}
+                <div class="filter-menu shadow-menu" id="historyFilterMenu-{{ key }}" role="menu" aria-label="{{ label }}" hidden>
+                    <a role="menuitemradio" aria-checked="{{ 'false' if current else 'true' }}" href="{{ history_url(**{param: None}) }}" class="filter-menu__item">{{ any_label }}</a>
+                    {% for option in options %}
+                    <a role="menuitemradio" aria-checked="{{ 'true' if option.value == current else 'false' }}"
+                       href="{{ history_url(**{param: option.value}) }}" class="filter-menu__item">{{ option.label }}</a>
+                    {% endfor %}
+                </div>
+            </span>
+        {% endmacro %}
+        {% set show_history_tools = transcriptions or request.args.get('q') or hf.is_active or history_unfiltered_total %}
+        {% if show_history_tools %}
+        <div class="history-tools" id="history">
+            <div class="relative flex min-w-0 flex-1 items-center">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <i class="material-icons text-text-muted text-base" aria-hidden="true">search</i>
+                </div>
+                <input type="text" id="historySearch"
+                       placeholder="{{ _('Search transcriptions…') }}"
+                       autocomplete="off"
+                       class="input-control pl-11 pr-10 w-full"
+                       aria-label="{{ _('Search transcription history') }}">
+                <button id="historySearchClear" type="button"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted hover:text-text-strong hidden"
+                        title="{{ _('Clear search') }}" aria-label="{{ _('Clear search') }}">
+                    <i class="material-icons text-base">close</i>
+                </button>
             </div>
-            <input type="text" id="historySearch"
-                   placeholder="{{ _('Search transcriptions…') }}"
-                   autocomplete="off"
-                   class="input-control pl-11 pr-10 w-full"
-                   aria-label="{{ _('Search transcription history') }}">
-            <button id="historySearchClear" type="button"
-                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted hover:text-text-strong hidden"
-                    title="{{ _('Clear search') }}" aria-label="{{ _('Clear search') }}">
-                <i class="material-icons text-base">close</i>
+            <button type="button" id="historyFiltersToggle" class="filter-toggle"
+                    aria-expanded="{{ 'true' if hf.is_active else 'false' }}" aria-controls="historyFilters">
+                <i class="material-icons text-base" aria-hidden="true">tune</i>{{ _('Filters') }}
+                {% if hf.active_count %}<span class="filter-toggle__count" aria-label="{{ _('%(num)s active', num=hf.active_count) }}">{{ hf.active_count }}</span>{% endif %}
             </button>
+        </div>
+
+        {# Filter chips. Hidden by default; shown open while filters are applied so the user sees them. #}
+        <div class="filter-row" id="historyFilters" role="group" aria-label="{{ _('Filter transcription history') }}"{% if not hf.is_active %} hidden{% endif %}>
+            {% set date_label = (history_date_presets | selectattr('value', 'equalto', hf.date) | map(attribute='label') | first) if hf.date else '' %}
+            {{ filter_chip('date', _('Date'), date_label, _('Any time'), history_date_presets, hf.date, 'date') }}
+
+            {% set model_options = [] %}
+            {% for option in history_filter_options.models %}
+                {% if model_options.append({'value': option.value, 'label': API_NAME_MAP_FRONTEND.get(option.value) or option.label}) %}{% endif %}
+            {% endfor %}
+            {% set model_label = (API_NAME_MAP_FRONTEND.get(hf.model) or hf.model) if hf.model else '' %}
+            {{ filter_chip('model', _('Model'), model_label, _('Any'), model_options | sort(attribute='label'), hf.model, 'model') }}
+
+            {% set lang_label = (supported_languages.get(hf.language) or hf.language) if hf.language else '' %}
+            {{ filter_chip('lang', _('Language'), lang_label, _('Any'), history_filter_options.languages, hf.language, 'lang') }}
+
+            {# Duration: two-handle range slider in a popover #}
+            {% set dur_lo = hf.duration_min or 0 %}
+            {% set dur_hi = hf.duration_max if hf.duration_max is not none else history_duration_max %}
+            {% if hf.has_duration %}
+                {% if dur_lo == 0 %}{% set dur_label = _('Under %(value)s', value=fmt_minutes(dur_hi)) %}
+                {% elif dur_hi >= history_duration_max %}{% set dur_label = _('Over %(value)s', value=fmt_minutes(dur_lo)) %}
+                {% else %}{% set dur_label = fmt_minutes(dur_lo) ~ ' – ' ~ fmt_minutes(dur_hi) %}{% endif %}
+            {% endif %}
+            <span class="filter-wrap">
+                {% if hf.has_duration %}
+                <span class="filter-chip is-active">
+                    <button type="button" class="filter-chip__body" data-filter-trigger
+                            aria-haspopup="dialog" aria-expanded="false" aria-controls="historyDurationPop">
+                        <b>{{ _('Duration') }}</b>{{ dur_label }}
+                    </button>
+                    <a href="{{ history_url(dur_min=None, dur_max=None) }}" class="filter-chip__remove"
+                       aria-label="{{ _('Remove filter: %(name)s', name=_('Duration')) }}" title="{{ _('Remove filter') }}">
+                        <i class="material-icons" aria-hidden="true">close</i>
+                    </a>
+                </span>
+                {% else %}
+                <button type="button" class="filter-chip" data-filter-trigger
+                        aria-haspopup="dialog" aria-expanded="false" aria-controls="historyDurationPop">
+                    <b>{{ _('Duration') }}</b>{{ _('Any') }}<i class="material-icons" aria-hidden="true">expand_more</i>
+                </button>
+                {% endif %}
+                <div class="filter-pop shadow-menu" id="historyDurationPop" role="dialog" aria-label="{{ _('Duration filter') }}" hidden>
+                    <div class="filter-pop__head"><span>{{ _('Duration') }}</span><span class="filter-pop__value" id="historyDurReadout">{{ fmt_minutes(dur_lo) }} – {{ fmt_minutes(dur_hi) }}</span></div>
+                    <div class="range-dual">
+                        <span class="range-dual__track"></span><span class="range-dual__fill" id="historyDurFill"></span>
+                        <input type="range" id="historyDurMin" min="0" max="{{ history_duration_max }}" step="{{ history_duration_step }}" value="{{ dur_lo }}" aria-label="{{ _('Minimum duration') }}">
+                        <input type="range" id="historyDurMax" min="0" max="{{ history_duration_max }}" step="{{ history_duration_step }}" value="{{ dur_hi }}" aria-label="{{ _('Maximum duration') }}">
+                    </div>
+                    <div class="range-dual__scale" aria-hidden="true"><span>0</span><span>1 h</span><span>2 h</span><span>3 h+</span></div>
+                    <div class="filter-pop__foot">
+                        <button type="button" class="filter-link" id="historyDurReset">{{ _('Reset') }}</button>
+                        <button type="button" class="ui-btn ui-btn--primary ui-btn--sm" id="historyDurApply">{{ _('Apply') }}</button>
+                    </div>
+                </div>
+            </span>
+
+            {% if user_permissions.allow_workflows %}
+            {{ filter_chip('workflow', _('Workflow'), hf.workflow or '', _('Any label'), history_filter_options.workflows, hf.workflow, 'workflow') }}
+            {% endif %}
+
+            <span class="filter-row__meta">
+                <span id="historyFilterCount">{{ _('%(shown)s of %(total)s', shown=history_filtered_total, total=history_unfiltered_total) }}</span>
+                {% if hf.is_active %}<a class="filter-link" href="{{ url_for('main.index') }}#history">{{ _('Clear all') }}</a>{% endif %}
+            </span>
         </div>
         <div id="searchStatus" class="text-xs text-text-muted hidden" aria-live="polite"></div>
         {% endif %}
@@ -331,17 +439,20 @@
                             </div>
                         </li>
                     {% endfor %}
+                {% elif hf.is_active %}
+                    <li class="py-6 text-center text-sm text-text-muted" id="history-placeholder">{{ _('No transcriptions match these filters.') }} <a class="filter-link" href="{{ url_for('main.index') }}#history">{{ _('Clear all') }}</a></li>
                 {% else %}
                     <li class="py-6 text-center text-sm text-text-muted" id="history-placeholder">{{ _('No completed transcriptions yet.') }}</li>
                 {% endif %}
             </ul>
 
-            {# Pagination #}
+            {# Pagination, with rows per page on the right #}
             {% if pagination %}
             <div class="mt-4 pagination-container">
-                <div class="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div class="pager-row">
+                    {% if pagination.total_pages > 1 %}
                     <nav class="pager" aria-label="Pagination">
-                        <a href="{{ url_for('main.index', page=pagination.current_page - 1) if pagination.has_prev else '#' }}"
+                        <a href="{{ history_url(page=pagination.current_page - 1) if pagination.has_prev else '#' }}"
                            class="pager__item {{ 'pointer-events-none opacity-40' if not pagination.has_prev }}">
                             <span class="sr-only">{{ _('Previous') }}</span>
                             <i class="material-icons text-lg">chevron_left</i>
@@ -361,7 +472,7 @@
                             {% endif %}
 
                             {% if show_page %}
-                                <a href="{{ url_for('main.index', page=page_num) }}"
+                                <a href="{{ history_url(page=page_num) }}"
                                    aria-current="{{ 'page' if page_num == pagination.current_page else 'false' }}"
                                    class="pager__item{% if page_num == pagination.current_page %} is-current{% endif %}">
                                     {{ page_num }}
@@ -371,15 +482,24 @@
                             {% endif %}
                             {% set ns.prev_show_page = show_page %} {# Update namespace variable #}
                         {% endfor %}
-                        <a href="{{ url_for('main.index', page=pagination.current_page + 1) if pagination.has_next else '#' }}"
+                        <a href="{{ history_url(page=pagination.current_page + 1) if pagination.has_next else '#' }}"
                            class="pager__item {{ 'pointer-events-none opacity-40' if not pagination.has_next }}">
                             <span class="sr-only">{{ _('Next') }}</span>
                             <i class="material-icons text-lg">chevron_right</i>
                         </a>
                     </nav>
+                    {% endif %}
                     <div class="text-xs text-text-muted">
                         {{ _('Showing %(length)s of %(total)s items', length=transcriptions|length, total=pagination.total_items) }}
                     </div>
+                    <label class="pager-rows" for="historyPerPage">
+                        <span>{{ _('Rows per page') }}</span>
+                        <select id="historyPerPage" class="input-select pager-rows__select">
+                            {% for option in history_per_page_options %}
+                            <option value="{{ option }}"{% if option == history_per_page %} selected{% endif %}>{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
                 </div>
             </div>
             {% endif %}
@@ -390,6 +510,7 @@
 
 {% block scripts %}
 {{ super() }}
+<script src="{{ url_for('static', filename='js/history/filters.js') }}"></script>
 <script src="{{ url_for('static', filename='js/history/search.js') }}"></script>
 <script nonce="{{ csp_nonce }}">
     // Helper function to update placeholders based on screen size
