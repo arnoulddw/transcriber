@@ -245,7 +245,7 @@ async function handleTranscribeSubmit() {
     transcribeBtn.innerHTML = 'PROCESSING...';
     stopBtn.classList.remove('hidden');
     stopBtn.disabled = false;
-    stopBtn.innerHTML = 'STOP <i class="material-icons right">cancel</i>';
+    stopBtn.innerHTML = '<i class="material-icons text-base">close</i><span>Stop</span>';
 
     progressContainer.style.display = 'block';
     setProgressBarWidth(progressBar, 0);
@@ -389,10 +389,10 @@ async function handleStopTranscription() {
     const jobIdToCancel = currentJobIdForStop;
     stopLogger.info("Stop requested.", { jobId: jobIdToCancel });
     stopBtn.disabled = true;
-    stopBtn.innerHTML = 'Cancelling... <span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-current border-r-transparent ml-2"></span>';
+    stopBtn.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-current border-r-transparent"></span><span>Cancelling...</span>';
 
     if (typeof window.updateProgressActivity === 'function') {
-        window.updateProgressActivity('cancel', 'Requesting cancellation...', 'orange-text');
+        window.updateProgressActivity('cancel', 'Requesting cancellation...', 'text-warning');
     } else {
         stopLogger.error("updateProgressActivity function not found.");
     }
@@ -408,7 +408,7 @@ async function handleStopTranscription() {
             stopLogger.info("Cancellation request acknowledged by server.", { jobId: jobIdToCancel, message: data.message });
             window.cancellationRequestedForJobId = jobIdToCancel;
             if (typeof window.updateProgressActivity === 'function') {
-                window.updateProgressActivity('cancel', 'Cancellation requested. Waiting for process to stop...', 'orange-text');
+                window.updateProgressActivity('cancel', 'Cancellation requested. Waiting for process to stop...', 'text-warning');
             }
              window.showNotification('Cancellation requested. Processing will stop.', 'success', 4000, false);
 
@@ -416,7 +416,7 @@ async function handleStopTranscription() {
                 if (window.currentJobId === jobIdToCancel && window.cancellationRequestedForJobId === jobIdToCancel) {
                     stopLogger.warn("Frontend forcing UI to cancelled state after timeout.", { jobId: jobIdToCancel });
                     if (typeof window.updateProgressActivity === 'function') {
-                        window.updateProgressActivity('cancel', 'Transcription cancelled by user.', 'orange-text');
+                        window.updateProgressActivity('cancel', 'Transcription cancelled by user.', 'text-warning');
                     }
                     if (typeof window.resetTranscribeUI === 'function') {
                         window.resetTranscribeUI(true, false);
@@ -441,13 +441,13 @@ async function handleStopTranscription() {
             stopLogger.error("Cancellation request failed.", { jobId: jobIdToCancel, error: errorMsg });
             window.showNotification(`Error: ${errorMsg}`, 'error', 5000, false);
             stopBtn.disabled = false;
-            stopBtn.innerHTML = 'STOP <i class="material-icons right">cancel</i>';
+            stopBtn.innerHTML = '<i class="material-icons text-base">close</i><span>Stop</span>';
         }
     } catch (error) {
         stopLogger.error("Network error requesting cancellation.", error);
         window.showNotification('Network error trying to stop transcription.', 'error', 4000, false);
         stopBtn.disabled = false;
-        stopBtn.innerHTML = 'STOP <i class="material-icons right">cancel</i>';
+        stopBtn.innerHTML = '<i class="material-icons text-base">close</i><span>Stop</span>';
     }
 }
 window.handleStopTranscription = handleStopTranscription;

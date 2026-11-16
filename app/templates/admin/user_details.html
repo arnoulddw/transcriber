@@ -10,14 +10,14 @@
 
 {% block admin_content %}
 <a href="{{ url_for('admin_panel.manage_users') }}"
-    class="inline-flex items-center px-3 py-1.5 border border-border-default shadow-sm text-xs font-medium rounded-md text-text-strong bg-surface hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary mb-6">
+    class="ui-btn ui-btn--secondary ui-btn--sm mb-6">
     {# Increased mb-4 to mb-6 #}
-    <i class="material-icons left tiny -ml-0.5 mr-1.5">arrow_back</i>Back to User List
+    <i class="material-icons text-base">arrow_back</i>Back to User List
 </a>
 
 {# User Information Card #}
-<div class="page-section card-panel p-6 space-y-4 mb-6">
-    <h2 class="card-title text-lg">User Information</h2> {# Changed h6 to h2 for better semantics #}
+<div class="table-card p-6 space-y-4 mb-6">
+    <h2 class="section-title">User Information</h2> {# Changed h6 to h2 for better semantics #}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
         <div>
             <p><strong class="font-medium text-text-muted">ID:</strong> {{ user_details.id }}</p>
@@ -34,8 +34,8 @@
 </div>
 
 {# Usage Statistics Card #}
-<div class="page-section card-panel p-6 space-y-4 mb-6">
-    <h2 class="card-title text-lg">Usage Statistics</h2>
+<div class="table-card p-6 space-y-4 mb-6">
+    <h2 class="section-title">Usage Statistics</h2>
     {% if user_details.usage_metrics and not user_details.usage_metrics.error %}
     <div class="table-card overflow-x-auto mt-4">
         <table class="table-shell data-table min-w-full">
@@ -144,8 +144,8 @@
 </div>
 
 {# Usage vs Quotas Card #}
-<div class="page-section card-panel p-6 space-y-4 mb-6">
-    <h2 class="card-title text-lg">Usage vs. Quotas</h2>
+<div class="table-card p-6 space-y-4 mb-6">
+    <h2 class="section-title">Usage vs. Quotas</h2>
     {% if usage_stats and user_details.role %}
     <div class="table-card overflow-x-auto mt-4">
         <table class="table-shell data-table min-w-full">
@@ -247,8 +247,8 @@
 </div>
 
 {# Transcription History Card #}
-<div class="page-section card-panel p-6 space-y-4 mb-6">
-    <h2 class="card-title text-lg">Transcription History</h2> {# Changed h6 to h2 #}
+<div class="table-card p-6 space-y-4 mb-6">
+    <h2 class="section-title">Transcription History</h2> {# Changed h6 to h2 #}
     <p class="text-xs text-text-muted mb-2">Includes records hidden from the user until physically deleted.</p>
     {% if user_details.history %}
     <div class="table-card overflow-x-auto mt-4">
@@ -314,7 +314,7 @@
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                            {{ 'bg-green-100 text-green-800' if job.status == 'finished' else
                                               'bg-red-100 text-red-800' if job.status == 'error' else
-                                              'bg-orange-100 text-orange-800' if job.status == 'cancelled' else
+                                              'bg-amber-100 text-amber-800' if job.status == 'cancelled' else
                                               'bg-surface-muted text-text-strong' }}">
                             {{ job.status | capitalize }}
                         </span>
@@ -341,8 +341,8 @@
 </div>
 
 {# Workflow History Card #}
-<div class="page-section card-panel p-6 space-y-4 mb-6">
-    <h2 class="card-title text-lg">Workflow History</h2> {# Changed h6 to h2 #}
+<div class="table-card p-6 space-y-4 mb-6">
+    <h2 class="section-title">Workflow History</h2> {# Changed h6 to h2 #}
     {% if user_details.workflow_history %}
     <div class="table-card overflow-x-auto mt-4">
         <table class="table-shell data-table min-w-full"> {# Added data-table class for responsive stacking #}
@@ -390,7 +390,7 @@
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                            {{ 'bg-green-100 text-green-800' if job.workflow_status == 'finished' else
                                               'bg-red-100 text-red-800' if job.workflow_status == 'error' else
-                                              'bg-blue-100 text-blue-800' if job.workflow_status == 'processing' else
+                                              'bg-primary-soft text-primary' if job.workflow_status == 'processing' else
                                               'bg-surface-muted text-text-strong' }}">
                             {{ job.workflow_status | capitalize }}
                         </span>

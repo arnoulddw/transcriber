@@ -215,7 +215,7 @@ function deleteTranscription(transcriptionId, transcriptionItemElement) {
             data.message || 'Transcription deleted.',
             {
                 label: window.i18n?.undo || 'Undo',
-                className: 'undo-delete-action inline-flex items-center px-3 py-1 ml-3 rounded-md border border-current text-current text-sm font-semibold bg-white/10 hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-current transition-colors',
+                className: 'undo-delete-action',
                 onClick: event => {
                     event.preventDefault();
                     handleUndoRestore(transcriptionId, undoData, notification, undoButton, logPrefix);

@@ -8,7 +8,7 @@
                 {{ _('User Settings') }}
             </h3>
             <button type="button" id="profileModalCloseButtonHeader"
-                    class="ui-btn ui-btn--muted px-2 py-2 rounded-full"
+                    class="modal-close"
                     aria-label="Close modal">
                 <i class="material-icons">close</i>
             </button>
@@ -59,8 +59,8 @@
                         <span id="profileLanguageError" class="form-error"></span>
                     </div>
                 </div>
-                <div class="pt-4">
-                    <h5 class="text-md font-medium text-text-strong mb-3">{{ _('Preferences') }}</h5>
+                <div class="pt-2">
+                    <h4 class="section-title mb-4">{{ _('Preferences') }}</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="profileDefaultLanguage" class="form-label">{{ _('Default Transcription Language') }}</label>
@@ -109,24 +109,24 @@
                     <div class="mt-4">
                          <label class="flex items-center">
                             <input type="checkbox" id="enable_auto_title_generation" name="enable_auto_title_generation"
-                                   class="form-checkbox h-4 w-4 text-primary border-border-default rounded focus:ring-primary"
+                                   class="checkbox-control"
                                    {% if current_user.enable_auto_title_generation %}checked{% endif %}
                                    {% if not user_permissions.allow_auto_title_generation %}disabled{% endif %}/>
-                            <span class="ml-2 text-sm text-text-strong">{{ _('Automatically Generate Titles for Transcriptions') }}</span>
+                            <span class="ml-2.5 text-sm text-text-strong">{{ _('Automatically Generate Titles for Transcriptions') }}</span>
                         </label>
                         {% if not user_permissions.allow_auto_title_generation %}
-                        <p class="text-xs text-text-muted ml-6">{{ _('This feature is not enabled for your account role.') }}</p>
+                        <p class="text-xs text-text-muted ml-7 mt-1">{{ _('This feature is not enabled for your account role.') }}</p>
                         {% endif %}
                     </div>
                 </div>
-                <div class="text-center pt-4">
+                <div class="pt-2">
                     {{ ui.button(_('Save Changes'), variant='primary', type='submit', icon='save', icon_position='end', id='saveProfileBtn') }}
                 </div>
             </form>
-            <div class="surface-divider my-6"></div>
+            <div class="surface-divider"></div>
             <button id="changePasswordToggleBtn"
-                    class="w-full flex items-center justify-between py-2 text-sm font-medium text-primary hover:text-primary-dark focus:outline-none">
-                <span class="flex items-center"><i class="material-icons tiny align-middle mr-1">lock_reset</i>{{ _('Change Password') }}</span>
+                    class="w-full flex items-center justify-between rounded-xl py-2 text-sm font-semibold text-primary hover:text-primary-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20">
+                <span class="flex items-center gap-2"><i class="material-icons text-lg">lock_reset</i>{{ _('Change Password') }}</span>
                 <i class="material-icons text-text-muted" id="passwordToggleIconDisplay">expand_more</i>
             </button>
             <div id="changePasswordSection" class="hidden mt-4 space-y-4">
@@ -140,7 +140,7 @@
                            aria-hidden="true">
                     <div>
                         <label for="currentPassword" class="form-label">{{ _('Current Password') }}</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="mt-1 relative">
                             <input id="currentPassword" type="password" name="current_password"
                                    class="input-control" autocomplete="current-password">
                         </div>
@@ -148,7 +148,7 @@
                     </div>
                     <div>
                         <label for="newPassword" class="form-label">{{ _('New Password') }}</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="mt-1 relative">
                             <input id="newPassword" type="password" name="new_password"
                                    class="input-control" autocomplete="new-password">
                         </div>
@@ -156,19 +156,19 @@
                     </div>
                     <div>
                         <label for="confirmNewPassword" class="form-label">{{ _('Confirm New Password') }}</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="mt-1 relative">
                             <input id="confirmNewPassword" type="password" name="confirm_new_password"
                                    class="input-control" autocomplete="new-password">
                         </div>
                         <span id="confirmNewPasswordError" class="form-error"></span>
                     </div>
-                    <div class="text-center pt-2">
+                    <div class="pt-2">
                         {{ ui.button(_('Update Password'), variant='primary', type='submit', icon='lock_reset', icon_position='end', id='submitPasswordChangeBtn') }}
                     </div>
                 </form>
             </div>
         </div>
-        <div class="modal-footer space-x-2">
+        <div class="modal-footer">
             {{ ui.button(_('Cancel'), variant='muted', id='profileModalCloseButtonFooter') }}
         </div>
 {% endcall %}

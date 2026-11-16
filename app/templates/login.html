@@ -84,7 +84,7 @@
             <label for="password" class="form-label">
                 {{ _(form.password.label.text) }}
             </label>
-            <div class="mt-1 relative rounded-md shadow-sm">
+            <div class="mt-1 relative">
                 {% if title == 'Login' %}
                 {{ form.password(class="input-control pr-10" + (" border-danger focus:border-danger focus:ring-danger"
                 if
@@ -109,7 +109,7 @@
             <label for="confirm_password" class="form-label">
                 {{ _(form.confirm_password.label.text) }}
             </label>
-            <div class="mt-1 relative rounded-md shadow-sm">
+            <div class="mt-1 relative">
                 {{ form.confirm_password(class="input-control pr-10" + (" border-danger focus:border-danger
                 focus:ring-danger" if form.confirm_password.errors else ""), id="confirm_password", required=true,
                 autocomplete="new-password") }}
@@ -126,7 +126,7 @@
 
         {% if form.remember_me is defined %}
         <div class="flex items-center">
-            {{ form.remember_me(class="h-4 w-4 text-primary focus:ring-primary border-border-default rounded") }}
+            {{ form.remember_me(class="checkbox-control") }}
             <label for="{{ form.remember_me.id }}" class="ml-2 block text-sm text-text-strong">
                 {{ _('Remember me') }}
             </label>

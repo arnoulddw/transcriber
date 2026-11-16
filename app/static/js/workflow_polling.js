@@ -103,7 +103,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
   }
   workflowPanel.innerHTML = ""; // Clear previous content
   // Reset classes to base state, then add specifics
-  workflowPanel.className = "workflow-panel w-full lg:w-auto mt-4 lg:mt-0 p-4 border border-gray-300 rounded-md bg-gray-50 relative pb-11";
+  workflowPanel.className = "workflow-panel";
 
 
   const opId = operationData.operation_id;
@@ -120,7 +120,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
     workflowPanel.classList.add("flex", "items-center", "justify-center", "min-h-[150px]");
     // MODIFICATION: Added justify-center and h-full to the inner div
     workflowPanel.innerHTML = `
-          <div class="flex flex-col items-center justify-center h-full text-gray-500">
+          <div class="flex flex-col items-center justify-center h-full text-text-muted">
             <span class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mb-2"></span>
             <span>Processing Workflow...</span>
           </div>`;
@@ -128,7 +128,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
     if (contentContainer) contentContainer.classList.add("has-active-workflow");
   } else if (status === "finished") {
     workflowPanel.classList.remove("flex", "items-center", "justify-center", "min-h-[150px]");
-    workflowPanel.classList.add("border-primary", "shadow-lg"); 
+    // Finished: base lilac panel styling applies
 
     const resultText = operationData.result || "[Empty Result]";
     const ranAt = operationData.completed_at || operationData.llm_operation_ran_at; 
@@ -159,7 +159,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
 
     const canDownload = window.USER_PERMISSIONS?.allow_download_transcript ?? true;
     const downloadButtonHtml = canDownload
-        ? `<button class="download-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary" title="Download Result"><i class="material-icons text-base">download</i></button>`
+        ? `<button class="download-workflow-btn icon-btn" title="Download Result"><i class="material-icons text-base">download</i></button>`
         : "";
     let resultHtml = "";
     if (typeof window.renderMarkdownSafe === "function") {
@@ -169,17 +169,17 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
     }
     workflowPanel.innerHTML = `
           <div class="flex justify-between items-start gap-4 mb-0">
-              <div class="panel-title flex-grow flex items-center font-medium text-primary-dark text-lg leading-tight">
-                <i class="material-icons text-xl mr-2">auto_awesome</i>${window.i18n.workflowResult || 'Workflow Result'}
+              <div class="panel-title">
+                <i class="material-icons text-lg">auto_awesome</i>${window.i18n.workflowResult || 'Workflow Result'}
               </div>
-              <div class="workflow-actions flex-shrink-0 flex space-x-1">
-                <button class="edit-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary" title="Edit Result"><i class="material-icons text-base">edit</i></button>
-                <button class="copy-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary" title="Copy Result"><i class="material-icons text-base">content_copy</i></button>
+              <div class="workflow-actions flex-shrink-0 flex gap-0.5">
+                <button class="edit-workflow-btn icon-btn" title="Edit Result"><i class="material-icons text-base">edit</i></button>
+                <button class="copy-workflow-btn icon-btn" title="Copy Result"><i class="material-icons text-base">content_copy</i></button>
                 ${downloadButtonHtml}
-                <button class="delete-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-red-600 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" title="Delete Result"><i class="material-icons text-base">delete</i></button>
+                <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete Result"><i class="material-icons text-base">delete</i></button>
               </div>
           </div>
-          <div class="workflow-meta text-xs text-gray-500 mb-2 leading-snug">
+          <div class="workflow-meta mt-1 mb-2 text-xs text-text-muted leading-snug">
             Ran: ${window.formatDateTime(ranAt).replace(",", "") || "-"} |
             ${
               displayPromptTitle
@@ -187,7 +187,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
                 : `Prompt: <span class="custom-prompt-preview italic">${window.escapeHtml(displayPromptText.substring(0, 80))}...</span>`
             }
           </div>
-          <div class="workflow-result-text text-sm text-gray-700 leading-relaxed break-words" data-full-text="${window.escapeHtml(resultText)}">
+          <div class="workflow-result-text text-sm text-text-strong leading-relaxed break-words" data-full-text="${window.escapeHtml(resultText)}">
             ${resultHtml}
           </div>`;
     workflowPanel.style.display = "block";
@@ -201,7 +201,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
     }
   } else if (status === "error") {
     workflowPanel.classList.remove("flex", "items-center", "justify-center", "min-h-[150px]");
-    workflowPanel.classList.add("border-red-500", "shadow-lg", "bg-red-50"); 
+    workflowPanel.classList.add("is-error");
 
     const ranAt = operationData.completed_at || operationData.llm_operation_ran_at || operationData.created_at;
     let displayPromptText = operationData.input_text;
@@ -232,14 +232,14 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
 
     workflowPanel.innerHTML = `
           <div class="flex justify-between items-start gap-4 mb-0">
-              <div class="panel-title flex-grow flex items-center font-medium text-red-700 text-lg leading-tight">
-                <i class="material-icons text-xl mr-2">error_outline</i>${window.i18n.workflowError || 'Workflow Error'}
+              <div class="panel-title">
+                <i class="material-icons text-lg">error_outline</i>${window.i18n.workflowError || 'Workflow Error'}
               </div>
-              <div class="workflow-actions flex-shrink-0 flex space-x-1">
-                <button class="delete-workflow-btn p-1.5 rounded-full text-gray-500 hover:text-red-600 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" title="Delete Result"><i class="material-icons text-base">delete</i></button>
+              <div class="workflow-actions flex-shrink-0 flex gap-0.5">
+                <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete Result"><i class="material-icons text-base">delete</i></button>
               </div>
           </div>
-          <div class="workflow-meta text-xs text-gray-500 mb-2 leading-snug">
+          <div class="workflow-meta mt-1 mb-2 text-xs text-text-muted leading-snug">
             Attempted: ${window.formatDateTime(ranAt).replace(",", "") || "-"} |
             ${
               displayPromptTitle
@@ -247,7 +247,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
                 : `Prompt: <span class="custom-prompt-preview italic">${window.escapeHtml(displayPromptText.substring(0, 80))}...</span>`
             }
           </div>
-          <div class="workflow-result-text text-sm text-red-700 leading-relaxed whitespace-pre-wrap break-words">${window.escapeHtml(errorMsg)}</div>`;
+          <div class="workflow-result-text text-sm text-danger leading-relaxed whitespace-pre-wrap break-words">${window.escapeHtml(errorMsg)}</div>`;
     workflowPanel.style.display = "block";
     if (contentContainer) contentContainer.classList.add("has-active-workflow");
 

@@ -12,7 +12,7 @@
 
 {% block admin_content %}
     <section class="page-section space-y-6">
-        <p class="text-sm text-gray-600">Deeper dive into how the transcription service is being utilized, focusing on volume, duration, and API choices.</p>
+        <p class="page-intro">Deeper dive into how the transcription service is being utilized, focusing on volume, duration, and API choices.</p>
 
         {# Display error if metrics loading failed #}
         {% if metrics.get('error') %}
@@ -25,8 +25,8 @@
         {# Volume Metrics #}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# Jobs Submitted Table #}
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-gray-700 font-semibold text-lg mb-4">Jobs Submitted</h2> {# Changed h6 to h2, added text-lg #}
+        <div class="table-card p-6">
+            <h2 class="section-title mb-4">Jobs Submitted</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table"> {# Added data-table class for responsive stacking #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -45,8 +45,8 @@
             </div>
         </div>
         {# Minutes Processed Table #}
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-gray-700 font-semibold text-lg mb-4">Minutes Processed</h2> {# Changed h6 to h2, added text-lg #}
+        <div class="table-card p-6">
+            <h2 class="section-title mb-4">Minutes Processed</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table"> {# Added data-table class #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -71,8 +71,8 @@
     <section class="page-section space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# API Usage (Jobs) Table #}
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-gray-700 font-semibold text-lg mb-4">API Usage Distribution (Jobs)</h2> {# Changed h6 to h2, added text-lg #}
+        <div class="table-card p-6">
+            <h2 class="section-title mb-4">API Usage Distribution (Jobs)</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default analytics-table data-table"> {# Added data-table class #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -109,8 +109,8 @@
             </div>
         </div>
         {# API Usage (Minutes) Table #}
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-gray-700 font-semibold text-lg mb-4">API Usage Distribution (Minutes)</h2> {# Changed h6 to h2, added text-lg #}
+        <div class="table-card p-6">
+            <h2 class="section-title mb-4">API Usage Distribution (Minutes)</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default analytics-table data-table"> {# Added data-table class #}
                      <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -153,8 +153,8 @@
     <section class="page-section space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# Language Distribution Table #}
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-gray-700 font-semibold text-lg mb-4">Language Distribution (Top 5 + Auto)</h2> {# Changed h6 to h2, added text-lg #}
+        <div class="table-card p-6">
+            <h2 class="section-title mb-4">Language Distribution (Top 5 + Auto)</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default analytics-table data-table"> {# Added data-table class #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -198,8 +198,8 @@
         </div>
 
         {# Context Prompt & Download Usage Table #}
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-gray-700 font-semibold text-lg mb-4">Feature Usage (%)</h2> {# Changed h6 to h2, added text-lg #}
+        <div class="table-card p-6">
+            <h2 class="section-title mb-4">Feature Usage (%)</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 {% set periods = ['24h', '7d', '30d', 'all'] %}
                  <table class="table-shell min-w-full divide-y divide-border-default analytics-table data-table"> {# Added data-table class #}
@@ -269,8 +269,8 @@
     {# Workflow Usage #}
     <section class="page-section space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="md:col-span-2 bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-gray-700 font-semibold text-lg mb-4">Workflow Usage</h2> {# Changed h6 to h2, added text-lg #}
+        <div class="md:col-span-2 table-card p-6">
+            <h2 class="section-title mb-4">Workflow Usage</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default workflow-table data-table"> {# Added data-table class #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">

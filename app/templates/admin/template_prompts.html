@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block admin_content %}
-    <p class="text-sm text-text-muted mb-6">Create and manage reusable workflow templates.</p>
+    <p class="page-intro">Create and manage reusable workflow templates.</p>
 
     {% set label_color_class_map = {
         '#ffffff': 'bg-workflow-label-default',
@@ -85,14 +85,14 @@
                         <td data-label="Actions" class="px-6 py-4 whitespace-nowrap text-sm font-medium block sm:table-cell text-right sm:text-left relative">
                             <div class="flex items-center sm:justify-start justify-end space-x-1"> {# Reduced space-x-2 to space-x-1 #}
                                 <a href="{{ url_for('admin_panel.edit_template_workflow', prompt_id=template.id) }}"
-                                   class="p-1.5 rounded-full text-text-muted hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary"
+                                   class="icon-btn"
                                    title="Edit Workflow Template">
                                     <i class="material-icons text-base">edit</i>
                                 </a>
                                 <form method="POST" action="{{ url_for('admin_panel.delete_template_workflow', prompt_id=template.id) }}" class="delete-template-form inline">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                     <button type="submit"
-                                            class="p-1.5 rounded-full text-text-muted hover:text-danger hover:bg-danger/10 focus:outline-none focus:ring-2 focus:ring-danger"
+                                            class="icon-btn icon-btn--danger"
                                             data-prompt-id="{{ template.id }}" data-prompt-title="{{ template.title | e }}"
                                             title="Delete Workflow Template">
                                         <i class="material-icons text-base">delete</i>

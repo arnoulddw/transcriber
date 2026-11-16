@@ -1,7 +1,7 @@
 <!-- app/templates/layout/components/auth_card.html -->
 {% import "layout/components/form_layout.html" as form_layout %}
 
-{% macro render(title, description=None, title_classes='mt-2 text-center text-2xl font-semibold text-text-strong', divider_margin_class='mt-4') -%}
+{% macro render(title, description=None, title_classes='page-title text-center', divider_margin_class='mt-4') -%}
 {% set rendered_caller %}
     {% if caller is defined %}
         {{ caller() }}
@@ -15,9 +15,9 @@
     title_tag='h2',
     title_classes=title_classes,
     description_classes='mt-2 text-center text-sm text-text-muted',
-    divider=True,
+    divider=False,
     divider_classes=divider_margin_class ~ ' surface-divider',
-    body_classes='space-y-6',
+    body_classes='mt-8 space-y-6',
     surface=True,
     padding_classes='p-8'
 ) %}

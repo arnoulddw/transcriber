@@ -325,8 +325,7 @@ async function _handleSubmitWorkflow() {
         }
 
         if (applyWorkflowBtn && removeWorkflowBtn) {
-            applyWorkflowBtn.classList.remove('bg-white', 'text-gray-700', 'hover:bg-gray-50', 'border-gray-300');
-            applyWorkflowBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700', 'border-green-600');
+            applyWorkflowBtn.classList.add('is-active');
             removeWorkflowBtn.classList.remove('hidden');
         }
 
@@ -387,7 +386,7 @@ async function _handleSubmitWorkflow() {
         contentContainer = historyItem?.querySelector(".history-item-content");
 
     if (workflowPanel) {
-        workflowPanel.className = "workflow-panel w-full lg:w-auto mt-4 lg:mt-0 p-4 border border-gray-300 rounded-md bg-gray-50 relative pb-11 flex items-center justify-center min-h-[150px]";
+        workflowPanel.className = "workflow-panel flex items-center justify-center min-h-[150px]";
         workflowPanel.innerHTML = `
             <div class="flex flex-col items-center text-gray-500">
               <span class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mb-2"></span>
@@ -426,7 +425,7 @@ async function _handleSubmitWorkflow() {
         } else {
             window.logger.error(submitLog, "API response successful but missing operation_id or startWorkflowPolling not available.");
             if (workflowPanel) {
-                workflowPanel.className = "workflow-panel w-full lg:w-auto mt-4 lg:mt-0 p-4 border border-red-500 rounded-md bg-red-50 relative pb-11 text-center";
+                workflowPanel.className = "workflow-panel is-error text-center";
                 workflowPanel.innerHTML = `<p class="text-red-700">Error: Could not track workflow status.</p>`;
             }
         }
@@ -434,7 +433,7 @@ async function _handleSubmitWorkflow() {
         window.logger.error(submitLog, "Error starting workflow:", error);
         window.Workflow.showToast(`Error: ${error.message}`, "error");
         if (workflowPanel) {
-            workflowPanel.className = "workflow-panel w-full lg:w-auto mt-4 lg:mt-0 p-4 border border-red-500 rounded-md bg-red-50 relative pb-11 text-center";
+            workflowPanel.className = "workflow-panel is-error text-center";
             workflowPanel.innerHTML = `<p class="text-red-700">Workflow failed to start.</p>`;
             workflowPanel.style.display = "block";
             if (startButtonActionDiv) startButtonActionDiv.style.display = "block";

@@ -456,6 +456,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+// Desktop sidebar: collapsible to an icon rail, expanded by default, remembered per browser.
+document.addEventListener('DOMContentLoaded', function() {
+    const collapseButton = document.getElementById('admin-sidebar-collapse');
+    if (!collapseButton) return;
+    const root = document.documentElement;
+    function syncCollapseButton() {
+        const collapsed = root.classList.contains('admin-collapsed');
+        collapseButton.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        const label = collapsed ? 'Expand sidebar' : 'Collapse sidebar';
+        collapseButton.setAttribute('aria-label', label);
+        collapseButton.setAttribute('title', label);
+        const icon = collapseButton.querySelector('.material-icons');
+        if (icon) icon.textContent = collapsed ? 'last_page' : 'first_page';
+    }
+    collapseButton.addEventListener('click', function() {
+        const collapsed = root.classList.toggle('admin-collapsed');
+        try { localStorage.setItem('compass-admin-sidebar', collapsed ? 'collapsed' : 'expanded'); } catch (e) { /* storage unavailable */ }
+        syncCollapseButton();
+    });
+    syncCollapseButton();
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     const adminSidenavButton = document.getElementById('admin-sidenav-button');
     const adminSidebar = document.getElementById('admin-sidebar');

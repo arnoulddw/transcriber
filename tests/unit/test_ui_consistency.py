@@ -76,9 +76,11 @@ def test_index_template_has_first_run_empty_state_warning_with_manage_api_keys_l
     # First-run blank state: warning rendered only when no models are available.
     assert "{% if not transcription_models %}" in index_template
     assert "ui.alert(level='warning', title=_('No transcription models configured')" in index_template
-    # Direct navigation: the warning carries a link that opens Manage API Keys.
+    # Direct navigation: "Manage API Keys" inside the sentence is the link
+    # (no separate, repeated "Go to Manage API Keys" line).
     assert "id=\"emptyStateApiKeysLink\"" in index_template
-    assert "_('Go to Manage API Keys')" in index_template
+    assert "_('Add a model in %(link)s to start transcribing.', link=manage_keys_link)" in index_template
+    assert "Go to Manage API Keys" not in index_template
     assert "allow_api_key_management" in index_template
     # The link is wired to the existing modal opener.
     assert "window.openApiKeyModalDialog" in index_template
@@ -327,7 +329,8 @@ def test_api_key_entries_render_explicit_model_purpose_badges():
     service = Path("app/services/user_service.py").read_text(encoding="utf-8")
 
     assert "MODEL_PURPOSE_LABELS" in script
-    assert "badge badge-muted text-xs" in script
+    # Lilac design language: purpose tags are small tonal (lilac) badges.
+    assert "badge badge-primary" in script
     assert "badge.textContent = label" in script
     assert "textContent = `[${label}]`" not in script
     assert "model_purposes" in service
@@ -343,7 +346,8 @@ def test_api_key_modal_uses_provider_specific_model_help_and_mobile_purpose_layo
     assert "Enter the OpenAI model name only, without the vendor prefix." in script
     assert "Enter the Google model name only, without the vendor prefix." in script
     assert "Enter the OpenRouter model as vendor/model." in script
-    assert "grid grid-cols-1 gap-2 sm:grid-cols-3" in template
+    # Segmented control: stacks on mobile, three columns from sm.
+    assert "grid grid-cols-1 gap-1 rounded-xl bg-surface-muted p-1 sm:grid-cols-3" in template
     assert "Usage tags:" not in template
     assert "Choose whether this model should handle" not in template
     assert "Use the provider model name" not in template
