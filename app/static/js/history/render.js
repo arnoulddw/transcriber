@@ -2,8 +2,19 @@
 // Rendering helpers for transcription history panels and workflow UI additions.
 
 function formatApiLabel(apiUsed, apiModel) {
-    const base = (window.API_NAME_MAP_FRONTEND && window.API_NAME_MAP_FRONTEND[apiUsed]) || apiUsed || 'Unknown API';
-    return apiModel && apiModel !== base ? `${base} · ${apiModel}` : base;
+    const mapped = window.API_NAME_MAP_FRONTEND && window.API_NAME_MAP_FRONTEND[apiUsed];
+    const base = String(mapped || apiUsed || 'Unknown API').trim();
+    const model = String(apiModel || '').trim();
+    if (!model) return base;
+    // Compare without case, whitespace or a "provider:" prefix so a display
+    // name that already is (or contains) the model slug isn't repeated.
+    const normalize = (value) => value.replace(/^[a-z0-9_-]+:/i, '').replace(/\s+/g, '').toLowerCase();
+    const normBase = normalize(base);
+    const normModel = normalize(model);
+    if (!normModel || normBase === normModel || normBase.includes(normModel)) {
+        return mapped ? base : model;
+    }
+    return `${base} · ${model}`;
 }
 
 window.formatApiLabel = formatApiLabel;

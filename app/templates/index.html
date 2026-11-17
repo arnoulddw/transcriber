@@ -77,13 +77,13 @@
             {# First-run empty state: no usable keys/models yet (spans both columns) #}
             {% if not transcription_models %}
                 {% if user_permissions.allow_api_key_management %}
-                    {% call ui.alert(level='warning', title=_('No transcription models configured'), extra_classes='') %}
+                    {% call ui.alert(level='warning', title=_('No transcription models configured'), extra_classes='js-no-models-empty-state') %}
                         {# The link sits inside the sentence instead of being repeated below it #}
                         {% set manage_keys_link %}<a href="#" id="emptyStateApiKeysLink" class="inline-action">{{ _('Manage API Keys') }}</a>{% endset %}
                         <p>{{ _('Add a model in %(link)s to start transcribing.', link=manage_keys_link) | safe }}</p>
                     {% endcall %}
                 {% else %}
-                    {% call ui.alert(level='warning', title=_('No transcription models configured'), extra_classes='') %}
+                    {% call ui.alert(level='warning', title=_('No transcription models configured'), extra_classes='js-no-models-empty-state') %}
                         <p>{{ _('No transcription models are available yet. Contact your administrator to enable them.') }}</p>
                     {% endcall %}
                 {% endif %}
