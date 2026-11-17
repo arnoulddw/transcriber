@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   test-javascript:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
@@ -36,7 +36,7 @@ jobs:
         run: node --check app/static/js/progress_timeline.js
 
   test-python:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     services:
       mysql-test:
@@ -91,7 +91,7 @@ jobs:
   build-and-push:
     needs: [test-javascript, test-python]
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
