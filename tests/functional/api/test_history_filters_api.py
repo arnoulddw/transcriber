@@ -135,7 +135,7 @@ def test_index_renders_filters_count_and_keeps_filters_in_page_links(app, logged
     assert "en-only.mp3" not in page
     # Page links and chip menus keep the active filter.
     assert "/?lang=fr&amp;page=2#history" in page
-    assert page.count("fr-") == 10  # default rows per page
+    assert page.count("fr-") == 5  # default rows per page
 
     empty = client.get("/?lang=fr&model=assemblyai").get_data(as_text=True)
     assert "No transcriptions match these filters." in empty
@@ -148,7 +148,7 @@ def test_rows_per_page_is_remembered_in_the_session(app, logged_in_client_with_p
     for i in range(30):
         _create(app, user.id, filename=f"rowfile-{i:02d}.mp3")
 
-    assert client.get("/").get_data(as_text=True).count("rowfile-") == 10
+    assert client.get("/").get_data(as_text=True).count("rowfile-") == 5
     first = client.get("/?per_page=25").get_data(as_text=True)
     assert first.count("rowfile-") == 25
     assert '<option value="25" selected>' in first

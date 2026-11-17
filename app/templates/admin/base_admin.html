@@ -26,8 +26,6 @@
     </button>
 {% endblock mobile_trigger %}
 
-{% block brand_logo_adjust_class %}admin-brand lg:ml-64{% endblock %}
-
 {% block content %}
 {% if current_user.is_authenticated and current_user.role and current_user.role.access_admin_panel %}
 

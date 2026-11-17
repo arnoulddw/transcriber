@@ -3,7 +3,7 @@
 
 function formatApiLabel(apiUsed, apiModel) {
     const base = (window.API_NAME_MAP_FRONTEND && window.API_NAME_MAP_FRONTEND[apiUsed]) || apiUsed || 'Unknown API';
-    return apiModel ? `${base} · ${apiModel}` : base;
+    return apiModel && apiModel !== base ? `${base} · ${apiModel}` : base;
 }
 
 window.formatApiLabel = formatApiLabel;

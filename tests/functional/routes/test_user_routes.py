@@ -3,6 +3,7 @@
 
 import pytest
 from flask import url_for
+from werkzeug.datastructures import MultiDict
 from app.models.user import User
 
 # --- Test User Profile Endpoints ---
@@ -150,6 +151,26 @@ def test_save_and_delete_api_key(logged_in_client_with_permissions):
     response = logged_in_client_with_permissions.get(url_for('user_settings.get_api_key_status'))
     assert response.status_code == 200
     assert response.get_json()['openai'] is False
+
+
+def test_save_api_key_with_several_purposes(logged_in_client_with_permissions):
+    form_data = MultiDict([
+        ('service', 'openai'),
+        ('api_key', 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
+        ('model_name', 'gpt-transcribe'),
+        ('model_purpose', 'transcription'),
+        ('model_purpose', 'live'),
+    ])
+    response = logged_in_client_with_permissions.post(
+        url_for('user_settings.save_api_key'), data=form_data
+    )
+    assert response.status_code == 200
+
+    status = logged_in_client_with_permissions.get(
+        url_for('user_settings.get_api_key_status')
+    ).get_json()
+    [entry] = status['provider_keys']['openai']
+    assert set(entry['model_purposes']) == {'transcription', 'live'}
 
 
 def test_save_and_delete_openrouter_api_key(logged_in_client_with_permissions):

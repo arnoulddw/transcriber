@@ -40,8 +40,8 @@ DATE_PRESETS: Dict[str, int] = {
 DURATION_STEP = 5
 DURATION_MAX = 180  # The slider's last stop reads "3 h+" (no upper bound).
 
-PER_PAGE_OPTIONS: Tuple[int, ...] = (10, 25, 50)
-DEFAULT_PER_PAGE = 10
+PER_PAGE_OPTIONS: Tuple[int, ...] = (5, 10, 25, 50)
+DEFAULT_PER_PAGE = 5
 
 FILTER_PARAM_NAMES: Tuple[str, ...] = ('date', 'date_from', 'date_to', 'model', 'lang', 'dur_min', 'dur_max', 'workflow')
 

@@ -258,14 +258,24 @@ def save_api_key():
         service = form.service.data
         api_key = form.api_key.data
         logging.info(f"{log_prefix} Attempting to save API key for service '{service}'.")
+        # The modal sends one model_purpose value per checked box; JSON clients
+        # send a single value. Each purpose is saved in turn and the key row
+        # accumulates them.
+        raw_purposes = [] if request.is_json else request.form.getlist('model_purpose')
+        purposes = list(dict.fromkeys(p for p in raw_purposes if p)) or [
+            form.model_purpose.data or form.openrouter_model_purpose.data
+        ]
+        if any(p not in ('transcription', 'llm', 'live') for p in purposes):
+            return jsonify({'error': _('Please choose a valid model purpose.')}), 400
         try:
-            user_service.save_user_api_key(
-                user_id,
-                service,
-                api_key,
-                model_name=form.model_name.data or form.openrouter_model.data,
-                model_purpose=form.model_purpose.data or form.openrouter_model_purpose.data,
-            )
+            for purpose in purposes:
+                user_service.save_user_api_key(
+                    user_id,
+                    service,
+                    api_key,
+                    model_name=form.model_name.data or form.openrouter_model.data,
+                    model_purpose=purpose,
+                )
             logging.info(f"{log_prefix} API key for service '{service}' saved successfully.")
             return jsonify({'message': _('API key for %(service)s saved successfully.', service=service)}), 200
         except (UserNotFoundError, ValueError, DatabaseUpdateError, ApiKeyManagementError) as e:
