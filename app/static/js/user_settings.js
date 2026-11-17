@@ -735,13 +735,17 @@ function handleApiKeySave(event) {
     const submitButton = form.querySelector('button[type="submit"]');
 
     const service = serviceSelect?.value || '';
-    const purpose = document.querySelector('input[name="model_purpose"]:checked')?.value || 'transcription';
+    const purposes = Array.from(document.querySelectorAll('input[name="model_purpose"]:checked'), input => input.value);
     const modelName = modelNameInput?.value.trim() || '';
     const apiKey = keyInput?.value.trim() || '';
     const isMaskedKey = /^\*{3}.{3}$/.test(apiKey);
 
     if (!service) {
         window.showNotification('Please select an API service.', 'warning', 4000, false);
+        return;
+    }
+    if (!purposes.length) {
+        window.showNotification('Please choose at least one use for this model.', 'warning', 4000, false);
         return;
     }
     if (!modelName && service === 'openrouter') {
@@ -769,8 +773,8 @@ function handleApiKeySave(event) {
     // Keep both names in the request while older API clients migrate.
     formData.set('model_name', modelName);
     formData.set('openrouter_model', modelName);
-    formData.set('model_purpose', purpose);
-    formData.set('openrouter_model_purpose', purpose);
+    // FormData(form) already carries one model_purpose entry per checked box.
+    formData.set('openrouter_model_purpose', purposes[0]);
 
     fetch('/api/user/keys', {
         method: 'POST',
@@ -796,8 +800,9 @@ function handleApiKeySave(event) {
         openRouterSuggestedMask = '';
         serviceSelect.value = '';
         if (modelNameInput) modelNameInput.value = '';
-        const transcriptionPurpose = document.querySelector('input[name="model_purpose"][value="transcription"]');
-        if (transcriptionPurpose) transcriptionPurpose.checked = true;
+        document.querySelectorAll('input[name="model_purpose"]').forEach(input => {
+            input.checked = input.value === 'transcription';
+        });
         updateModelSettings(serviceSelect.value);
         return fetchApiKeyStatus()
             .then(() => refreshModelCatalogGlobals());

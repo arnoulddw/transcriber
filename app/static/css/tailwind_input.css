@@ -460,15 +460,13 @@ These are processed by PostCSS with the Tailwind plugin.
         html.admin-collapsed .admin-nav-sep {
             @apply mx-2;
         }
-        html.admin-collapsed .admin-main,
-        html.admin-collapsed .admin-brand {
+        html.admin-collapsed .admin-main {
             margin-left: theme('spacing.rail');
         }
         html.admin-collapsed body.admin-panel .flash-messages-wrapper {
             padding-left: theme('spacing.rail');
         }
-        .admin-main,
-        .admin-brand {
+        .admin-main {
             transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1);
         }
     }
@@ -505,6 +503,9 @@ These are processed by PostCSS with the Tailwind plugin.
     }
     .history-item {
         @apply -mx-4 rounded-card transition-colors hover:bg-gray-50;
+    }
+    .history-item.is-pinned {
+        @apply bg-primary-tint hover:bg-primary-soft;
     }
     .history-meta {
         @apply mt-0.5 text-xs text-text-muted;

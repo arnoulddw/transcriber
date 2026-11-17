@@ -18,7 +18,7 @@
             {{ _('Enter your personal API keys for the transcription and workflow services. These keys are stored securely and used only for your transcription requests.') }}
             {{ _('You can get your keys here:') }}
             <ul class="list-disc list-inside ml-1 mt-1 space-y-0.5">
-                <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="font-medium text-primary hover:underline">OpenAI</a></li>
+                <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">OpenAI</a></li>
                 <li><a href="https://www.assemblyai.com/dashboard/signup" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">AssemblyAI</a></li>
                 <li><a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google</a></li>
                 <li><a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">OpenRouter</a></li>
@@ -48,17 +48,17 @@
             </div>
             <fieldset>
                 <legend class="form-label">{{ _('Use this model for') }}</legend>
-                <div id="modelPurpose" class="mt-1 grid grid-cols-1 gap-1 rounded-xl bg-surface-muted p-1 sm:grid-cols-3" role="radiogroup" aria-label="{{ _('Model purpose') }}">
+                <div id="modelPurpose" class="mt-1 grid grid-cols-1 gap-1 rounded-xl bg-surface-muted p-1 sm:grid-cols-3" role="group" aria-label="{{ _('Model purpose') }}">
                     <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-segment px-2 py-1.5 text-sm font-medium text-text-muted transition hover:text-text-strong has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-primary has-[:checked]:shadow-raised has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-primary/20">
-                        <input class="peer sr-only" type="radio" name="model_purpose" value="transcription" checked>
+                        <input class="peer sr-only" type="checkbox" name="model_purpose" value="transcription" checked>
                         <span class="w-full px-2 py-0.5 text-center leading-5">{{ _('Transcription') }}</span>
                     </label>
                     <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-segment px-2 py-1.5 text-sm font-medium text-text-muted transition hover:text-text-strong has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-primary has-[:checked]:shadow-raised has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-primary/20">
-                        <input class="peer sr-only" type="radio" name="model_purpose" value="live">
+                        <input class="peer sr-only" type="checkbox" name="model_purpose" value="live">
                         <span class="w-full px-2 py-0.5 text-center leading-5">{{ _('Live') }}</span>
                     </label>
                     <label class="flex min-w-0 cursor-pointer items-center justify-center rounded-segment px-2 py-1.5 text-sm font-medium text-text-muted transition hover:text-text-strong has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-primary has-[:checked]:shadow-raised has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-primary/20">
-                        <input class="peer sr-only" type="radio" name="model_purpose" value="llm">
+                        <input class="peer sr-only" type="checkbox" name="model_purpose" value="llm">
                         <span class="w-full px-2 py-0.5 text-center leading-5">{{ _('LLM') }}</span>
                     </label>
                 </div>

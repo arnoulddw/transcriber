@@ -317,9 +317,9 @@ def test_admin_pricing_route_only_passes_the_canonical_options_context():
 def test_live_purpose_keeps_the_entered_model_name():
     script = Path("app/static/js/user_settings.js").read_text(encoding="utf-8")
 
-    assert "const purpose = document.querySelector('input[name=\"model_purpose\"]:checked')?.value || 'transcription';" in script
+    assert "const purposes = Array.from(document.querySelectorAll('input[name=\"model_purpose\"]:checked'), input => input.value);" in script
     assert "modelNameInput.value = liveModelSelect.value" not in script
-    assert "formData.set('model_purpose', purpose);" in script
+    assert "formData.set('openrouter_model_purpose', purposes[0]);" in script
     assert "formData.set('model_name', modelName);" in script
 
 
