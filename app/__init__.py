@@ -395,6 +395,20 @@ def create_app(config_class=Config) -> Flask:
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
         return response
 
+    # Cache-bust every static asset URL so browsers pick up new JS/CSS after a
+    # deploy. Uses the build timestamp, or the file's mtime when none is set.
+    @app.url_defaults
+    def add_static_version(endpoint, values):
+        if endpoint != 'static' or 'v' in values or 'filename' not in values:
+            return
+        version = app.config.get('BUILD_TIMESTAMP')
+        if not version:
+            try:
+                version = int(os.stat(os.path.join(app.static_folder, values['filename'])).st_mtime)
+            except OSError:
+                return
+        values['v'] = version
+
     # Register Context Processors
     @app.context_processor
     def inject_global_vars():
