@@ -4,7 +4,7 @@
 {% import "layout/components/form_layout.html" as form_layout %}
 {% import "layout/components/ui_helpers.html" as ui %}
 
-{% block title %}{{ _('Compass Platform') }}{% endblock %}
+{% block title %}{{ app_name }}{% endblock %}
 
 {% block content_container_class %}mx-auto w-full max-w-page px-4 sm:px-6{% endblock %}
 
@@ -232,8 +232,54 @@
 
         {# Filter chips. Hidden by default; shown open while filters are applied so the user sees them. #}
         <div class="filter-row" id="historyFilters" role="group" aria-label="{{ _('Filter transcription history') }}"{% if not hf.is_active %} hidden{% endif %}>
-            {% set date_label = (history_date_presets | selectattr('value', 'equalto', hf.date) | map(attribute='label') | first) if hf.date else '' %}
-            {{ filter_chip('date', _('Date'), date_label, _('Any time'), history_date_presets, hf.date, 'date') }}
+            {# Date: quick presets plus a custom From/To range in one popover #}
+            <span class="filter-wrap">
+                {% if hf.has_date %}
+                <span class="filter-chip is-active">
+                    <button type="button" class="filter-chip__body" data-filter-trigger
+                            aria-haspopup="dialog" aria-expanded="false" aria-controls="historyDatePop">
+                        <b>{{ _('Date') }}</b>{{ history_date_label }}
+                    </button>
+                    <a href="{{ history_url(date=None, date_from=None, date_to=None) }}" class="filter-chip__remove"
+                       aria-label="{{ _('Remove filter: %(name)s', name=_('Date')) }}" title="{{ _('Remove filter') }}">
+                        <i class="material-icons" aria-hidden="true">close</i>
+                    </a>
+                </span>
+                {% else %}
+                <button type="button" class="filter-chip" data-filter-trigger
+                        aria-haspopup="dialog" aria-expanded="false" aria-controls="historyDatePop">
+                    <b>{{ _('Date') }}</b>{{ _('Any time') }}<i class="material-icons" aria-hidden="true">expand_more</i>
+                </button>
+                {% endif %}
+                <div class="filter-pop filter-pop--date shadow-menu" id="historyDatePop" role="dialog" aria-label="{{ _('Date filter') }}" hidden>
+                    <div class="date-presets" role="group" aria-label="{{ _('Quick ranges') }}">
+                        <a href="{{ history_url(date=None, date_from=None, date_to=None) }}" class="date-preset"
+                           aria-current="{{ 'false' if hf.has_date else 'true' }}">{{ _('Any time') }}</a>
+                        {% for option in history_date_presets %}
+                        <a href="{{ history_url(date=option.value, date_from=None, date_to=None) }}" class="date-preset"
+                           aria-current="{{ 'true' if option.value == hf.date else 'false' }}">{{ option.label }}</a>
+                        {% endfor %}
+                    </div>
+                    <div class="filter-pop__head"><span>{{ _('Custom range') }}</span><span class="filter-pop__value" id="historyDateReadout"></span></div>
+                    <div class="date-range">
+                        <label class="date-range__field">
+                            <span>{{ _('From') }}</span>
+                            <input type="date" id="historyDateFrom" class="input-control"
+                                   value="{{ hf.date_from.isoformat() if hf.date_from else '' }}" max="{{ history_today }}">
+                        </label>
+                        <label class="date-range__field">
+                            <span>{{ _('To') }}</span>
+                            <input type="date" id="historyDateTo" class="input-control"
+                                   value="{{ hf.date_to.isoformat() if hf.date_to else '' }}" max="{{ history_today }}">
+                        </label>
+                    </div>
+                    <p class="date-range__hint">{{ _('Leave one side empty for an open-ended range.') }}</p>
+                    <div class="filter-pop__foot">
+                        <button type="button" class="filter-link" id="historyDateReset">{{ _('Reset') }}</button>
+                        <button type="button" class="ui-btn ui-btn--primary ui-btn--sm" id="historyDateApply">{{ _('Apply') }}</button>
+                    </div>
+                </div>
+            </span>
 
             {% set model_options = [] %}
             {% for option in history_filter_options.models %}

@@ -384,6 +384,31 @@ These are processed by PostCSS with the Tailwind plugin.
     .filter-pop__foot {
         @apply flex items-center justify-between border-t border-border-default pt-3;
     }
+    /* Date popover: preset pills above a From/To custom range */
+    .filter-pop--date {
+        @apply w-[352px];
+    }
+    .date-presets {
+        @apply flex flex-wrap gap-1.5 border-b border-border-default pb-3;
+    }
+    .date-preset {
+        @apply inline-flex h-8 items-center rounded-full bg-surface-muted px-3 text-xs font-medium text-text-strong hover:bg-primary-soft hover:text-primary focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+    }
+    .date-preset[aria-current="true"] {
+        @apply bg-primary text-white hover:bg-primary hover:text-white;
+    }
+    .date-range {
+        @apply grid grid-cols-2 gap-2;
+    }
+    .date-range__field {
+        @apply flex min-w-0 flex-col gap-1 text-xs font-medium text-text-muted;
+    }
+    .date-range__field .input-control {
+        @apply px-2 tabular-nums;
+    }
+    .date-range__hint {
+        @apply -mt-1 text-xs text-text-muted;
+    }
     /* Two-handle range slider: two stacked range inputs, only the thumbs take pointer events */
     .range-dual {
         @apply relative h-7;

@@ -8,7 +8,7 @@
     const DURATION_MAX = 180;
     const DURATION_STEP = 5;
     // Filters that a change of page size or filter must keep.
-    const FILTER_PARAMS = ['date', 'model', 'lang', 'dur_min', 'dur_max', 'workflow'];
+    const FILTER_PARAMS = ['date', 'date_from', 'date_to', 'model', 'lang', 'dur_min', 'dur_max', 'workflow'];
 
     function formatDuration(minutes, max) {
         const top = max || DURATION_MAX;
@@ -67,6 +67,26 @@
         };
     }
 
+    // URL changes for a custom date range (YYYY-MM-DD strings, either may be
+    // empty). Reversed bounds are swapped; a custom range replaces the preset.
+    function dateRangeChanges(from, to) {
+        let lo = from || null;
+        let hi = to || null;
+        if (lo && hi && lo > hi) {
+            const tmp = lo; lo = hi; hi = tmp;
+        }
+        return { date: null, date_from: lo, date_to: hi };
+    }
+
+    // Number of whole days covered by an inclusive range, or null if open-ended.
+    function dateRangeDays(from, to) {
+        if (!from || !to) return null;
+        const a = Date.parse(from + 'T00:00:00Z');
+        const b = Date.parse(to + 'T00:00:00Z');
+        if (isNaN(a) || isNaN(b)) return null;
+        return Math.abs(b - a) / 86400000 + 1;
+    }
+
     // Filter params of the current page, for the history search request.
     function activeFilterParams(search) {
         const params = new URLSearchParams(search || '');
@@ -87,6 +107,8 @@
         clampRange,
         buildHistorySearch,
         durationChanges,
+        dateRangeChanges,
+        dateRangeDays,
         activeFilterParams,
     };
 
@@ -139,7 +161,7 @@
                 pop.hidden = !open;
                 trigger.setAttribute('aria-expanded', String(open));
                 if (open) {
-                    const first = pop.querySelector('[aria-checked="true"], a, input');
+                    const first = pop.querySelector('[aria-checked="true"], [aria-current="true"], a, input');
                     if (first) first.focus();
                 }
             });
@@ -190,6 +212,44 @@
                 draw('max');
             });
             draw('max');
+        }
+
+        // --- Custom date range ---
+        const datePop = doc.getElementById('historyDatePop');
+        if (datePop) {
+            const from = doc.getElementById('historyDateFrom');
+            const to = doc.getElementById('historyDateTo');
+            const readout = doc.getElementById('historyDateReadout');
+            const apply = doc.getElementById('historyDateApply');
+            const today = to.max;
+
+            function syncDates() {
+                // Each picker can't cross the other one (or go past today).
+                to.min = from.value || '';
+                from.max = to.value || today;
+                const days = dateRangeDays(from.value, to.value);
+                readout.textContent = days ? (days === 1 ? '1 day' : days + ' days') : '';
+                apply.disabled = !from.value && !to.value;
+            }
+            function applyDates() {
+                if (apply.disabled) return;
+                navigate(dateRangeChanges(from.value, to.value));
+            }
+            [from, to].forEach(function (input) {
+                input.addEventListener('input', syncDates);
+                input.addEventListener('change', syncDates);
+                input.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') { event.preventDefault(); applyDates(); }
+                });
+            });
+            apply.addEventListener('click', applyDates);
+            doc.getElementById('historyDateReset').addEventListener('click', function () {
+                from.value = '';
+                to.value = '';
+                syncDates();
+                from.focus();
+            });
+            syncDates();
         }
 
         // --- Rows per page ---

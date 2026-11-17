@@ -41,6 +41,9 @@ class Config:
     if DEPLOYMENT_MODE not in ['single', 'multi']:
         raise ValueError(f"Invalid DEPLOYMENT_MODE: '{DEPLOYMENT_MODE}'. Must be 'single' or 'multi'.")
 
+    # --- Branding (internal; intentionally undocumented) ---
+    COMPASS_BRANDING = os.environ.get('COMPASS_BRANDING', '').strip().lower() in ('1', 'true', 'yes', 'on')
+
     # --- Timezone Setting ---
     TZ = os.environ.get('TZ', 'UTC')
     BUILD_TIMESTAMP = _load_build_timestamp()

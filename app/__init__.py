@@ -563,6 +563,8 @@ def create_app(config_class=Config) -> Flask:
 
         return dict(
             csp_nonce=getattr(g, 'csp_nonce', ''),
+            compass_branding=bool(app.config.get('COMPASS_BRANDING')),
+            app_name='Compass Platform' if app.config.get('COMPASS_BRANDING') else 'Transcriber',
             deployment_mode=app.config['DEPLOYMENT_MODE'],
             is_multi_user=is_multi,
             current_user=user,

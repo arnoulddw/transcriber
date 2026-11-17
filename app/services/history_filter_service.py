@@ -11,6 +11,7 @@ preference, so it is deliberately not stored on the user record.
 from __future__ import annotations
 
 import logging
+from datetime import date
 from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Tuple
 
 from app.models.transcription_utils.history_filters import (
@@ -110,6 +111,29 @@ def date_preset_options(gettext) -> List[Dict[str, str]]:
         '1y': gettext('Last 12 months'),
     }
     return [{'value': key, 'label': labels[key]} for key in DATE_PRESETS]
+
+
+def date_filter_label(filters: HistoryFilters, presets: List[Dict[str, str]], gettext, format_day) -> str:
+    """Chip text for the active date filter (preset label or custom range), or ''.
+
+    ``format_day`` turns a ``date`` into display text; the year is left out when
+    both ends fall in the current year so the chip stays short.
+    """
+    if filters.has_date_range:
+        lo, hi = filters.date_from, filters.date_to
+        this_year = date.today().year
+        with_year = any(d and d.year != this_year for d in (lo, hi))
+        fmt = 'medium' if with_year else 'd MMM'
+        if lo and hi:
+            if lo == hi:
+                return format_day(lo, fmt)
+            return f"{format_day(lo, fmt)} – {format_day(hi, fmt)}"
+        if lo:
+            return gettext('Since %(day)s', day=format_day(lo, fmt))
+        return gettext('Until %(day)s', day=format_day(hi, fmt))
+    if filters.date:
+        return next((p['label'] for p in presets if p['value'] == filters.date), '')
+    return ''
 
 
 def resolve_session_per_page(args: Mapping[str, Any], session: MutableMapping[str, Any]) -> Tuple[int, bool]:

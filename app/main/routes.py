@@ -5,7 +5,8 @@ import logging
 import math
 from flask import render_template, current_app, g, abort, request, redirect, session, url_for
 from flask_login import current_user, login_required
-from flask_babel import gettext as _
+from flask_babel import gettext as _, format_date
+from datetime import date
 
 # Import the main blueprint defined in app/main/__init__.py
 from . import main_bp
@@ -206,6 +207,7 @@ def index():
         logging.error(f"{log_prefix} Error fetching paginated transcriptions: {e}", exc_info=True)
 
     filter_query = history_filters.to_query()
+    date_presets = history_filter_service.date_preset_options(_)
 
     def history_url(**changes):
         """URL of the history with the current filters, changed by ``changes``.
@@ -227,7 +229,11 @@ def index():
         history_filters=history_filters,
         history_filter_query=filter_query,
         history_filter_options=filter_options,
-        history_date_presets=history_filter_service.date_preset_options(_),
+        history_date_presets=date_presets,
+        history_date_label=history_filter_service.date_filter_label(
+            history_filters, date_presets, _, format_date
+        ),
+        history_today=date.today().isoformat(),
         history_duration_max=DURATION_MAX,
         history_duration_step=DURATION_STEP,
         history_per_page=per_page,

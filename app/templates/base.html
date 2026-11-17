@@ -6,8 +6,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{% block title %}{{ _('Compass Platform') }}{% endblock %}</title>
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    {% if compass_branding %}
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2302566C'/%3E%3Ctext x='16' y='22' font-size='18' text-anchor='middle' fill='%23fff' font-family='Arial, sans-serif'%3EC%3C/text%3E%3C/svg%3E">
+    {% else %}
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235A2BD6'/%3E%3Cg stroke='%23fff' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M8 13.5v5M12.5 10v12M17 7.5v17M21.5 11v10M26 14v4'/%3E%3C/g%3E%3C/svg%3E">
+    {% endif %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -41,9 +45,13 @@
                         {% endblock mobile_trigger %}
                         <a href="{{ url_for('main.index') }}" class="inline-flex items-center gap-2.5 text-base font-semibold tracking-snug text-text-strong {% block brand_logo_adjust_class %}{% endblock %}">
                             <span class="inline-flex h-7 w-7 flex-none items-center justify-center rounded-full bg-primary text-white" aria-hidden="true">
+                                {% if compass_branding %}
                                 <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 8.5 13.2 13.2 8.5 15.5l2.3-4.7z" fill="currentColor"/></svg>
+                                {% else %}
+                                <svg viewBox="0 0 24 24" class="h-[16px] w-[16px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 10.5v3"/></svg>
+                                {% endif %}
                             </span>
-                            <span>{{ _('Compass Platform') }}</span>
+                            <span>{{ app_name }}</span>
                         </a>
                     </div>
                     <div class="flex items-center">
@@ -223,7 +231,7 @@
     <footer class="text-text-muted text-xs">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="text-center">
-                {{ _('Compass Platform App') }} - © {{ now.year }}
+                {{ app_name }} - © {{ now.year }}
                 {% if build_timestamp %}
                     - Built {{ build_timestamp }}
                 {% endif %}

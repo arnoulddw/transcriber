@@ -82,3 +82,22 @@ def test_per_page_request_wins_then_remembered_then_default():
     assert resolve_per_page(None, 50) == (50, False)
     assert resolve_per_page('7', '13') == (DEFAULT_PER_PAGE, False)
     assert resolve_per_page('abc', None) == (DEFAULT_PER_PAGE, False)
+
+
+def test_custom_date_range_replaces_preset_and_is_inclusive():
+    from datetime import datetime
+    filters = HistoryFilters.from_args({'date': '30d', 'date_from': '2026-09-20', 'date_to': '2026-08-21'})
+    assert filters.date is None  # custom range wins over the preset
+    assert (filters.date_from.isoformat(), filters.date_to.isoformat()) == ('2026-08-21', '2026-09-20')
+    assert filters.active_count == 1
+    assert filters.to_query() == {'date_from': '2026-08-21', 'date_to': '2026-09-20'}
+
+    sql, params = build_history_filter_clause(filters, user_id=1)
+    assert "t.created_at >= %s" in sql and "t.created_at < %s" in sql
+    assert params == [datetime(2026, 8, 21), datetime(2026, 9, 21)]
+
+
+def test_open_ended_and_invalid_custom_dates():
+    filters = HistoryFilters.from_args({'date_from': '2026-01-05', 'date_to': 'nope'})
+    assert filters.date_from.isoformat() == '2026-01-05' and filters.date_to is None
+    assert HistoryFilters.from_args({'date_from': '2026-13-40'}).is_active is False

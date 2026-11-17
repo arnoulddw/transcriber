@@ -7,6 +7,8 @@ const {
     clampRange,
     buildHistorySearch,
     durationChanges,
+    dateRangeChanges,
+    dateRangeDays,
     activeFilterParams,
 } = require('../../app/static/js/history/filters.js');
 
@@ -52,4 +54,13 @@ test('full-range duration clears both bounds', () => {
 test('search only forwards filter parameters', () => {
     const params = activeFilterParams('?date=7d&page=2&per_page=50&workflow=Summary&q=old');
     assert.equal(params.toString(), 'date=7d&workflow=Summary');
+});
+
+test('custom date range clears the preset and orders its bounds', () => {
+    assert.deepEqual(dateRangeChanges('2026-09-20', '2026-08-21'),
+        { date: null, date_from: '2026-08-21', date_to: '2026-09-20' });
+    assert.deepEqual(dateRangeChanges('', '2026-08-21'),
+        { date: null, date_from: null, date_to: '2026-08-21' });
+    assert.equal(dateRangeDays('2026-08-21', '2026-09-20'), 31);
+    assert.equal(dateRangeDays('2026-08-21', ''), null);
 });

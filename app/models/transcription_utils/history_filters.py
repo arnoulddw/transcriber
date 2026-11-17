@@ -6,6 +6,9 @@ helpers so that filters, search and pagination always agree on the same rows.
 Filters arrive as query-string parameters:
 
 * ``date``     preset key from ``DATE_PRESETS`` (rolling window ending now)
+* ``date_from`` first day of a custom range (``YYYY-MM-DD``, inclusive)
+* ``date_to``   last day of a custom range (``YYYY-MM-DD``, inclusive);
+               a custom range replaces any ``date`` preset
 * ``model``    exact ``transcriptions.api_used`` value
 * ``lang``     exact ``transcriptions.detected_language`` value
 * ``dur_min``  minimum duration in minutes (multiple of ``DURATION_STEP``)
@@ -16,6 +19,7 @@ Filters arrive as query-string parameters:
 from __future__ import annotations
 
 import logging
+from datetime import date as Date, datetime, timedelta
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple
 
@@ -39,7 +43,7 @@ DURATION_MAX = 180  # The slider's last stop reads "3 h+" (no upper bound).
 PER_PAGE_OPTIONS: Tuple[int, ...] = (10, 25, 50)
 DEFAULT_PER_PAGE = 10
 
-FILTER_PARAM_NAMES: Tuple[str, ...] = ('date', 'model', 'lang', 'dur_min', 'dur_max', 'workflow')
+FILTER_PARAM_NAMES: Tuple[str, ...] = ('date', 'date_from', 'date_to', 'model', 'lang', 'dur_min', 'dur_max', 'workflow')
 
 
 def _clean_text(value: Any, max_length: int = 255) -> Optional[str]:
@@ -63,11 +67,24 @@ def _clean_duration(value: Any) -> Optional[int]:
     return (minutes // DURATION_STEP) * DURATION_STEP
 
 
+def _clean_day(value: Any) -> Optional[Date]:
+    """Parse a ``YYYY-MM-DD`` day; anything else means "no bound"."""
+    text = _clean_text(value, 10)
+    if not text:
+        return None
+    try:
+        return datetime.strptime(text, '%Y-%m-%d').date()
+    except ValueError:
+        return None
+
+
 @dataclass
 class HistoryFilters:
     """Validated history filters. Empty fields mean "any"."""
 
     date: Optional[str] = None
+    date_from: Optional[Date] = None
+    date_to: Optional[Date] = None
     model: Optional[str] = None
     language: Optional[str] = None
     duration_min: Optional[int] = None
@@ -82,6 +99,12 @@ class HistoryFilters:
         date = _clean_text(args.get('date'), 8)
         if date not in DATE_PRESETS:
             date = None
+        date_from = _clean_day(args.get('date_from'))
+        date_to = _clean_day(args.get('date_to'))
+        if date_from and date_to and date_from > date_to:
+            date_from, date_to = date_to, date_from
+        if date_from or date_to:
+            date = None  # A custom range replaces the preset.
 
         duration_min = _clean_duration(args.get('dur_min'))
         duration_max = _clean_duration(args.get('dur_max'))
@@ -94,12 +117,22 @@ class HistoryFilters:
 
         return cls(
             date=date,
+            date_from=date_from,
+            date_to=date_to,
             model=_clean_text(args.get('model'), 50),
             language=_clean_text(args.get('lang'), 10),
             duration_min=duration_min,
             duration_max=duration_max,
             workflow=_clean_text(args.get('workflow'), 100),
         )
+
+    @property
+    def has_date_range(self) -> bool:
+        return self.date_from is not None or self.date_to is not None
+
+    @property
+    def has_date(self) -> bool:
+        return bool(self.date) or self.has_date_range
 
     @property
     def has_duration(self) -> bool:
@@ -110,7 +143,7 @@ class HistoryFilters:
         """Number of active chips (duration counts once even with two bounds)."""
         return sum(
             1 for active in (
-                self.date, self.model, self.language, self.has_duration, self.workflow,
+                self.has_date, self.model, self.language, self.has_duration, self.workflow,
             ) if active
         )
 
@@ -123,6 +156,10 @@ class HistoryFilters:
         query: Dict[str, Any] = {}
         if self.date:
             query['date'] = self.date
+        if self.date_from:
+            query['date_from'] = self.date_from.isoformat()
+        if self.date_to:
+            query['date_to'] = self.date_to.isoformat()
         if self.model:
             query['model'] = self.model
         if self.language:
@@ -151,6 +188,13 @@ def build_history_filter_clause(
     if filters.date:
         clauses.append(f"{alias}.created_at >= (NOW() - INTERVAL %s DAY)")
         params.append(DATE_PRESETS[filters.date])
+    # Whole days, both ends inclusive: [from 00:00, to + 1 day 00:00).
+    if filters.date_from:
+        clauses.append(f"{alias}.created_at >= %s")
+        params.append(datetime.combine(filters.date_from, datetime.min.time()))
+    if filters.date_to:
+        clauses.append(f"{alias}.created_at < %s")
+        params.append(datetime.combine(filters.date_to + timedelta(days=1), datetime.min.time()))
     if filters.model:
         clauses.append(f"{alias}.api_used = %s")
         params.append(filters.model)
