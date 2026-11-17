@@ -53,8 +53,13 @@
             if (currentPagination) currentPagination.classList.add('hidden');
 
             try {
+                // Search within the filters applied to the page (date, model, ...).
+                const params = window.History && window.History.filters
+                    ? window.History.filters.activeFilterParams(window.location.search)
+                    : new URLSearchParams();
+                params.set('q', query);
                 const resp = await fetch(
-                    '/api/transcriptions/search?q=' + encodeURIComponent(query),
+                    '/api/transcriptions/search?' + params.toString(),
                     { headers: { 'X-CSRFToken': window.csrfToken || '' } }
                 );
                 if (!resp.ok) throw new Error('Search request failed');

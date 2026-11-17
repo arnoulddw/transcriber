@@ -91,6 +91,7 @@ Admin tables keep their own 8px `table-card` radius.
 | `shadow-menu` | Dropdown menus and toasts |
 | `shadow-surface-xl` | Modals and drawers |
 | `shadow-progress` | The outlined progress panel |
+| `shadow-thumb` | Range slider handles (Duration filter) |
 
 ## Components
 

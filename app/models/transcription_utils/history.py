@@ -10,6 +10,7 @@ from mysql.connector import Error as MySQLError
 
 from app.database import get_cursor, get_db
 from app.models.transcription import _map_row_to_transcription_dict
+from .history_filters import HistoryFilters, build_history_filter_clause
 
 
 def get_all_transcriptions_for_admin(
@@ -272,21 +273,29 @@ def physically_delete_hidden_records(retention_period_days: int) -> int:
     return deleted_count
 
 
-def count_visible_user_transcriptions(user_id: int, search_query: Optional[str] = None) -> int:
-    """Counts the total number of visible and finished transcription records for a user."""
+def count_visible_user_transcriptions(
+    user_id: int,
+    search_query: Optional[str] = None,
+    filters: Optional[HistoryFilters] = None,
+) -> int:
+    """Counts the visible and finished transcription records for a user,
+    optionally narrowed by a search query and history filters."""
     log_prefix = f"[DB:History:User:{user_id}]"
     sql = (
-        'SELECT COUNT(*) as count FROM transcriptions '
-        'WHERE user_id = %s AND is_hidden_from_user = FALSE AND status = %s'
+        'SELECT COUNT(*) as count FROM transcriptions t '
+        'WHERE t.user_id = %s AND t.is_hidden_from_user = FALSE AND t.status = %s'
     )
     params: list = [user_id, 'finished']
     if search_query and search_query.strip():
         pattern = f"%{search_query.strip()}%"
         sql += (
-            ' AND (filename LIKE %s OR generated_title LIKE %s '
-            'OR MATCH(filename, generated_title, transcription_text) AGAINST (%s IN NATURAL LANGUAGE MODE))'
+            ' AND (t.filename LIKE %s OR t.generated_title LIKE %s '
+            'OR MATCH(t.filename, t.generated_title, t.transcription_text) AGAINST (%s IN NATURAL LANGUAGE MODE))'
         )
         params.extend([pattern, pattern, search_query.strip()])
+    filter_sql, filter_params = build_history_filter_clause(filters, user_id)
+    sql += filter_sql
+    params.extend(filter_params)
     cursor = get_cursor()
     count = 0
     try:
@@ -314,11 +323,13 @@ def get_paginated_transcriptions(
     page: int,
     per_page: int,
     search_query: Optional[str] = None,
+    filters: Optional[HistoryFilters] = None,
 ) -> List[Dict[str, Any]]:
     """
     Retrieves a paginated list of visible and finished transcription records for a user,
     ordered by creation date DESC. Includes the latest associated LLM operation ID.
-    Optionally filters by search_query across filename, generated_title, and transcription_text.
+    Optionally filters by search_query across filename, generated_title, and transcription_text,
+    and by the history filters (date, model, language, duration, workflow label).
     """
     log_prefix = f"[DB:History:User:{user_id}:Page:{page}]"
     offset = (page - 1) * per_page
@@ -333,6 +344,8 @@ def get_paginated_transcriptions(
             "AGAINST (%s IN NATURAL LANGUAGE MODE))"
         )
         search_params = (pattern, pattern, search_query.strip())
+
+    filter_clause, filter_params = build_history_filter_clause(filters, user_id)
 
     sql = f"""
         WITH RankedOperations AS (
@@ -361,11 +374,11 @@ def get_paginated_transcriptions(
             ro.llm_operation_status
         FROM transcriptions t
         LEFT JOIN RankedOperations ro ON t.id = ro.transcription_id AND ro.rn = 1
-        WHERE t.user_id = %s AND t.is_hidden_from_user = FALSE AND t.status = %s{search_clause}
+        WHERE t.user_id = %s AND t.is_hidden_from_user = FALSE AND t.status = %s{search_clause}{filter_clause}
         ORDER BY t.is_pinned DESC, t.created_at DESC
         LIMIT %s OFFSET %s
     """
-    params = (user_id, user_id, 'finished') + search_params + (per_page, offset)
+    params = (user_id, user_id, 'finished') + search_params + tuple(filter_params) + (per_page, offset)
 
     transcriptions: List[Dict[str, Any]] = []
     cursor = get_cursor()

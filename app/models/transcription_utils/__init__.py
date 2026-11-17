@@ -13,6 +13,10 @@ from .history import (
     physically_delete_hidden_records,
     purge_user_history,
 )
+from .history_filters import (
+    HistoryFilters,
+    get_history_filter_values,
+)
 from .user_stats import (
     count_user_errors,
     count_user_transcriptions,
@@ -55,6 +59,8 @@ __all__ = [
     "get_common_workflow_error_messages",
     "count_visible_user_transcriptions",
     "get_paginated_transcriptions",
+    "HistoryFilters",
+    "get_history_filter_values",
     "count_successful_title_generations_in_range",
     "count_workflow_jobs_with_filters",
     "get_cost_analytics_by_component",
