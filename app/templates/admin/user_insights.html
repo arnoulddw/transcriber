@@ -1,8 +1,8 @@
 <!-- app/templates/admin/user_insights.html -->
-{# Template for the User Insights page #}
+{# Template for the User insights page #}
 {% extends "admin/base_admin.html" %}
 
-{% block subtitle %}User Insights{% endblock %}
+{% block subtitle %}User insights{% endblock %}
 
 {% block admin_head_extra %}
     {{ super() }}
@@ -24,7 +24,7 @@
         {# Signup Metrics #}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> {# Use grid for layout #}
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">New User Sign-ups</h2> {# Changed h6 to h2, added text-lg #}
+            <h2 class="section-title mb-4">New user sign-ups</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table"> {# Added data-table class for responsive stacking #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -35,16 +35,16 @@
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
                         <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 24h</td><td data-label="Signups" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.new_signups.get('24h', 0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 7 Days</td><td data-label="Signups" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.new_signups.get('7d', 0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 30 Days</td><td data-label="Signups" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.new_signups.get('30d', 0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative">All Time</td><td data-label="Signups" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative">{{ format_number(metrics.new_signups.get('all', 0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 7 days</td><td data-label="Signups" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.new_signups.get('7d', 0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 30 days</td><td data-label="Signups" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.new_signups.get('30d', 0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative">All time</td><td data-label="Signups" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative">{{ format_number(metrics.new_signups.get('all', 0), locale=formatting_locale) }}</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
         {# Placeholder for another card if needed, or adjust grid-cols if only one card in this row #}
         <div class="table-card p-6 md:col-start-2"> {# Example of ensuring it's in the second column if only one #}
-             <h2 class="section-title mb-4">Additional Insights (Placeholder)</h2>
+             <h2 class="section-title mb-4">Additional insights (placeholder)</h2>
              <p class="text-gray-500">More user insights can be displayed here.</p>
         </div>
         </div>
@@ -53,7 +53,7 @@
     {# Users Hitting Limits #}
     <section class="page-section space-y-6">
     <div class="table-card p-6">
-        <h2 class="section-title mb-4">Users Currently Hitting Limits</h2> {# Changed h6 to h2, added text-lg #}
+        <h2 class="section-title mb-4">Users currently hitting limits</h2> {# Changed h6 to h2, added text-lg #}
         {% if metrics.users_hitting_limits %}
             <p class="text-sm text-gray-600 mb-2">Users who have reached at least one monthly or total transcription/minute/workflow limit based on their role.</p>
             <div class="table-card overflow-x-auto mt-4">

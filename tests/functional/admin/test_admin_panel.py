@@ -61,7 +61,7 @@ def test_admin_panel_authorized_access(admin_client):
     """
     response = admin_client.get(url_for('admin_panel.dashboard'))
     assert response.status_code == 200
-    assert b"Dashboard Overview" in response.data
+    assert b"Dashboard overview" in response.data
 
 # --- User Management Tests ---
 
@@ -84,7 +84,7 @@ def test_view_user_list_paginated(admin_client, app):
     
     response = admin_client.get(url_for('admin_panel.manage_users'))
     assert response.status_code == 200
-    assert b"User Management" in response.data
+    assert b"User management" in response.data
     # Check for a user that should be on the first page
     assert b"testuser1" in response.data
 
@@ -173,7 +173,7 @@ def test_view_role_list(admin_client, app):
 
     response = admin_client.get(url_for('admin_panel.manage_roles'))
     assert response.status_code == 200
-    assert b"Role Management" in response.data
+    assert b"Role management" in response.data
     assert b"role1" in response.data
     assert b"role2" in response.data
 

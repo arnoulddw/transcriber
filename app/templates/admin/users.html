@@ -4,7 +4,7 @@
 {% import "layout/components/ui_helpers.html" as ui %}
 
 {# Set the subtitle for this specific admin page #}
-{% block subtitle %}User Management{% endblock %}
+{% block subtitle %}User management{% endblock %}
 
 {% block admin_head_extra %}
     {# No page-specific styles needed here, Tailwind utilities and admin.js handle styling and dynamic classes. #}
@@ -35,7 +35,7 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Created At</th>
                     <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Total Transcriptions</th> {# Centered header #}
                     <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Total Workflows</th> {# Centered header #}
-                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Total Minutes Processed</th> {# Centered header #}
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Total Minutes processed</th> {# Centered header #}
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
@@ -86,7 +86,7 @@
                                 <button type="button"
                                         class="edit-role-btn icon-btn"
                                         data-user-id="{{ user.id }}"
-                                        title="Edit Role"
+                                        title="Edit role"
                                         {% if is_initial_admin %}disabled{% endif %}>
                                     <i class="material-icons text-base">edit</i>
                                 </button>

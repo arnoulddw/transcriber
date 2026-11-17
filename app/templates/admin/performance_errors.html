@@ -1,8 +1,8 @@
 <!-- app/templates/admin/performance_errors.html -->
-{# Template for the Performance & Errors page #}
+{# Template for the Performance & errors page #}
 {% extends "admin/base_admin.html" %}
 
-{% block subtitle %}Performance & Errors{% endblock %} {# Updated subtitle to match content #}
+{% block subtitle %}Performance & errors{% endblock %} {# Updated subtitle to match content #}
 
 {% block admin_head_extra %}
     {{ super() }}
@@ -11,7 +11,7 @@
 
 {% block admin_content %}
     <section class="page-section space-y-6">
-        {% set period_labels = {'24h': 'Last 24h', '7d': 'Last 7 Days', '30d': 'Last 30 Days', 'all': 'All Time'} %}
+        {% set period_labels = {'24h': 'Last 24h', '7d': 'Last 7 days', '30d': 'Last 30 days', 'all': 'All time'} %}
         <p class="page-intro">Monitor the reliability of the transcription process and workflow analysis.</p>
 
         {% if metrics.get('error') %}
@@ -22,11 +22,11 @@
         {% endif %}
 
         {# Transcription Error Metrics #}
-        <h2 class="section-heading">Transcription Performance</h2>
+        <h2 class="section-heading">Transcription performance</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# Overall Transcription Error Rate Table #}
         <div class="table-card p-6">
-            <h3 class="section-title mb-4">Overall Transcription Error Rate (%)</h3>
+            <h3 class="section-title mb-4">Overall transcription error rate (%)</h3>
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table">
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -49,9 +49,9 @@
                 </table>
             </div>
         </div>
-        {# API-Specific Transcription Error Rates Table #}
+        {# API-Specific Transcription Error rates Table #}
         <div class="table-card p-6">
-            <h3 class="section-title mb-4">API-Specific Transcription Error Rates (%)</h3>
+            <h3 class="section-title mb-4">API-specific transcription error rates (%)</h3>
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table">
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -60,7 +60,7 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 24h</th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 7d</th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 30d</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All Time</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All time</th>
                         </tr>
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
@@ -87,7 +87,7 @@
 
     {# Common Transcription Error Types #}
     <div class="table-card p-6 mb-6">
-        <h3 class="section-title mb-4">Common Transcription Error Messages (Top 10)</h3>
+        <h3 class="section-title mb-4">Common transcription error messages (top 10)</h3>
         <div class="tab-group" id="transcriptionErrorTabGroup">
             <div role="tablist" aria-label="Transcription Error Periods" class="border-b border-border-default">
                 <nav class="-mb-px flex space-x-2 sm:space-x-4 md:space-x-8" aria-label="Tabs">
@@ -95,7 +95,7 @@
                         {'key': '24h', 'id_suffix': 'Trans24h', 'label': 'Last 24h'},
                         {'key': '7d', 'id_suffix': 'Trans7d', 'label': 'Last 7d'},
                         {'key': '30d', 'id_suffix': 'Trans30d', 'label': 'Last 30d'},
-                        {'key': 'all', 'id_suffix': 'TransAll', 'label': 'All Time'}
+                        {'key': 'all', 'id_suffix': 'TransAll', 'label': 'All time'}
                     ] %}
                     {% for period_info in transcription_error_periods %}
                     <button
@@ -157,12 +157,12 @@
 
     {# Workflow Error Metrics #}
     <section class="page-section space-y-6">
-    <h2 class="section-heading">Workflow Performance</h2>
+    <h2 class="section-heading">Workflow performance</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# Overall Workflow Error Rate Table #}
         <div class="table-card p-6">
-            <h3 class="section-title mb-4">Overall Workflow Error Rate (%)</h3>
+            <h3 class="section-title mb-4">Overall workflow error rate (%)</h3>
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table">
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -186,9 +186,9 @@
             </div>
             <small class="text-text-muted text-xs block mt-2">Based on workflows attempted (status not 'idle').</small>
         </div>
-        {# Workflow Model-Specific Error Rates Table #}
+        {# Workflow Model-Specific Error rates Table #}
         <div class="table-card p-6">
-            <h3 class="section-title mb-4">Workflow Model Error Rates (%)</h3>
+            <h3 class="section-title mb-4">Workflow model error rates (%)</h3>
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table">
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -197,7 +197,7 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 24h</th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 7d</th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 30d</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All Time</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All time</th>
                         </tr>
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
@@ -222,7 +222,7 @@
 
     {# Common Workflow Error Types #}
     <div class="table-card p-6 mb-6">
-        <h3 class="section-title mb-4">Common Workflow Error Messages (Top 10)</h3>
+        <h3 class="section-title mb-4">Common workflow error messages (top 10)</h3>
         <div class="tab-group" id="workflowErrorTabGroup">
             <div role="tablist" aria-label="Workflow Error Periods" class="border-b border-border-default">
                 <nav class="-mb-px flex space-x-2 sm:space-x-4 md:space-x-8" aria-label="Tabs">
@@ -230,7 +230,7 @@
                         {'key': '24h', 'id_suffix': 'Workflow24h', 'label': 'Last 24h'},
                         {'key': '7d', 'id_suffix': 'Workflow7d', 'label': 'Last 7d'},
                         {'key': '30d', 'id_suffix': 'Workflow30d', 'label': 'Last 30d'},
-                        {'key': 'all', 'id_suffix': 'WorkflowAll', 'label': 'All Time'}
+                        {'key': 'all', 'id_suffix': 'WorkflowAll', 'label': 'All time'}
                     ] %}
                     {% for period_info in workflow_error_periods %}
                     <button

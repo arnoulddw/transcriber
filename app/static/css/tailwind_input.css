@@ -205,22 +205,28 @@ These are processed by PostCSS with the Tailwind plugin.
     .ui-btn--link {
         @apply btn-base bg-transparent px-2 text-primary shadow-none hover:bg-primary-soft;
     }
+    /* Raised white button (used on tinted surfaces, e.g. Choose File) */
+    .ui-btn--raised {
+        @apply btn-base bg-white text-text-strong shadow-raised hover:shadow-raised-hover;
+    }
+    /* Sizes are declared after every variant so they win over the variants'
+       own btn-base height (e.g. Choose File = raised + sm = 34px). */
     /* Small control (34px): chips, Stop, Choose File, inline actions */
     .ui-btn--sm,
     .btn-sm {
-        @apply min-h-control-sm px-3 py-1.5 text-control;
+        @apply min-h-control-sm py-1 text-control;
+    }
+    .ui-btn--sm:not(.ui-btn--link),
+    .btn-sm {
+        @apply px-3;
     }
     /* Hero call to action (50px): Transcribe */
     .ui-btn--hero {
         @apply min-h-control-lg text-hero;
     }
-    /* Raised white button (used on tinted surfaces, e.g. Choose File) */
-    .ui-btn--raised {
-        @apply btn-base bg-white text-text-strong shadow-raised hover:shadow-raised-hover;
-    }
     /* Toggle chip (Context Prompt, Apply Workflow, Identify Speakers) */
     .chip-toggle {
-        @apply inline-flex min-h-control-sm items-center gap-1.5 rounded-full border border-border-strong bg-transparent px-3 py-1.5 text-control font-medium text-text-strong transition-colors hover:bg-surface-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+        @apply inline-flex min-h-control-sm items-center gap-1.5 rounded-full border border-border-strong bg-transparent px-3 py-0 text-control font-medium text-text-strong transition-colors hover:bg-surface-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
     }
     .chip-toggle.is-active,
     .chip-toggle[aria-pressed="true"] {
@@ -785,8 +791,10 @@ These are processed by PostCSS with the Tailwind plugin.
     }
 }
 @layer components {
+    /* Page-level sections each open with a 32px title, so they get more air
+       than the 32px between sections inside a page. */
     .page-section + .page-section {
-        @apply mt-8;
+        @apply mt-16;
     }
 }
 @layer components {

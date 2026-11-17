@@ -1,7 +1,7 @@
 <!-- app/templates/admin/user_details.html -->
 {% extends "admin/base_admin.html" %}
 
-{% block subtitle %}User Details: {{ user_details.username | e }}{% endblock %}
+{% block subtitle %}User details: {{ user_details.username | e }}{% endblock %}
 
 {% block admin_head_extra %}
 {# Custom styles for hidden-row and hidden-tag are now applied directly with Tailwind utilities #}
@@ -12,12 +12,12 @@
 <a href="{{ url_for('admin_panel.manage_users') }}"
     class="ui-btn ui-btn--secondary ui-btn--sm mb-6">
     {# Increased mb-4 to mb-6 #}
-    <i class="material-icons text-base">arrow_back</i>Back to User List
+    <i class="material-icons text-base">arrow_back</i>Back to user list
 </a>
 
-{# User Information Card #}
+{# User information Card #}
 <div class="table-card p-6 space-y-4 mb-6">
-    <h2 class="section-title">User Information</h2> {# Changed h6 to h2 for better semantics #}
+    <h2 class="section-title">User information</h2> {# Changed h6 to h2 for better semantics #}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
         <div>
             <p><strong class="font-medium text-text-muted">ID:</strong> {{ user_details.id }}</p>
@@ -26,16 +26,16 @@
         <div>
             <p><strong class="font-medium text-text-muted">Email:</strong> {{ user_details.email | e }}</p>
             <p><strong class="font-medium text-text-muted">Role:</strong> {{ user_details.role.name | e }}</p>
-            <p><strong class="font-medium text-text-muted">Account Created:</strong> <time
+            <p><strong class="font-medium text-text-muted">Account created:</strong> <time
                     datetime="{{ user_details.created_at | datetime_tz }}">{{ user_details.created_at | datetime_tz
                     }}</time></p>
         </div>
     </div>
 </div>
 
-{# Usage Statistics Card #}
+{# Usage statistics Card #}
 <div class="table-card p-6 space-y-4 mb-6">
-    <h2 class="section-title">Usage Statistics</h2>
+    <h2 class="section-title">Usage statistics</h2>
     {% if user_details.usage_metrics and not user_details.usage_metrics.error %}
     <div class="table-card overflow-x-auto mt-4">
         <table class="table-shell data-table min-w-full">
@@ -86,11 +86,11 @@
                     {% endfor %}
                 </tr>
 
-                {# Title Generations Row #}
+                {# Title generations Row #}
                 <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0">
                     <td data-label="Metric"
                         class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">
-                        Title Generations (#)</td>
+                        Title generations (#)</td>
                     {% for period in periods %}
                     <td data-label="Last 24h"
                         class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">
@@ -145,7 +145,7 @@
 
 {# Usage vs Quotas Card #}
 <div class="table-card p-6 space-y-4 mb-6">
-    <h2 class="section-title">Usage vs. Quotas</h2>
+    <h2 class="section-title">Usage vs. quotas</h2>
     {% if usage_stats and user_details.role %}
     <div class="table-card overflow-x-auto mt-4">
         <table class="table-shell data-table min-w-full">
@@ -190,11 +190,11 @@
                         user_details.role.limit_monthly_cost > 0 else '∞' }}
                     </td>
                 </tr>
-                {# Minutes Processed Row #}
+                {# Minutes processed Row #}
                 <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0">
                     <td data-label="Metric"
                         class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">
-                        Minutes Processed</td>
+                        Minutes processed</td>
                     <td data-label="Daily"
                         class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">
                         {{ format_number(usage_stats.daily.minutes, locale=formatting_locale) }} / {{
@@ -246,9 +246,9 @@
     {% endif %}
 </div>
 
-{# Transcription History Card #}
+{# Transcription history Card #}
 <div class="table-card p-6 space-y-4 mb-6">
-    <h2 class="section-title">Transcription History</h2> {# Changed h6 to h2 #}
+    <h2 class="section-title">Transcription history</h2> {# Changed h6 to h2 #}
     <p class="text-xs text-text-muted mb-2">Includes records hidden from the user until physically deleted.</p>
     {% if user_details.history %}
     <div class="table-card overflow-x-auto mt-4">
@@ -340,9 +340,9 @@
     {% endif %}
 </div>
 
-{# Workflow History Card #}
+{# Workflow history Card #}
 <div class="table-card p-6 space-y-4 mb-6">
-    <h2 class="section-title">Workflow History</h2> {# Changed h6 to h2 #}
+    <h2 class="section-title">Workflow history</h2> {# Changed h6 to h2 #}
     {% if user_details.workflow_history %}
     <div class="table-card overflow-x-auto mt-4">
         <table class="table-shell data-table min-w-full"> {# Added data-table class for responsive stacking #}

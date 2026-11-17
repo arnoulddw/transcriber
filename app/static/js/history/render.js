@@ -69,7 +69,7 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
 
     if (hadPendingWorkflow && transcription.pending_workflow_prompt_text) {
         listItem.dataset.pendingWorkflowPrompt = transcription.pending_workflow_prompt_text;
-        listItem.dataset.pendingWorkflowTitle = transcription.pending_workflow_prompt_title || "Custom Workflow";
+        listItem.dataset.pendingWorkflowTitle = transcription.pending_workflow_prompt_title || "Custom workflow";
         listItem.dataset.pendingWorkflowColor = transcription.pending_workflow_prompt_color || "#ffffff";
         if (transcription.pending_workflow_origin_prompt_id) {
             listItem.dataset.workflowOriginPromptId = transcription.pending_workflow_origin_prompt_id;
@@ -100,7 +100,7 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
     const metaText = metaSegments.map(segment => window.escapeHtml(segment)).join(' | ');
 
     const downloadButtonHtml = canDownload ? `
-        <button type="button" class="download-btn icon-btn" title="Download Transcript">
+        <button type="button" class="download-btn icon-btn" title="Download transcript">
             <i class="material-icons text-base">download</i>
         </button>
     ` : '';
@@ -126,7 +126,7 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
         startWorkflowButtonHtml = `
             <div class="start-workflow-action text-right mt-1">
                 <button type="button" class="start-workflow-btn ui-btn ui-btn--link ui-btn--sm">
-                    <i class="material-icons text-base">auto_awesome</i>${window.i18n.startWorkflow || 'Start Workflow'}
+                    <i class="material-icons text-base">auto_awesome</i>${window.i18n.startWorkflow || 'Start workflow'}
                 </button>
             </div>
         `;
@@ -156,12 +156,12 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
                         </p>
                     </div>
                     <div class="secondary-content history-item-actions flex-shrink-0 flex gap-0.5">
-                        <button type="button" class="copy-btn icon-btn" title="Copy Transcript">
+                        <button type="button" class="copy-btn icon-btn" title="Copy transcript">
                             <i class="material-icons text-base">content_copy</i>
                         </button>
                         ${downloadButtonHtml}
                         ${pinButtonHtml}
-                        <button type="button" class="delete-btn icon-btn icon-btn--danger" title="Delete Transcript">
+                        <button type="button" class="delete-btn icon-btn icon-btn--danger" title="Delete transcript">
                             <i class="material-icons text-base">delete</i>
                         </button>
                     </div>

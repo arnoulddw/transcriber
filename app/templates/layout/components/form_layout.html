@@ -13,11 +13,12 @@
     body_classes='card-body',
     surface=True,
     surface_classes='surface-card',
-    padding_classes='p-6 md:p-8',
+    padding_classes='',
     actions=None
 ) -%}
-{# Wrapper handles centering when needed #}
-<div class="page-section {{ 'flex flex-col items-center' if centered else '' }}">
+{# Wrapper handles centering when needed. Sections are not boxed, so by default
+   they add no inner padding: content lines up with the page edge on every page. #}
+<div class="page-section {{ 'flex w-full flex-col items-center' if centered else '' }}">
     {# Container toggles between surfaced card and inline section #}
     <div class="{{ wrapper_classes }} {% if surface %}{{ surface_classes }} {{ padding_classes }}{% endif %}">
         <div class="card-header">

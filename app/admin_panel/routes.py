@@ -352,9 +352,9 @@ def create_role():
         except Exception as e:
             logging.error(f"{log_prefix} Unexpected error creating role '{form.name.data}': {e}", exc_info=True)
             flash("An unexpected error occurred while creating the role.", "danger")
-        return render_template('admin/create_edit_role.html', form=form, title="Create New Role")
+        return render_template('admin/create_edit_role.html', form=form, title="Create new role")
     logging.debug(f"{log_prefix} Displaying create role form.")
-    return render_template('admin/create_edit_role.html', form=form, title="Create New Role")
+    return render_template('admin/create_edit_role.html', form=form, title="Create new role")
 
 
 @admin_panel_bp.route('/roles/<int:role_id>/edit', methods=['GET', 'POST'])
@@ -490,9 +490,9 @@ def edit_role(role_id):
         except Exception as e:
             logging.error(f"{log_prefix} Unexpected error updating role '{form.name.data}': {e}", exc_info=True)
             flash("An unexpected error occurred while updating the role.", "danger")
-        return render_template('admin/create_edit_role.html', form=form, title=f"Edit Role: {role.name}", role_id=role_id)
+        return render_template('admin/create_edit_role.html', form=form, title=f"Edit role: {role.name}", role_id=role_id)
     logging.debug(f"{log_prefix} Displaying edit role form for role '{role.name}'.")
-    return render_template('admin/create_edit_role.html', form=form, title=f"Edit Role: {role.name}", role_id=role_id)
+    return render_template('admin/create_edit_role.html', form=form, title=f"Edit role: {role.name}", role_id=role_id)
 
 
 @admin_panel_bp.route('/roles/<int:role_id>/delete', methods=['POST'])
@@ -543,7 +543,7 @@ def create_template_workflow():
     log_prefix = f"[ROUTE:AdminPanel:CreateTemplateWorkflow:User:{current_user.id}]"
     form = AdminTemplateWorkflowForm()
     logging.debug(f"{log_prefix} Displaying create template workflow form.")
-    return render_template('admin/create_edit_template_prompt.html', form=form, title="Create New Workflow Template")
+    return render_template('admin/create_edit_template_prompt.html', form=form, title="Create new workflow template")
 
 
 @admin_panel_bp.route('/template-workflows/<int:prompt_id>/edit', methods=['GET'])

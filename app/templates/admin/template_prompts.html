@@ -3,7 +3,7 @@
 {% extends "admin/base_admin.html" %}
 {% import "layout/components/ui_helpers.html" as ui %}
 
-{% block subtitle %}Manage Workflow Templates{% endblock %}
+{% block subtitle %}Manage workflow templates{% endblock %}
 
 {% block admin_head_extra %}
     {{ super() }}
@@ -27,7 +27,7 @@
     <div class="mb-6">
         <a href="{{ url_for('admin_panel.create_template_workflow') }}"
            class="ui-btn ui-btn--success inline-flex items-center gap-2">
-            <i class="material-icons text-base">add</i>{{ _('Create New Workflow Template') }}
+            <i class="material-icons text-base">add</i>{{ _('Create new workflow template') }}
         </a>
     </div>
 

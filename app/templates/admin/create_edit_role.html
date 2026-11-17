@@ -14,11 +14,11 @@
 
 {% block admin_content %}
     {% set form_intro = 'Define the details and permissions for the new role.' if 'Create' in title else 'Modify the details and permissions for this role.' %}
-    {% call form_layout.card(title='Role Details', description=form_intro, title_classes='section-heading', body_classes='mt-8') %}
+    <p class="page-intro">{{ form_intro }}</p>
         <form method="POST" action="" class="space-y-8">
             {{ form.hidden_tag() }}
 
-            {% call form_layout.section(title='Basic Role Info', divider=True) %}
+            {% call form_layout.section(title='Basic role info', divider=True) %}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="{{ form.name.id }}" class="form-label">{{ form.name.label.text }}</label>
@@ -38,13 +38,13 @@
             {% endcall %}
 
             {% call form_layout.section(
-                title='Default Models',
+                title='Default models',
                 description='Choose default models for users assigned to this role. Leave blank to use system defaults.',
                 divider=True
             ) %}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
-                    <div class="min-w-0 text-center">
-                        <label for="{{ form.default_transcription_model.id }}" class="form-label whitespace-nowrap inline-block mb-1">{{ form.default_transcription_model.label.text }}</label>
+                    <div class="min-w-0">
+                        <label for="{{ form.default_transcription_model.id }}" class="form-label whitespace-nowrap truncate">{{ form.default_transcription_model.label.text }}</label>
                         <select name="{{ form.default_transcription_model.id }}" id="{{ form.default_transcription_model.id }}" class="input-select{{ ' border-red-500' if form.default_transcription_model.errors }}">
                             <option value="">-- Use System Default --</option>
                             {% for model in form.transcription_model_options %}
@@ -57,22 +57,22 @@
                             <p class="form-error">{{ form.default_transcription_model.errors[0] }}</p>
                         {% endif %}
                     </div>
-                    <div class="min-w-0 text-center">
-                        <label for="{{ form.default_live_transcription_model.id }}" class="form-label whitespace-nowrap inline-block mb-1">{{ form.default_live_transcription_model.label.text }}</label>
+                    <div class="min-w-0">
+                        <label for="{{ form.default_live_transcription_model.id }}" class="form-label whitespace-nowrap truncate">{{ form.default_live_transcription_model.label.text }}</label>
                         {{ form.default_live_transcription_model(class="input-select" + (" border-red-500" if form.default_live_transcription_model.errors else ""), id=form.default_live_transcription_model.id) }}
                         {% if form.default_live_transcription_model.errors %}
                             <p class="form-error">{{ form.default_live_transcription_model.errors[0] }}</p>
                         {% endif %}
                     </div>
-                    <div class="min-w-0 text-center">
-                        <label for="{{ form.default_workflow_model.id }}" class="form-label whitespace-nowrap inline-block mb-1">{{ form.default_workflow_model.label.text }}</label>
+                    <div class="min-w-0">
+                        <label for="{{ form.default_workflow_model.id }}" class="form-label whitespace-nowrap truncate">{{ form.default_workflow_model.label.text }}</label>
                         {{ form.default_workflow_model(class="input-select" + (" border-red-500" if form.default_workflow_model.errors else ""), id=form.default_workflow_model.id) }}
                         {% if form.default_workflow_model.errors %}
                             <p class="form-error">{{ form.default_workflow_model.errors[0] }}</p>
                         {% endif %}
                     </div>
-                    <div class="min-w-0 text-center">
-                        <label for="{{ form.default_title_generation_model.id }}" class="form-label whitespace-nowrap inline-block mb-1">{{ form.default_title_generation_model.label.text }}</label>
+                    <div class="min-w-0">
+                        <label for="{{ form.default_title_generation_model.id }}" class="form-label whitespace-nowrap truncate">{{ form.default_title_generation_model.label.text }}</label>
                         {{ form.default_title_generation_model(class="input-select" + (" border-red-500" if form.default_title_generation_model.errors else ""), id=form.default_title_generation_model.id) }}
                         {% if form.default_title_generation_model.errors %}
                             <p class="form-error">{{ form.default_title_generation_model.errors[0] }}</p>
@@ -85,20 +85,20 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
                     {# API Access Column #}
                     <div class="space-y-3">
-                    <h4 class="section-title text-sm text-text-muted">API Access</h4>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <h4 class="eyebrow">API Access</h4>
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.use_api_openai(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.use_api_openai.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.use_api_assemblyai(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.use_api_assemblyai.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.use_api_google(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.use_api_google.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.use_api_openrouter(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.use_api_openrouter.label.text }}</span>
                     </label>
@@ -106,28 +106,28 @@
 
                 {# Feature Access Column #}
                 <div class="space-y-3">
-                    <h4 class="section-title text-sm text-text-muted">Feature Access</h4>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <h4 class="eyebrow">Feature Access</h4>
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.allow_large_files(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_large_files.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.allow_context_prompt(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_context_prompt.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.allow_download_transcript(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_download_transcript.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.allow_workflows(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_workflows.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.allow_speaker_diarization(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_speaker_diarization.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.allow_auto_title_generation(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_auto_title_generation.label.text }}</span>
                     </label>
@@ -135,20 +135,20 @@
 
                 {# Account & Admin Column #}
                 <div class="space-y-3">
-                    <h4 class="section-title text-sm text-text-muted">Account & Admin</h4>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <h4 class="eyebrow">Account & Admin</h4>
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.allow_api_key_management(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_api_key_management.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.allow_public_api_access(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.allow_public_api_access.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.access_admin_panel(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.access_admin_panel.label.text }}</span>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         {{ form.manage_workflow_templates(class="checkbox-control") }}
                         <span class="text-sm text-text-strong">{{ form.manage_workflow_templates.label.text }}</span>
                     </label>
@@ -156,12 +156,12 @@
             </div>
             {% endcall %}
 
-            {% call form_layout.section(title='Usage Limits', description='Set to 0 for unlimited.', divider=True) %}
+            {% call form_layout.section(title='Usage limits', description='Set to 0 for unlimited.', divider=True) %}
             <div class="grid grid-cols-4 gap-x-6 gap-y-2 items-end">
                 {# Headers #}
-                <div class="col-start-2 text-sm font-semibold text-text-muted">Daily Quota</div>
-                <div class="text-sm font-semibold text-text-muted">Weekly Quota</div>
-                <div class="text-sm font-semibold text-text-muted">Monthly Quota</div>
+                <div class="col-start-2 eyebrow">Daily quota</div>
+                <div class="eyebrow">Weekly quota</div>
+                <div class="eyebrow">Monthly quota</div>
 
                 {# Costs Row #}
                 <div class="form-label self-center">Costs ($)</div>
@@ -175,8 +175,8 @@
                     {{ form.limit_monthly_cost(type="number", min="0", step="0.01", class="input-control" + (" border-red-500" if form.limit_monthly_cost.errors else "")) }}
                 </div>
 
-                {# Minutes Processed Row #}
-                <div class="form-label self-center">Minutes Processed</div>
+                {# Minutes processed Row #}
+                <div class="form-label self-center">Minutes processed</div>
                 <div>
                     {{ form.limit_daily_minutes(type="number", min="0", step="1", class="input-control" + (" border-red-500" if form.limit_daily_minutes.errors else "")) }}
                 </div>
@@ -200,7 +200,7 @@
                 </div>
 
                 {# Live Minutes Row #}
-                <div class="form-label self-center">Live Minutes</div>
+                <div class="form-label self-center">Live minutes</div>
                 <div>
                     {{ form.limit_daily_live_minutes(type="number", min="0", step="1", class="input-control" + (" border-red-500" if form.limit_daily_live_minutes.errors else "")) }}
                 </div>
@@ -239,7 +239,6 @@
             </div>
         </div>
     </form>
-    {% endcall %}
 {% endblock %}
 
 {% block scripts %}

@@ -2,6 +2,7 @@
 {# Template used for both Login and Registration forms #}
 {% extends "base.html" %}
 {% import "layout/components/auth_card.html" as auth_card %}
+{% import "layout/components/ui_helpers.html" as ui %}
 {# Set title dynamically based on context passed from route #}
 {% block title %}{{ _(title) }}{% endblock %}
 
@@ -31,15 +32,8 @@
     {% set message_text = _(message) %}
     {% if message_text not in shown_messages.texts %}
     {% set shown_messages.texts = shown_messages.texts + [message_text] %}
-    <div class="alert {{ 'alert-danger' if category == 'danger' else 'alert-success' }}" role="alert">
-        <div class="alert-icon">
-            <i class="material-icons">{{ 'error' if category == 'danger' else 'check_circle' }}</i>
-        </div>
-        <div class="alert-content">
-            <p class="font-semibold">{{ _('Message:') }}</p>
-            <p>{{ message_text }}</p>
-        </div>
-    </div>
+    {% set level = category if category in ['danger', 'success', 'warning', 'info'] else 'info' %}
+    {{ ui.alert(level=level, message=message_text) }}
     {% endif %}
     {% endfor %}
     {% endif %}
@@ -161,7 +155,7 @@
                 data-login_uri="{{ url_for('auth.google_callback', _external=True) }}" data-auto_prompt="false">
             </div>
             <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="signin_with"
-                data-shape="rectangular" data-logo_alignment="left">
+                data-shape="pill" data-logo_alignment="left" data-locale="{{ current_language }}">
             </div>
         </div>
         {% endif %}

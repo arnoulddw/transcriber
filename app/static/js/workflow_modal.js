@@ -174,7 +174,7 @@ async function _openWorkflowModal(transcriptionId) {
   promptSelect.querySelectorAll("optgroup").forEach(group => group.remove());
   window.logger.debug(workflowModalLogPrefix, "Cleared existing options and optgroups.");
 
-  const loadingOption = createOption("", "Loading Workflows...");
+  const loadingOption = createOption("", "Loading workflows...");
   loadingOption.disabled = true;
   loadingOption.id = "loading-workflows-option";
   promptSelect.appendChild(loadingOption);
@@ -191,7 +191,7 @@ async function _openWorkflowModal(transcriptionId) {
     if (response.ok) {
       const prompts = await response.json();
       if (prompts && prompts.length > 0) {
-        const savedGroup = createOptgroup(window.i18n.yourSavedWorkflows || "Your Saved Workflows");
+        const savedGroup = createOptgroup(window.i18n.yourSavedWorkflows || "Your saved workflows");
         prompts.forEach(prompt => {
           const isSystemDefined = prompt.source_template_id;
           const displayTitle = isSystemDefined
@@ -291,7 +291,7 @@ async function _handleSubmitWorkflow() {
 
     const isPreApplyMode = modalElem.dataset.mode === 'pre-apply';
     const selectedOption = promptSelect.selectedOptions[0];
-    const promptTitle = (selectedOption && selectedOption.value === prompt) ? selectedOption.textContent : "Custom Workflow";
+    const promptTitle = (selectedOption && selectedOption.value === prompt) ? selectedOption.textContent : "Custom workflow";
     const promptColor = (selectedOption && selectedOption.value === prompt) ? (selectedOption.dataset.promptColor || '#ffffff') : '#ffffff';
     const promptId = (selectedOption && selectedOption.value === prompt) ? (selectedOption.dataset.promptId || null) : null;
 

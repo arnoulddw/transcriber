@@ -28,11 +28,11 @@ msgstr "Authentication required."
 
 #: app/__init__.py:539
 msgid "Not Found"
-msgstr "Not Found"
+msgstr "Not found"
 
 #: app/__init__.py:554 app/templates/errors/500.html:5
 msgid "Internal Server Error"
-msgstr "Internal Server Error"
+msgstr "Internal server error"
 
 #: app/__init__.py:560 app/templates/errors/403.html:5
 msgid "Forbidden"
@@ -83,7 +83,7 @@ msgstr "Password"
 
 #: app/forms.py:50
 msgid "Confirm Password"
-msgstr "Confirm Password"
+msgstr "Confirm password"
 
 #: app/forms.py:56 app/templates/base.html:101 app/templates/base.html:189
 msgid "Register"
@@ -91,7 +91,7 @@ msgstr "Register"
 
 #: app/forms.py:69
 msgid "Remember Me"
-msgstr "Remember Me"
+msgstr "Remember me"
 
 #: app/forms.py:71 app/templates/base.html:98 app/templates/base.html:186
 msgid "Login"
@@ -99,70 +99,70 @@ msgstr "Login"
 
 #: app/forms.py:76 app/templates/layout/modals/api_key_modal.html:28
 msgid "API Service"
-msgstr "API Service"
+msgstr "API service"
 
 #: app/forms.py:86 app/templates/layout/modals/api_key_modal.html:37
 msgid "API Key"
-msgstr "API Key"
+msgstr "API key"
 
 #: app/forms.py:92
 msgid "Save API Key"
-msgstr "Save API Key"
+msgstr "Save API key"
 
 #: app/forms.py:103
 msgid "Send Reset Link"
-msgstr "Send Reset Link"
+msgstr "Send reset link"
 
 #: app/forms.py:107 app/forms.py:230
 #: app/templates/layout/modals/profile_modal.html:126
 msgid "New Password"
-msgstr "New Password"
+msgstr "New password"
 
 #: app/forms.py:114 app/forms.py:237
 #: app/templates/layout/modals/profile_modal.html:137
 msgid "Confirm New Password"
-msgstr "Confirm New Password"
+msgstr "Confirm new password"
 
 #: app/forms.py:120 app/templates/reset_password.html:47
 msgid "Reset Password"
-msgstr "Reset Password"
+msgstr "Reset password"
 
 #: app/forms.py:132
 msgid "Email Address"
-msgstr "Email Address"
+msgstr "Email address"
 
 #: app/forms.py:138 app/templates/layout/modals/profile_modal.html:36
 msgid "First Name"
-msgstr "First Name"
+msgstr "First name"
 
 #: app/forms.py:139 app/templates/layout/modals/profile_modal.html:43
 msgid "Last Name"
-msgstr "Last Name"
+msgstr "Last name"
 
 #: app/forms.py:142 app/templates/layout/modals/profile_modal.html:66
 msgid "Default Transcription Language"
-msgstr "Default Transcription Language"
+msgstr "Default transcription language"
 
 #: app/forms.py:146 app/forms.py:260
 #: app/templates/layout/modals/profile_modal.html:74
 msgid "Default Transcription Model"
-msgstr "Default Transcription Model"
+msgstr "Default transcription model"
 
 #: app/forms.py:150 app/templates/layout/modals/profile_modal.html:52
 msgid "Interface Language"
-msgstr "Interface Language"
+msgstr "Interface language"
 
 #: app/forms.py:152 app/templates/layout/modals/profile_modal.html:88
 msgid "Automatically Generate Titles for Transcriptions"
-msgstr "Automatically Generate Titles for Transcriptions"
+msgstr "Automatically generate titles for transcriptions"
 
 #: app/forms.py:226 app/templates/layout/modals/profile_modal.html:115
 msgid "Current Password"
-msgstr "Current Password"
+msgstr "Current password"
 
 #: app/forms.py:248
 msgid "Role Name"
-msgstr "Role Name"
+msgstr "Role name"
 
 #: app/forms.py:255
 msgid "Description"
@@ -170,11 +170,11 @@ msgstr "Description"
 
 #: app/forms.py:418
 msgid "Default Auxiliary LLM Model"
-msgstr "Default Auxiliary LLM Model"
+msgstr "Default auxiliary LLM model"
 
 #: app/forms.py:424
 msgid "Default Workflow LLM Model"
-msgstr "Default Workflow LLM Model"
+msgstr "Default workflow LLM model"
 
 #: app/forms.py:279
 msgid "Use AssemblyAI API"
@@ -190,7 +190,7 @@ msgstr "Use OpenAI GPT-4o Transcribe API"
 
 #: app/forms.py:282
 msgid "Use OpenAI Live Transcription"
-msgstr "Use OpenAI Live Transcription"
+msgstr "Use OpenAI live transcription"
 
 #: app/forms.py:284
 msgid "Use Google Gemini API"
@@ -198,90 +198,90 @@ msgstr "Use Google Gemini API"
 
 #: app/forms.py:286
 msgid "Access Admin Panel"
-msgstr "Access Admin Panel"
+msgstr "Access admin panel"
 
 #: app/forms.py:287
 msgid "Allow Large Files (>25MB)"
-msgstr "Allow Large Files (>25MB)"
+msgstr "Allow large files (>25MB)"
 
 #: app/forms.py:288
 msgid "Allow Context Prompt"
-msgstr "Allow Context Prompt"
+msgstr "Allow context prompt"
 
 #: app/forms.py:289
 msgid "Allow User API Key Management"
-msgstr "Allow User API Key Management"
+msgstr "Allow user API key management"
 
 #: app/forms.py:290
 msgid "Allow Public API Access"
-msgstr ""
+msgstr "Allow public API access"
 
 #: app/forms.py:291
 msgid "Allow Transcript Download"
-msgstr "Allow Transcript Download"
+msgstr "Allow transcript download"
 
 #: app/forms.py:292
 msgid "Allow Workflows"
-msgstr "Allow Workflows"
+msgstr "Allow workflows"
 
 #: app/forms.py:293
 msgid "Manage Workflow Templates (Admin)"
-msgstr "Manage Workflow Templates (Admin)"
+msgstr "Manage workflow templates (admin)"
 
 #: app/forms.py:294
 msgid "Allow Automatic Title Generation"
-msgstr "Allow Automatic Title Generation"
+msgstr "Allow automatic title generation"
 
 #: app/forms.py:295
 msgid "Allow Speaker Diarization (AssemblyAI)"
-msgstr ""
+msgstr "Allow speaker diarization (AssemblyAI)"
 
 #: app/forms.py:298 app/forms.py:301 app/forms.py:304
 msgid "Daily Quota"
-msgstr "Daily Quota"
+msgstr "Daily quota"
 
 #: app/forms.py:299 app/forms.py:302 app/forms.py:305
 msgid "Weekly Quota"
-msgstr "Weekly Quota"
+msgstr "Weekly quota"
 
 #: app/forms.py:300 app/forms.py:303 app/forms.py:306
 msgid "Monthly Quota"
-msgstr "Monthly Quota"
+msgstr "Monthly quota"
 
 #: app/forms.py:308
 msgid "Max History Items"
-msgstr "Max History Items"
+msgstr "Max history items"
 
 #: app/forms.py:312
 msgid "History Retention Days"
-msgstr "History Retention Days"
+msgstr "History retention days"
 
 #: app/forms.py:316
 msgid "Save Role"
-msgstr "Save Role"
+msgstr "Save role"
 
 #: app/forms.py:390 app/templates/manage_prompts.html:27
 #: app/templates/manage_prompts.html:86
 msgid "Workflow Label"
-msgstr "Workflow Label"
+msgstr "Workflow label"
 
 #: app/forms.py:397 app/templates/manage_prompts.html:41
 #: app/templates/manage_prompts.html:99
 msgid "Workflow Prompt"
-msgstr "Workflow Prompt"
+msgstr "Workflow prompt"
 
 #: app/forms.py:404
 msgid "Workflow Language"
-msgstr "Workflow Language"
+msgstr "Workflow language"
 
 #: app/forms.py:407 app/templates/manage_prompts.html:32
 #: app/templates/manage_prompts.html:91
 msgid "Label Color"
-msgstr "Label Color"
+msgstr "Label color"
 
 #: app/forms.py:408
 msgid "Save Workflow Template"
-msgstr "Save Workflow Template"
+msgstr "Save workflow template"
 
 #: app/api/auth.py:265
 msgid "Already logged in."
@@ -313,7 +313,7 @@ msgstr "An unexpected server error occurred."
 
 #: app/api/live.py:30
 msgid "You do not have access to Live transcription."
-msgstr "You do not have access to Live transcription."
+msgstr "You do not have access to live transcription."
 
 #: app/api/live.py:43
 #, python-format
@@ -322,11 +322,11 @@ msgstr "Usage limit exceeded: %(reason)s"
 
 #: app/api/live.py:60
 msgid "Could not start Live transcription."
-msgstr "Could not start Live transcription."
+msgstr "Could not start live transcription."
 
 #: app/api/live.py:81
 msgid "Could not save the Live transcript."
-msgstr "Could not save the Live transcript."
+msgstr "Could not save the live transcript."
 
 #: app/api/llm.py:52
 msgid "Please include a prompt before requesting AI text generation."
@@ -386,27 +386,25 @@ msgstr ""
 
 #: app/api/transcriptions.py:85
 msgid "A valid API key is required. Provide it in the Authorization header."
-msgstr ""
+msgstr "A valid API key is required. Provide it in the Authorization header."
 
 #: app/api/transcriptions.py:88
 msgid "A valid API key is required."
-msgstr ""
+msgstr "A valid API key is required."
 
 #: app/api/transcriptions.py:92
 msgid "Authentication failed. Please check your API key."
-msgstr ""
+msgstr "Authentication failed. Please check your API key."
 
 #: app/api/transcriptions.py:94 app/api/user_settings.py:131
 #: app/api/user_settings.py:155 app/api/user_settings.py:182
 #: app/api/user_settings.py:208
-#, fuzzy
 msgid "You do not have permission to use the public API."
-msgstr "You do not have permission to delete this transcription."
+msgstr "You do not have permission to use the public API."
 
 #: app/api/transcriptions.py:136
-#, fuzzy
 msgid "Transcription was cancelled."
-msgstr "Transcription cancellation requested."
+msgstr "Transcription was cancelled."
 
 #: app/api/transcriptions.py:194 app/api/transcriptions.py:416
 msgid "We did not receive an audio file in your request."
@@ -422,12 +420,11 @@ msgstr "This file type is not supported for transcription."
 
 #: app/api/transcriptions.py:209
 msgid "No transcription provider is available for your account."
-msgstr ""
+msgstr "No transcription provider is available for your account."
 
 #: app/api/transcriptions.py:214
-#, fuzzy
 msgid "You do not have permission to use this transcription provider."
-msgstr "You do not have permission to delete this transcription."
+msgstr "You do not have permission to use this transcription provider."
 
 #: app/api/transcriptions.py:247 app/api/transcriptions.py:451
 #, python-format
@@ -476,9 +473,8 @@ msgstr ""
 "again."
 
 #: app/api/transcriptions.py:495
-#, fuzzy
 msgid "You do not have permission to identify speakers for this model."
-msgstr "You do not have permission to delete this transcription."
+msgstr "You do not have permission to identify speakers for this model."
 
 #: app/api/transcriptions.py:587
 msgid ""
@@ -531,7 +527,7 @@ msgstr "We could not retrieve your transcription history. Please try again."
 
 #: app/api/transcriptions.py:796
 msgid "Search failed. Please try again."
-msgstr ""
+msgstr "Search failed. Please try again."
 
 #: app/api/transcriptions.py:824
 msgid "Transcription deleted successfully."
@@ -616,19 +612,16 @@ msgstr ""
 "again."
 
 #: app/api/transcriptions.py:955
-#, fuzzy
 msgid "You do not have permission to modify this transcription."
-msgstr "You do not have permission to delete this transcription."
+msgstr "You do not have permission to modify this transcription."
 
 #: app/api/transcriptions.py:958
-#, fuzzy
 msgid "Could not toggle pin. Please try again."
-msgstr "We could not log this download. Please try again."
+msgstr "Could not toggle pin. Please try again."
 
 #: app/api/transcriptions.py:961
-#, fuzzy
 msgid "An internal error occurred. Please try again."
-msgstr ""
+msgstr "An internal error occurred. Please try again."
 "We encountered an internal error while fetching job progress. Please try "
 "again."
 
@@ -657,18 +650,16 @@ msgid "Failed to retrieve API key status."
 msgstr "Failed to retrieve API key status."
 
 #: app/api/user_settings.py:168
-#, fuzzy
 msgid "An unexpected error occurred while generating the API key."
-msgstr "An unexpected error occurred while deleting the API key."
+msgstr "An unexpected error occurred while generating the API key."
 
 #: app/api/user_settings.py:185 app/api/user_settings.py:211
 msgid "Public API key revoked."
-msgstr ""
+msgstr "Public API key revoked."
 
 #: app/api/user_settings.py:194 app/api/user_settings.py:223
-#, fuzzy
 msgid "An unexpected error occurred while revoking the API key."
-msgstr "An unexpected error occurred while saving the API key."
+msgstr "An unexpected error occurred while revoking the API key."
 
 #: app/api/user_settings.py:243
 #, python-format
@@ -971,21 +962,21 @@ msgstr "Open user menu"
 #: app/templates/base.html:78 app/templates/base.html:160
 #: app/templates/layout/modals/profile_modal.html:8
 msgid "User Settings"
-msgstr "User Settings"
+msgstr "User settings"
 
 #: app/templates/base.html:80 app/templates/base.html:164
 #: app/templates/layout/modals/api_key_modal.html:8
 msgid "Manage API Keys"
-msgstr "Manage API Keys"
+msgstr "Manage API keys"
 
 #: app/templates/base.html:83 app/templates/base.html:169
 #: app/templates/manage_prompts.html:7 app/templates/manage_prompts.html:18
 msgid "Manage your Workflows"
-msgstr "Manage your Workflows"
+msgstr "Manage your workflows"
 
 #: app/templates/base.html:87 app/templates/base.html:175
-msgid "Admin Panel"
-msgstr "Admin Panel"
+msgid "Admin panel"
+msgstr "Admin panel"
 
 #: app/templates/base.html:92 app/templates/base.html:180
 msgid "Logout"
@@ -1021,15 +1012,15 @@ msgstr "Compass Platform App"
 
 #: app/templates/index.html:11
 msgid "Upload Audio File"
-msgstr "Upload Audio File"
+msgstr "Upload audio file"
 
 #: app/templates/index.html:15
 msgid "Audio File"
-msgstr "Audio File"
+msgstr "Audio file"
 
 #: app/templates/index.html:20
 msgid "Choose File"
-msgstr "Choose File"
+msgstr "Choose file"
 
 #: app/templates/index.html:26 app/templates/index.html:27
 msgid "Select an audio file (mp3, wav, m4a...)"
@@ -1049,32 +1040,31 @@ msgstr ""
 
 #: app/templates/index.html:34
 msgid "Transcription Model"
-msgstr "Transcription Model"
+msgstr "Transcription model"
 
 #: app/templates/index.html:50
 msgid "Transcription Language"
-msgstr "Transcription Language"
+msgstr "Transcription language"
 
 #: app/templates/index.html:66
 msgid "Context Prompt"
-msgstr "Context Prompt"
+msgstr "Context prompt"
 
 #: app/templates/index.html:73
 msgid "Identify Speakers"
-msgstr ""
+msgstr "Identify speakers"
 
 #: app/templates/index.html:80
 msgid "Apply Workflow"
-msgstr "Apply Workflow"
+msgstr "Apply workflow"
 
 #: app/templates/index.html:81
-#, fuzzy
 msgid "Remove applied workflow"
-msgstr "Apply Workflow"
+msgstr "Remove applied workflow"
 
 #: app/templates/index.html:92
 msgid "Context Prompt (Max 120 words)"
-msgstr "Context Prompt (Max 120 words)"
+msgstr "Context prompt (max 120 words)"
 
 #: app/templates/index.html:96 app/templates/index.html:97
 msgid "(Optional) Provide context like names or jargon..."
@@ -1104,66 +1094,61 @@ msgstr "STOP"
 
 #: app/templates/index.html:137
 msgid "Clear All"
-msgstr "Clear All"
+msgstr "Clear all"
 
 #: app/templates/index.html:138
-msgid "Transcription History"
-msgstr "Transcription History"
+msgid "Transcription history"
+msgstr "Transcription history"
 
 #: app/templates/index.html:146
-#, fuzzy
 msgid "Search transcriptions…"
-msgstr "Default Transcription Model"
+msgstr "Search transcriptions…"
 
 #: app/templates/index.html:149
-#, fuzzy
 msgid "Search transcription history"
-msgstr "Transcription History"
+msgstr "Search transcription history"
 
 #: app/templates/index.html:152
-#, fuzzy
 msgid "Clear search"
-msgstr "Clear All"
+msgstr "Clear search"
 
 #: app/templates/index.html:202
 msgid "(Failed)"
 msgstr "(Failed)"
 
 #: app/templates/index.html:206
-#, fuzzy
 msgid "Copy Transcript"
-msgstr "TRANSCRIBE"
+msgstr "Copy transcript"
 
 #: app/templates/index.html:210
 msgid "Download Transcript"
-msgstr ""
+msgstr "Download transcript"
 
 #: app/templates/index.html:214
 msgid "Unpin"
-msgstr ""
+msgstr "Unpin"
 
 #: app/templates/index.html:214
 msgid "Pin to top"
-msgstr ""
+msgstr "Pin to top"
 
 #: app/templates/index.html:217
-#, fuzzy
 msgid "Delete Transcript"
-msgstr "Default Transcription Model"
+msgstr "Delete transcript"
 
 #: app/templates/index.html:227
 #: app/templates/layout/scripts/base_bootstrap.html:34
 msgid "Start Workflow"
-msgstr "Start Workflow"
+msgstr "Start workflow"
 
 #: app/templates/index.html:238
 msgid "Processing Workflow..."
-msgstr "Processing Workflow..."
+msgstr "Processing workflow..."
 
 #: app/templates/index.html:244
 #: app/templates/layout/scripts/base_bootstrap.html:35
 msgid "Workflow Result"
-msgstr "Workflow Result"
+msgstr "Workflow result"
 
 #: app/templates/index.html:247
 msgid "Ran:"
@@ -1171,7 +1156,7 @@ msgstr "Ran:"
 
 #: app/templates/index.html:249 app/templates/index.html:278
 msgid "Workflow Label:"
-msgstr "Workflow Label:"
+msgstr "Workflow label:"
 
 #: app/templates/index.html:251 app/templates/index.html:253
 #: app/templates/index.html:280 app/templates/index.html:282
@@ -1181,7 +1166,7 @@ msgstr "Prompt:"
 #: app/templates/index.html:273
 #: app/templates/layout/scripts/base_bootstrap.html:36
 msgid "Workflow Error"
-msgstr "Workflow Error"
+msgstr "Workflow error"
 
 #: app/templates/index.html:276
 msgid "Attempted:"
@@ -1332,7 +1317,7 @@ msgstr "Open history"
 
 #: app/templates/login.html:35
 msgid "Message:"
-msgstr ""
+msgstr "Message:"
 
 #: app/templates/login.html:126
 msgid "Remember me"
@@ -1352,16 +1337,16 @@ msgstr "Create, edit, or delete your reusable workflow prompts."
 
 #: app/templates/manage_prompts.html:23
 msgid "Add New Workflow"
-msgstr "Add New Workflow"
+msgstr "Add new workflow"
 
 #: app/templates/manage_prompts.html:48
 msgid "Add Workflow"
-msgstr "Add Workflow"
+msgstr "Add workflow"
 
 #: app/templates/layout/scripts/base_bootstrap.html:32
 #: app/templates/manage_prompts.html:59
 msgid "Your Saved Workflows"
-msgstr "Your Saved Workflows"
+msgstr "Your saved workflows"
 
 #: app/templates/manage_prompts.html:62 app/templates/manage_prompts.html:65
 msgid "Loading workflows..."
@@ -1377,7 +1362,7 @@ msgstr "Error loading workflows:"
 
 #: app/templates/manage_prompts.html:73
 msgid "Edit Workflow"
-msgstr "Edit Workflow"
+msgstr "Edit workflow"
 
 #: app/templates/admin/create_edit_role.html:215
 #: app/templates/layout/modals/profile_modal.html:154
@@ -1389,11 +1374,11 @@ msgstr "Cancel"
 #: app/templates/layout/modals/profile_modal.html:96
 #: app/templates/manage_prompts.html:107
 msgid "Save Changes"
-msgstr "Save Changes"
+msgstr "Save changes"
 
 #: app/templates/reset_password.html:6 app/templates/reset_password.html:11
 msgid "Reset Your Password"
-msgstr "Reset Your Password"
+msgstr "Reset your password"
 
 #: app/templates/reset_password.html:12
 msgid "Please enter your new password below."
@@ -1401,96 +1386,88 @@ msgstr "Please enter your new password below."
 
 #: app/templates/admin/costs.html:7
 msgid "Manage the costs of the different services and view cost analytics."
-msgstr ""
+msgstr "Manage the costs of the different services and view cost analytics."
 
 #: app/templates/admin/costs.html:10
-#, fuzzy
-msgid "Pricing Configuration"
-msgstr "Save Pricing Configuration"
+msgid "Pricing configuration"
+msgstr "Pricing configuration"
 
 #: app/templates/admin/costs.html:16
-#, fuzzy
-msgid "Transcription Models"
-msgstr "Transcription Model"
+msgid "Transcription models"
+msgstr "Transcription models"
 
 #: app/templates/admin/costs.html:35
-#, fuzzy
-msgid "Title Generations"
-msgstr "Default Title Generation Model"
+msgid "Title generations"
+msgstr "Title generations"
 
 #: app/templates/admin/costs.html:60 app/templates/admin/dashboard.html:131
 #: app/templates/admin/dashboard.html:143
-#, fuzzy
 msgid "Workflows"
-msgstr "Run Workflow"
+msgstr "Workflows"
 
 #: app/templates/admin/costs.html:82
 msgid "Save Pricing Configuration"
-msgstr "Save Pricing Configuration"
+msgstr "Save pricing configuration"
 
 #: app/templates/admin/costs.html:89
-msgid "Cost Analytics"
-msgstr ""
+msgid "Cost analytics"
+msgstr "Cost analytics"
 
 #: app/templates/admin/costs.html:92
-msgid "By Component"
-msgstr ""
+msgid "By component"
+msgstr "By component"
 
 #: app/templates/admin/costs.html:119
-#, fuzzy
-msgid "By Role"
-msgstr "Save Role"
+msgid "By role"
+msgstr "By role"
 
 #: app/templates/admin/dashboard.html:9
 msgid "Quick, high-level snapshot of current activity and health."
-msgstr ""
+msgstr "Quick, high-level snapshot of current activity and health."
 
 #: app/templates/admin/dashboard.html:12
 msgid "Warning:"
-msgstr ""
+msgstr "Warning:"
 
 #: app/templates/admin/dashboard.html:13
 msgid "Some metrics might be unavailable."
-msgstr ""
+msgstr "Some metrics might be unavailable."
 
 #: app/templates/admin/dashboard.html:21
-msgid "Total Users"
-msgstr ""
+msgid "Total users"
+msgstr "Total users"
 
 #: app/templates/admin/dashboard.html:26
-msgid "Active Users (24h)"
-msgstr ""
+msgid "Active users (24h)"
+msgstr "Active users (24h)"
 
 #: app/templates/admin/dashboard.html:31
-#, fuzzy
 msgid "Transcriptions (24h)"
-msgstr "Transcription History"
+msgstr "Transcriptions (24h)"
 
 #: app/templates/admin/dashboard.html:36
-#, fuzzy
-msgid "Workflows Run (24h)"
-msgstr "Workflow Result"
+msgid "Workflows run (24h)"
+msgstr "Workflows run (24h)"
 
 #: app/templates/admin/dashboard.html:40
 msgid "Last 24h"
-msgstr ""
+msgstr "Last 24h"
 
 #: app/templates/admin/dashboard.html:40
-#, fuzzy
-msgid "Last 7 Days"
-msgstr "Last Name"
+msgid "Last 7 days"
+msgstr "Last 7 days"
 
 #: app/templates/admin/dashboard.html:40
-msgid "Last 30 Days"
-msgstr ""
+msgid "Last 30 days"
+msgstr "Last 30 days"
 
 #: app/templates/admin/dashboard.html:40
-msgid "All Time"
-msgstr ""
+msgid "All time"
+msgstr "All time"
 
 #: app/templates/admin/dashboard.html:44
-msgid "Active Users (Submitted Job)"
-msgstr ""
+msgid "Active users (submitted job)"
+msgstr "Active users (submitted job)"
 
 #: app/templates/admin/dashboard.html:49 app/templates/admin/dashboard.html:56
 #: app/templates/admin/dashboard.html:75 app/templates/admin/dashboard.html:82
@@ -1499,45 +1476,42 @@ msgstr ""
 #: app/templates/admin/dashboard.html:129
 #: app/templates/admin/dashboard.html:137
 msgid "Period"
-msgstr ""
+msgstr "Period"
 
 #: app/templates/admin/dashboard.html:50 app/templates/admin/dashboard.html:59
-#, fuzzy
 msgid "Users"
-msgstr "Username"
+msgstr "Users"
 
 #: app/templates/admin/dashboard.html:70
-msgid "Jobs Submitted"
-msgstr ""
+msgid "Jobs submitted"
+msgstr "Jobs submitted"
 
 #: app/templates/admin/dashboard.html:76 app/templates/admin/dashboard.html:85
 #: app/templates/admin/dashboard.html:104
 #: app/templates/admin/dashboard.html:113
 msgid "Count"
-msgstr ""
+msgstr "Count"
 
 #: app/templates/admin/dashboard.html:98
-#, fuzzy
-msgid "Workflows Run"
-msgstr "Workflow Result"
+msgid "Workflows run"
+msgstr "Workflows run"
 
 #: app/templates/admin/dashboard.html:124
-msgid "Error Rates"
-msgstr ""
+msgid "Error rates"
+msgstr "Error rates"
 
 #: app/templates/admin/dashboard.html:130
 #: app/templates/admin/dashboard.html:140
-#, fuzzy
 msgid "Transcriptions"
-msgstr "Transcription History"
+msgstr "Transcriptions"
 
 #: app/templates/admin/roles.html:15
 msgid "View, create, and manage user roles and their permissions."
-msgstr ""
+msgstr "View, create, and manage user roles and their permissions."
 
 #: app/templates/admin/roles.html:21
-msgid "Create New Role"
-msgstr ""
+msgid "Create new role"
+msgstr "Create new role"
 
 #: app/templates/admin/roles.html:27
 #: app/templates/admin/template_prompts.html:36
@@ -1546,9 +1520,8 @@ msgid "Error:"
 msgstr "Error:"
 
 #: app/templates/admin/template_prompts.html:30
-#, fuzzy
-msgid "Create New Workflow Template"
-msgstr "Save Workflow Template"
+msgid "Create new workflow template"
+msgstr "Create new workflow template"
 
 #: app/templates/errors/403.html:10
 msgid "403 - Forbidden"
@@ -1569,15 +1542,15 @@ msgstr "If you believe this is an error, please contact the administrator."
 #: app/templates/errors/403.html:15 app/templates/errors/404.html:15
 #: app/templates/errors/500.html:19
 msgid "Go Home"
-msgstr "Go Home"
+msgstr "Go home"
 
 #: app/templates/errors/404.html:5
 msgid "Page Not Found"
-msgstr "Page Not Found"
+msgstr "Page not found"
 
 #: app/templates/errors/404.html:10
 msgid "404 - Page Not Found"
-msgstr "404 - Page Not Found"
+msgstr "404 - Page not found"
 
 #: app/templates/errors/404.html:11
 msgid "Sorry, the page you are looking for could not be found."
@@ -1589,7 +1562,7 @@ msgstr "Please check the URL or go back to the homepage."
 
 #: app/templates/errors/500.html:10
 msgid "500 - Internal Server Error"
-msgstr "500 - Internal Server Error"
+msgstr "500 - Internal server error"
 
 #: app/templates/errors/500.html:11
 msgid "Sorry, something went wrong on our end."
@@ -1637,11 +1610,11 @@ msgstr "Google (Gemini)"
 
 #: app/templates/layout/modals/api_key_modal.html:40
 msgid "Save Key"
-msgstr "Save Key"
+msgstr "Save key"
 
 #: app/templates/layout/modals/api_key_modal.html:43
 msgid "Configured Keys"
-msgstr "Configured Keys"
+msgstr "Configured keys"
 
 #: app/templates/layout/modals/api_key_modal.html:49
 msgid "OpenAI (Whisper/GPT/Live)"
@@ -1655,7 +1628,7 @@ msgstr "Checking..."
 
 #: app/templates/layout/modals/api_key_modal.html:80
 msgid "Public API Access"
-msgstr ""
+msgstr "Public API access"
 
 #: app/templates/layout/modals/api_key_modal.html:82
 msgid ""
@@ -1664,47 +1637,43 @@ msgstr ""
 
 #: app/templates/layout/modals/api_key_modal.html:83
 msgid "YOUR_KEY"
-msgstr ""
+msgstr "YOUR_KEY"
 
 #: app/templates/layout/modals/api_key_modal.html:86
-#, fuzzy
 msgid "Not Configured"
-msgstr "Configured Keys"
+msgstr "Not configured"
 
 #: app/templates/layout/modals/api_key_modal.html:90
-#, fuzzy
 msgid "Key Name"
-msgstr "Role Name"
+msgstr "Key name"
 
 #: app/templates/layout/modals/api_key_modal.html:91
 msgid "Production upload script"
-msgstr ""
+msgstr "Production upload script"
 
 #: app/templates/layout/modals/api_key_modal.html:93
-#, fuzzy
 msgid "Create Key"
-msgstr "Save Key"
+msgstr "Create key"
 
 #: app/templates/layout/modals/api_key_modal.html:96
 msgid "New key created"
-msgstr ""
+msgstr "New key created"
 
 #: app/templates/layout/modals/api_key_modal.html:98
 msgid "Generate a key to view it"
-msgstr ""
+msgstr "Generate a key to view it"
 
 #: app/templates/layout/modals/api_key_modal.html:100
 msgid "Copy"
-msgstr ""
+msgstr "Copy"
 
 #: app/templates/layout/modals/api_key_modal.html:103
 msgid "For security, the full key is shown only immediately after generation."
-msgstr ""
+msgstr "For security, the full key is shown only immediately after generation."
 
 #: app/templates/layout/modals/api_key_modal.html:106
-#, fuzzy
 msgid "Configured Public API Keys"
-msgstr "Configured Keys"
+msgstr "Configured public API keys"
 
 #: app/templates/layout/modals/api_key_modal.html:113
 msgid "Close"
@@ -1720,15 +1689,15 @@ msgstr "This feature is not enabled for your account role."
 
 #: app/templates/layout/modals/profile_modal.html:102
 msgid "Change Password"
-msgstr "Change Password"
+msgstr "Change password"
 
 #: app/templates/layout/modals/profile_modal.html:148
 msgid "Update Password"
-msgstr "Update Password"
+msgstr "Update password"
 
 #: app/templates/layout/modals/workflow_modal.html:7
 msgid "Run Workflow"
-msgstr "Run Workflow"
+msgstr "Run workflow"
 
 #: app/templates/layout/modals/workflow_modal.html:17
 msgid ""
@@ -1747,17 +1716,16 @@ msgid "here"
 msgstr "here"
 
 #: app/templates/layout/modals/workflow_modal.html:23
-#, fuzzy
 msgid "Saved Workflows"
-msgstr "Your Saved Workflows"
+msgstr "Saved workflows"
 
 #: app/templates/layout/modals/workflow_modal.html:27
 msgid "Select a Workflow or Enter a Custom Prompt Below"
-msgstr "Select a Workflow or Enter a Custom Prompt Below"
+msgstr "Select a workflow or enter a custom prompt below"
 
 #: app/templates/layout/modals/workflow_modal.html:32
 msgid "Custom Workflow Prompt"
-msgstr "Custom Workflow Prompt"
+msgstr "Custom workflow prompt"
 
 #: app/templates/layout/modals/workflow_modal.html:35
 msgid "Enter your custom workflow prompt here (max 120 words)..."
@@ -1765,15 +1733,15 @@ msgstr "Enter your custom workflow prompt here (max 120 words)..."
 
 #: app/templates/layout/modals/workflow_modal.html:43
 msgid "Submit Workflow"
-msgstr "Submit Workflow"
+msgstr "Submit workflow"
 
 #: app/templates/layout/scripts/base_bootstrap.html:28
 msgid " Read More"
-msgstr " Read More"
+msgstr " Read more"
 
 #: app/templates/layout/scripts/base_bootstrap.html:29
 msgid " Read Less"
-msgstr " Read Less"
+msgstr " Read less"
 
 #: app/templates/layout/scripts/base_bootstrap.html:30
 msgid "Undo"
@@ -1910,3 +1878,21 @@ msgstr "System defined - "
 #: app/templates/live.html
 msgid "Back to live"
 msgstr "Back to live"
+
+msgid "Default Live Transcription Model"
+msgstr "Default live transcription model"
+
+msgid "Model Name"
+msgstr "Model name"
+
+msgid "Model Purpose"
+msgstr "Model purpose"
+
+msgid "OpenRouter Model"
+msgstr "OpenRouter model"
+
+msgid "Forgot Your Password?"
+msgstr "Forgot your password?"
+
+msgid "Forgot Your Password"
+msgstr "Forgot your password"

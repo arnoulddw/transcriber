@@ -58,7 +58,7 @@
         <div class="flex items-center space-x-4 pt-4">
             <button type="button" id="saveTemplateWorkflowBtn"
                     class="btn-save disabled:opacity-50 disabled:cursor-not-allowed">
-                <i class="material-icons text-lg">save</i>{{ 'Save Workflow Template' if 'Create' in title else 'Save Changes' }}
+                <i class="material-icons text-lg">save</i>{{ 'Save workflow template' if 'Create' in title else 'Save changes' }}
             </button>
             <a href="{{ url_for('admin_panel.manage_template_workflows') }}"
                class="ui-btn ui-btn--secondary">

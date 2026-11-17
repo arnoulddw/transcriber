@@ -3,7 +3,7 @@
 {% extends "admin/base_admin.html" %}
 {% import "layout/components/ui_helpers.html" as ui %}
 
-{% block subtitle %}Role Management{% endblock %}
+{% block subtitle %}Role management{% endblock %}
 
 {% block admin_head_extra %}
     {{ super() }}
@@ -18,7 +18,7 @@
     <div class="mb-6">
         <a href="{{ url_for('admin_panel.create_role') }}"
            class="ui-btn ui-btn--success inline-flex items-center gap-2">
-            <i class="material-icons text-base">add</i>{{ _('Create New Role') }}
+            <i class="material-icons text-base">add</i>{{ _('Create new role') }}
         </a>
     </div>
 
@@ -59,7 +59,7 @@
                             {% set perm_count = [role.use_api_assemblyai, role.use_api_openai_whisper, role.use_api_openai_gpt_4o_transcribe, role.use_api_openai_live_transcribe, role.use_api_google_gemini, role.use_api_openrouter, role.access_admin_panel, role.allow_large_files, role.allow_context_prompt, role.allow_api_key_management, role.allow_public_api_access, role.allow_download_transcript, role.allow_workflows, role.allow_speaker_diarization, role.manage_workflow_templates, role.allow_auto_title_generation] | select | list | length %}
                             <span class="text-text-muted">{{ perm_count }} permissions enabled</span>
                             {% if role.access_admin_panel %}
-                                <span class="badge badge-primary ml-2">Admin Access</span>
+                                <span class="badge badge-primary ml-2">Admin access</span>
                             {% endif %}
                         </td>
                         <td data-label="Users" class="px-6 py-4 whitespace-nowrap text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none"> {# New cell, centered data #}
@@ -69,7 +69,7 @@
                             <div class="flex items-center sm:justify-start justify-end space-x-1"> {# Reduced space-x-2 to space-x-1 #}
                                 <a href="{{ url_for('admin_panel.edit_role', role_id=role.id) }}"
                                    class="icon-btn"
-                                   title="Edit Role">
+                                   title="Edit role">
                                     <i class="material-icons text-base">edit</i>
                                 </a>
                                 <form method="POST" action="{{ url_for('admin_panel.delete_role', role_id=role.id) }}" class="delete-role-form inline">

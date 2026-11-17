@@ -67,7 +67,7 @@ Letter spacing tokens are `tracking-display`, `tracking-title`, `tracking-headin
 | `rail` | 72px | Collapsed admin sidebar |
 | `max-w-page` | 52rem | Single-column app pages |
 
-**Spacing:** 32px between page sections, 20px inside a section, 16px from a heading to its content.
+**Spacing:** 64px between page-level sections (each opens with a page title), 32px between sections inside a page, 20px inside a section, 16px from a heading to its content. App page sections (`form_layout.card()`) are not boxed and add no inner padding, so content lines up with the page edge on every page.
 
 ## Radii
 
@@ -114,8 +114,8 @@ All of these live in `tailwind_input.css`.
   - `card-title` for app page sections, via the `form_layout.card()` macro.
   - `modal-title`.
   - `section-heading` for 20px sections, via the `form_layout.section()` macro.
-  - `section-title` for 17px groups.
-  - `eyebrow` for uppercase labels.
+  - `section-title` for 17px groups, including the title of every admin panel (`table-card p-6`), followed by `mb-4`.
+  - `eyebrow` for uppercase labels, including sub-groups inside a panel or form section (permission columns, pricing columns, quota headers).
 
   Use `page-intro` for the sentence under an admin page title.
 - **Surfaces:**
@@ -136,7 +136,7 @@ All of these live in `tailwind_input.css`.
 3. **One style per button level.** Primary is purple, secondary is grey, destructive is soft red. Two buttons at the same level never look different. Icons always come before the label.
 4. **Buttons and fields share heights** (`control`, `control-sm`). Never size a button with padding alone.
 5. **Purple stays an accent.** Don't fill inputs, dropdowns or page backgrounds with purple. The audio file zone (`primary-tint`) is the one deliberate exception, and workflow results (`primary-soft`) mark generated output.
-6. **Sentence case.** Labels are sentence case. For legacy upper-case translations, wrap the label in `sentence-case` rather than changing the message ID.
+6. **Sentence case.** Titles, labels, buttons and tooltips are sentence case (`Upload audio file`, not `Upload Audio File`); only product names and acronyms keep capitals. For an existing Title Case message ID, set the sentence-case English text in `app/translations/en/LC_MESSAGES/messages.po` rather than changing the ID. New strings are written in sentence case.
 7. **JS-rendered markup uses the same classes** as server-rendered markup: history items, workflow panels, key rows, saved workflows.
 8. **Admin tables keep their structure.** Only colours and the font may change.
 

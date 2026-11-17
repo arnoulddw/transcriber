@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Event listener for the "Add New Workflow" form
+    // Event listener for the "Add new workflow" form
     const addForm = document.getElementById('addPromptForm');
     if (addForm) {
         addForm.addEventListener('submit', handleAddPrompt);
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.logger.warn(managePromptsLogPrefix, "Add prompt form not found.");
     }
 
-    // Event listener for the "Edit Workflow" form (inside the modal)
+    // Event listener for the "Edit workflow" form (inside the modal)
     const editForm = document.getElementById('editPromptForm');
     if (editForm) {
         editForm.addEventListener('submit', handleSaveEditPrompt);
@@ -400,11 +400,11 @@ function addPromptToList(prompt, prepend = false) {
     const actionButtonsHtml = isSystemDefined
         ? ''
         : `<div class="flex-shrink-0 flex gap-0.5">
-            <button class="edit-prompt-btn icon-btn" title="Edit Workflow">
+            <button class="edit-prompt-btn icon-btn" title="Edit workflow">
                 <span class="sr-only">Edit</span>
                 <i class="material-icons text-base">edit</i>
             </button>
-            <button class="delete-prompt-btn icon-btn icon-btn--danger" title="Delete Workflow">
+            <button class="delete-prompt-btn icon-btn icon-btn--danger" title="Delete workflow">
                 <span class="sr-only">Delete</span>
                 <i class="material-icons text-base">delete</i>
             </button>
@@ -432,7 +432,7 @@ function addPromptToList(prompt, prepend = false) {
 }
 
 /**
- * Handles the submission of the "Add New Workflow" form.
+ * Handles the submission of the "Add new workflow" form.
  * @param {Event} event - The form submission event.
  */
 async function handleAddPrompt(event) {

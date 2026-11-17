@@ -39,7 +39,7 @@
             <div class="flex flex-col h-full">
                 {# Sidebar Header (visible on mobile, part of main nav on desktop) #}
                 <div class="admin-sidebar-head flex items-center justify-between gap-2 px-5 pb-3 pt-5 lg:pt-4">
-                    <h2 id="admin-sidebar-title" class="eyebrow admin-nav-label">Admin Panel</h2>
+                    <h2 id="admin-sidebar-title" class="eyebrow admin-nav-label">Admin panel</h2>
                     {# Desktop: collapse to an icon rail (expanded by default) #}
                     <button type="button" id="admin-sidebar-collapse" class="icon-btn hidden lg:inline-flex" aria-controls="admin-sidebar" aria-expanded="true" aria-label="Collapse sidebar" title="Collapse sidebar">
                         <i class="material-icons text-xl" aria-hidden="true">first_page</i>
@@ -55,12 +55,12 @@
                         <i class="material-icons" aria-hidden="true">dashboard</i><span class="admin-nav-label">Dashboard</span>
                     </a>
                     <a href="{{ url_for('admin_panel.usage_analytics') }}"
-                       class="admin-nav-link{% if request.endpoint == 'admin_panel.usage_analytics' %} is-active{% endif %}" title="Usage Analytics"{% if request.endpoint == 'admin_panel.usage_analytics' %} aria-current="page"{% endif %}>
-                        <i class="material-icons" aria-hidden="true">analytics</i><span class="admin-nav-label">Usage Analytics</span>
+                       class="admin-nav-link{% if request.endpoint == 'admin_panel.usage_analytics' %} is-active{% endif %}" title="Usage analytics"{% if request.endpoint == 'admin_panel.usage_analytics' %} aria-current="page"{% endif %}>
+                        <i class="material-icons" aria-hidden="true">analytics</i><span class="admin-nav-label">Usage analytics</span>
                     </a>
                     <a href="{{ url_for('admin_panel.user_insights') }}"
-                       class="admin-nav-link{% if request.endpoint == 'admin_panel.user_insights' %} is-active{% endif %}" title="User Insights"{% if request.endpoint == 'admin_panel.user_insights' %} aria-current="page"{% endif %}>
-                        <i class="material-icons" aria-hidden="true">supervised_user_circle</i><span class="admin-nav-label">User Insights</span>
+                       class="admin-nav-link{% if request.endpoint == 'admin_panel.user_insights' %} is-active{% endif %}" title="User insights"{% if request.endpoint == 'admin_panel.user_insights' %} aria-current="page"{% endif %}>
+                        <i class="material-icons" aria-hidden="true">supervised_user_circle</i><span class="admin-nav-label">User insights</span>
                     </a>
                     <a href="{{ url_for('admin_panel.performance_errors') }}"
                        class="admin-nav-link{% if request.endpoint == 'admin_panel.performance_errors' %} is-active{% endif %}" title="Performance"{% if request.endpoint == 'admin_panel.performance_errors' %} aria-current="page"{% endif %}>
@@ -94,8 +94,8 @@
 
                     <div class="mt-auto border-t border-border-default pt-2 lg:mx-1">
                         <a href="{{ url_for('main.index') }}"
-                           class="admin-nav-link" title="Back to App">
-                            <i class="material-icons" aria-hidden="true">arrow_back</i><span class="admin-nav-label">Back to App</span>
+                           class="admin-nav-link" title="Back to app">
+                            <i class="material-icons" aria-hidden="true">arrow_back</i><span class="admin-nav-label">Back to app</span>
                         </a>
                     </div>
                 </nav>

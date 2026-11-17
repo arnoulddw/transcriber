@@ -96,7 +96,7 @@
                                                 {% endif %}
                                                 {% set is_admin_user = current_user.role and current_user.role.access_admin_panel %}
                                                 {% if is_admin_user %}
-                                                <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">admin_panel_settings</i>{{ _('Admin Panel') }}</a>
+                                                <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">admin_panel_settings</i>{{ _('Admin panel') }}</a>
                                                 {% endif %}
                                                 {% if current_user.role and (current_user.role.allow_api_key_management or is_admin_user or user_permissions.allow_workflows) %}
                                                 <div class="border-t border-border-default my-1.5 mx-2" role="separator"></div>
@@ -182,7 +182,7 @@
                         {% set is_admin_user = current_user.role and current_user.role.access_admin_panel %}
                         {% if is_admin_user %}
                         <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">
-                            <i class="material-icons mr-3 text-text-muted">admin_panel_settings</i>{{ _('Admin Panel') }}
+                            <i class="material-icons mr-3 text-text-muted">admin_panel_settings</i>{{ _('Admin panel') }}
                         </a>
                         {% endif %}
                         <div class="border-t border-border-default my-2"></div>

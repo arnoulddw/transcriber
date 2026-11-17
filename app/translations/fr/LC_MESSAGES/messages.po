@@ -1025,7 +1025,7 @@ msgid "Manage your Workflows"
 msgstr "Gérer vos Workflows"
 
 #: app/templates/base.html:87 app/templates/base.html:175
-msgid "Admin Panel"
+msgid "Admin panel"
 msgstr "Panneau d'administration"
 
 #: app/templates/base.html:92 app/templates/base.html:180
@@ -1149,7 +1149,7 @@ msgid "Clear All"
 msgstr "Tout effacer"
 
 #: app/templates/index.html:138
-msgid "Transcription History"
+msgid "Transcription history"
 msgstr "Historique des transcriptions"
 
 #: app/templates/index.html:146
@@ -1457,17 +1457,17 @@ msgstr ""
 
 #: app/templates/admin/costs.html:10
 #, fuzzy
-msgid "Pricing Configuration"
+msgid "Pricing configuration"
 msgstr "Enregistrer la configuration tarifaire"
 
 #: app/templates/admin/costs.html:16
 #, fuzzy
-msgid "Transcription Models"
+msgid "Transcription models"
 msgstr "Modèle de transcription"
 
 #: app/templates/admin/costs.html:35
 #, fuzzy
-msgid "Title Generations"
+msgid "Title generations"
 msgstr "Modèle de génération de titres par défaut"
 
 #: app/templates/admin/costs.html:60 app/templates/admin/dashboard.html:131
@@ -1481,16 +1481,16 @@ msgid "Save Pricing Configuration"
 msgstr "Enregistrer la configuration tarifaire"
 
 #: app/templates/admin/costs.html:89
-msgid "Cost Analytics"
+msgid "Cost analytics"
 msgstr ""
 
 #: app/templates/admin/costs.html:92
-msgid "By Component"
+msgid "By component"
 msgstr ""
 
 #: app/templates/admin/costs.html:119
 #, fuzzy
-msgid "By Role"
+msgid "By role"
 msgstr "Enregistrer la clé"
 
 #: app/templates/admin/dashboard.html:9
@@ -1506,11 +1506,11 @@ msgid "Some metrics might be unavailable."
 msgstr ""
 
 #: app/templates/admin/dashboard.html:21
-msgid "Total Users"
+msgid "Total users"
 msgstr ""
 
 #: app/templates/admin/dashboard.html:26
-msgid "Active Users (24h)"
+msgid "Active users (24h)"
 msgstr ""
 
 #: app/templates/admin/dashboard.html:31
@@ -1520,7 +1520,7 @@ msgstr "Historique des transcriptions"
 
 #: app/templates/admin/dashboard.html:36
 #, fuzzy
-msgid "Workflows Run (24h)"
+msgid "Workflows run (24h)"
 msgstr "Résultat du Workflow"
 
 #: app/templates/admin/dashboard.html:40
@@ -1529,19 +1529,19 @@ msgstr ""
 
 #: app/templates/admin/dashboard.html:40
 #, fuzzy
-msgid "Last 7 Days"
+msgid "Last 7 days"
 msgstr "Nom de famille"
 
 #: app/templates/admin/dashboard.html:40
-msgid "Last 30 Days"
+msgid "Last 30 days"
 msgstr ""
 
 #: app/templates/admin/dashboard.html:40
-msgid "All Time"
+msgid "All time"
 msgstr ""
 
 #: app/templates/admin/dashboard.html:44
-msgid "Active Users (Submitted Job)"
+msgid "Active users (submitted job)"
 msgstr ""
 
 #: app/templates/admin/dashboard.html:49 app/templates/admin/dashboard.html:56
@@ -1559,7 +1559,7 @@ msgid "Users"
 msgstr "Nom d'utilisateur"
 
 #: app/templates/admin/dashboard.html:70
-msgid "Jobs Submitted"
+msgid "Jobs submitted"
 msgstr ""
 
 #: app/templates/admin/dashboard.html:76 app/templates/admin/dashboard.html:85
@@ -1570,11 +1570,11 @@ msgstr ""
 
 #: app/templates/admin/dashboard.html:98
 #, fuzzy
-msgid "Workflows Run"
+msgid "Workflows run"
 msgstr "Résultat du Workflow"
 
 #: app/templates/admin/dashboard.html:124
-msgid "Error Rates"
+msgid "Error rates"
 msgstr ""
 
 #: app/templates/admin/dashboard.html:130
@@ -1588,7 +1588,7 @@ msgid "View, create, and manage user roles and their permissions."
 msgstr ""
 
 #: app/templates/admin/roles.html:21
-msgid "Create New Role"
+msgid "Create new role"
 msgstr ""
 
 #: app/templates/admin/roles.html:27
@@ -1599,7 +1599,7 @@ msgstr "Erreur :"
 
 #: app/templates/admin/template_prompts.html:30
 #, fuzzy
-msgid "Create New Workflow Template"
+msgid "Create new workflow template"
 msgstr "Libellé du Workflow"
 
 #: app/templates/errors/403.html:10

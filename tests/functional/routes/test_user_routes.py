@@ -225,7 +225,7 @@ def test_manage_prompts_page(logged_in_client_with_permissions):
     """
     response = logged_in_client_with_permissions.get(url_for('main.manage_prompts'))
     assert response.status_code == 200
-    assert b"<title>Manage your Workflows</title>" in response.data
+    assert b"<title>Manage your workflows</title>" in response.data
 
 def test_get_user_prompts(logged_in_client):
     """

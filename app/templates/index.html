@@ -9,7 +9,7 @@
 {% block content_container_class %}mx-auto w-full max-w-page px-4 sm:px-6{% endblock %}
 
 {% block content %}
-<div class="space-y-8">
+<div>
     {% call form_layout.card(title=_('Upload Audio File')) %}
         <form id="transcription-form" enctype="multipart/form-data" class="space-y-6">
             {# File Input #}
@@ -169,7 +169,7 @@
     {% endcall %}
 
     {% set history_actions = ui.button(_('Clear All'), variant='danger', id='clearAllBtn', icon='delete_forever', extra_classes='ui-btn--sm') if transcriptions else '' %}
-    {% call form_layout.card(title=_('Transcription History'), actions=history_actions) %}
+    {% call form_layout.card(title=_('Transcription history'), actions=history_actions) %}
         {% set hf = history_filters %}
         {% macro fmt_minutes(m) -%}
             {%- if m >= history_duration_max -%}{{ (history_duration_max // 60) }} h+

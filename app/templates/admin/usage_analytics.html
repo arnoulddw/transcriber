@@ -1,8 +1,8 @@
 <!-- app/templates/admin/usage_analytics.html -->
-{# Template for the Usage Analytics page #}
+{# Template for the Usage analytics page #}
 {% extends "admin/base_admin.html" %}
 
-{% block subtitle %}Usage Analytics{% endblock %}
+{% block subtitle %}Usage analytics{% endblock %}
 
 {% block admin_head_extra %}
     {{ super() }}
@@ -24,9 +24,9 @@
 
         {# Volume Metrics #}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {# Jobs Submitted Table #}
+        {# Jobs submitted Table #}
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">Jobs Submitted</h2> {# Changed h6 to h2, added text-lg #}
+            <h2 class="section-title mb-4">Jobs submitted</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table"> {# Added data-table class for responsive stacking #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -37,16 +37,16 @@
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
                         <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 24h</td><td data-label="Jobs" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.jobs_submitted.get('24h', 0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 7 Days</td><td data-label="Jobs" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.jobs_submitted.get('7d', 0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 30 Days</td><td data-label="Jobs" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.jobs_submitted.get('30d', 0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row"><td data-label="Period" class="px-6 py-4 text-sm font-semibold text-text-strong block sm:table-cell text-right sm:text-left relative">All Time</td><td data-label="Jobs" class="px-6 py-4 text-sm font-semibold text-text-muted block sm:table-cell sm:text-center relative">{{ format_number(metrics.jobs_submitted.get('all', 0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 7 days</td><td data-label="Jobs" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.jobs_submitted.get('7d', 0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 30 days</td><td data-label="Jobs" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.jobs_submitted.get('30d', 0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row"><td data-label="Period" class="px-6 py-4 text-sm font-semibold text-text-strong block sm:table-cell text-right sm:text-left relative">All time</td><td data-label="Jobs" class="px-6 py-4 text-sm font-semibold text-text-muted block sm:table-cell sm:text-center relative">{{ format_number(metrics.jobs_submitted.get('all', 0), locale=formatting_locale) }}</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        {# Minutes Processed Table #}
+        {# Minutes processed Table #}
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">Minutes Processed</h2> {# Changed h6 to h2, added text-lg #}
+            <h2 class="section-title mb-4">Minutes processed</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table"> {# Added data-table class #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -57,9 +57,9 @@
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
                         <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 24h</td><td data-label="Minutes" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.minutes_processed.get('24h', 0.0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 7 Days</td><td data-label="Minutes" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.minutes_processed.get('7d', 0.0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 30 Days</td><td data-label="Minutes" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.minutes_processed.get('30d', 0.0), locale=formatting_locale) }}</td></tr>
-                        <tr class="block sm:table-row"><td data-label="Period" class="px-6 py-4 text-sm font-semibold text-text-strong block sm:table-cell text-right sm:text-left relative">All Time</td><td data-label="Minutes" class="px-6 py-4 text-sm font-semibold text-text-muted block sm:table-cell sm:text-center relative">{{ format_number(metrics.minutes_processed.get('all', 0.0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 7 days</td><td data-label="Minutes" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.minutes_processed.get('7d', 0.0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0"><td data-label="Period" class="px-6 py-4 text-sm text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Last 30 days</td><td data-label="Minutes" class="px-6 py-4 text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none">{{ format_number(metrics.minutes_processed.get('30d', 0.0), locale=formatting_locale) }}</td></tr>
+                        <tr class="block sm:table-row"><td data-label="Period" class="px-6 py-4 text-sm font-semibold text-text-strong block sm:table-cell text-right sm:text-left relative">All time</td><td data-label="Minutes" class="px-6 py-4 text-sm font-semibold text-text-muted block sm:table-cell sm:text-center relative">{{ format_number(metrics.minutes_processed.get('all', 0.0), locale=formatting_locale) }}</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -72,7 +72,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# API Usage (Jobs) Table #}
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">API Usage Distribution (Jobs)</h2> {# Changed h6 to h2, added text-lg #}
+            <h2 class="section-title mb-4">API usage distribution (jobs)</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default analytics-table data-table"> {# Added data-table class #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -81,7 +81,7 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 24h</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 7d</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 30d</th> {# Centered header #}
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All Time</th> {# Centered header #}
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All time</th> {# Centered header #}
                         </tr>
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
@@ -110,7 +110,7 @@
         </div>
         {# API Usage (Minutes) Table #}
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">API Usage Distribution (Minutes)</h2> {# Changed h6 to h2, added text-lg #}
+            <h2 class="section-title mb-4">API usage distribution (minutes)</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default analytics-table data-table"> {# Added data-table class #}
                      <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -119,7 +119,7 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 24h</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 7d</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 30d</th> {# Centered header #}
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All Time</th> {# Centered header #}
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All time</th> {# Centered header #}
                         </tr>
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
@@ -154,7 +154,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {# Language Distribution Table #}
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">Language Distribution (Top 5 + Auto)</h2> {# Changed h6 to h2, added text-lg #}
+            <h2 class="section-title mb-4">Language distribution (top 5 + auto)</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default analytics-table data-table"> {# Added data-table class #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -163,7 +163,7 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 24h</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 7d</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 30d</th> {# Centered header #}
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All Time</th> {# Centered header #}
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All time</th> {# Centered header #}
                         </tr>
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
@@ -199,7 +199,7 @@
 
         {# Context Prompt & Download Usage Table #}
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">Feature Usage (%)</h2> {# Changed h6 to h2, added text-lg #}
+            <h2 class="section-title mb-4">Feature usage (%)</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 {% set periods = ['24h', '7d', '30d', 'all'] %}
                  <table class="table-shell min-w-full divide-y divide-border-default analytics-table data-table"> {# Added data-table class #}
@@ -209,7 +209,7 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 24h</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 7d</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 30d</th> {# Centered header #}
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All Time</th> {# Centered header #}
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All time</th> {# Centered header #}
                         </tr>
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
@@ -266,11 +266,11 @@
     </div>
     </section>
 
-    {# Workflow Usage #}
+    {# Workflow usage #}
     <section class="page-section space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="md:col-span-2 table-card p-6">
-            <h2 class="section-title mb-4">Workflow Usage</h2> {# Changed h6 to h2, added text-lg #}
+            <h2 class="section-title mb-4">Workflow usage</h2> {# Changed h6 to h2, added text-lg #}
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default workflow-table data-table"> {# Added data-table class #}
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -279,7 +279,7 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 24h</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 7d</th> {# Centered header #}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">Last 30d</th> {# Centered header #}
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All Time</th> {# Centered header #}
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase tracking-wider">All time</th> {# Centered header #}
                         </tr>
                     </thead>
                     <tbody class="bg-surface divide-y divide-border-default">
@@ -301,7 +301,7 @@
                         </tr>
                         {% endfor %}
                         <tr class="block sm:table-row">
-                            <td data-label="Total" class="px-6 py-4 text-sm font-semibold text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Total Workflows Run</td>
+                            <td data-label="Total" class="px-6 py-4 text-sm font-semibold text-text-strong block sm:table-cell text-right sm:text-left relative border-b sm:border-none">Total Workflows run</td>
                              {% for period in periods %}
                                 <td data-label="{{ period|replace('h', 'h Total WF')|replace('d', 'd Total WF')|replace('all', 'All Total WF') }}" class="px-6 py-4 text-sm font-semibold text-text-strong block sm:table-cell sm:text-center relative">{{ format_number(metrics.workflows_run.get(period, 0), locale=formatting_locale) }}</td>
                             {% endfor %}

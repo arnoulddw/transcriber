@@ -130,7 +130,7 @@ const MODEL_PURPOSE_LABELS = {
 };
 
 // Status badge shared by provider keys and public keys: same width so the
-// "Configured" / "Not Configured" column lines up.
+// "Configured" / "Not configured" column lines up.
 function createKeyStatusBadge(configured) {
     const status = document.createElement('span');
     status.className = configured
@@ -141,7 +141,7 @@ function createKeyStatusBadge(configured) {
     icon.setAttribute('aria-hidden', 'true');
     icon.textContent = configured ? 'check_circle' : 'error';
     const text = document.createElement('span');
-    text.textContent = configured ? 'Configured' : 'Not Configured';
+    text.textContent = configured ? 'Configured' : 'Not configured';
     status.append(icon, text);
     return status;
 }
@@ -379,7 +379,7 @@ function updatePublicApiKeySection(publicStatus) {
     const enabled = Boolean(status && status.enabled);
 
     if (publicApiKeyStatusEl) {
-        publicApiKeyStatusEl.textContent = enabled ? 'Configured' : 'Not Configured';
+        publicApiKeyStatusEl.textContent = enabled ? 'Configured' : 'Not configured';
         publicApiKeyStatusEl.className = enabled
             ? 'text-sm text-success font-medium'
             : 'text-sm text-warning font-medium';
@@ -582,7 +582,7 @@ function renderProviderKeyRows(service, keys) {
         const label = document.createElement('span');
         label.className = 'text-sm font-medium text-text-strong';
         label.textContent = providerLabels[service] || service;
-        // Reserve the delete-button slot so 'Not Configured' lines up
+        // Reserve the delete-button slot so 'Not configured' lines up
         // with 'Configured' (both badges share one fixed width).
         const actions = document.createElement('div');
         actions.className = 'flex items-center gap-2';

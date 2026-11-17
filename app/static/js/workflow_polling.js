@@ -159,7 +159,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
 
     const canDownload = window.USER_PERMISSIONS?.allow_download_transcript ?? true;
     const downloadButtonHtml = canDownload
-        ? `<button class="download-workflow-btn icon-btn" title="Download Result"><i class="material-icons text-base">download</i></button>`
+        ? `<button class="download-workflow-btn icon-btn" title="Download result"><i class="material-icons text-base">download</i></button>`
         : "";
     let resultHtml = "";
     if (typeof window.renderMarkdownSafe === "function") {
@@ -170,13 +170,13 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
     workflowPanel.innerHTML = `
           <div class="flex justify-between items-start gap-4 mb-0">
               <div class="panel-title">
-                <i class="material-icons text-lg">auto_awesome</i>${window.i18n.workflowResult || 'Workflow Result'}
+                <i class="material-icons text-lg">auto_awesome</i>${window.i18n.workflowResult || 'Workflow result'}
               </div>
               <div class="workflow-actions flex-shrink-0 flex gap-0.5">
-                <button class="edit-workflow-btn icon-btn" title="Edit Result"><i class="material-icons text-base">edit</i></button>
-                <button class="copy-workflow-btn icon-btn" title="Copy Result"><i class="material-icons text-base">content_copy</i></button>
+                <button class="edit-workflow-btn icon-btn" title="Edit result"><i class="material-icons text-base">edit</i></button>
+                <button class="copy-workflow-btn icon-btn" title="Copy result"><i class="material-icons text-base">content_copy</i></button>
                 ${downloadButtonHtml}
-                <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete Result"><i class="material-icons text-base">delete</i></button>
+                <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete result"><i class="material-icons text-base">delete</i></button>
               </div>
           </div>
           <div class="workflow-meta mt-1 mb-2 text-xs text-text-muted leading-snug">
@@ -236,7 +236,7 @@ function _updateWorkflowPanel(transcriptionId, operationData) {
                 <i class="material-icons text-lg">error_outline</i>${window.i18n.workflowError || 'Workflow Error'}
               </div>
               <div class="workflow-actions flex-shrink-0 flex gap-0.5">
-                <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete Result"><i class="material-icons text-base">delete</i></button>
+                <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete result"><i class="material-icons text-base">delete</i></button>
               </div>
           </div>
           <div class="workflow-meta mt-1 mb-2 text-xs text-text-muted leading-snug">

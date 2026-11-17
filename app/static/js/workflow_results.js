@@ -34,10 +34,10 @@ function _handleEditWorkflowResult(operationId, workflowPanel) {
   textArea.focus();
 
   actionsDiv.innerHTML = `
-        <button class="save-edit-workflow-btn icon-btn bg-primary text-white hover:bg-primary-dark hover:text-white" title="Save Changes">
+        <button class="save-edit-workflow-btn icon-btn bg-primary text-white hover:bg-primary-dark hover:text-white" title="Save changes">
           <i class="material-icons text-base">save</i>
         </button>
-        <button class="cancel-edit-workflow-btn icon-btn bg-surface-muted" title="Cancel Edit">
+        <button class="cancel-edit-workflow-btn icon-btn bg-surface-muted" title="Cancel edit">
           <i class="material-icons text-base">cancel</i>
         </button>
       `;
@@ -180,13 +180,13 @@ function _handleCancelWorkflowEdit(workflowPanel, updatedText = null) {
   }
   const canDownload = window.USER_PERMISSIONS?.allow_download_transcript ?? true;
   const downloadButtonHtml = canDownload
-    ? `<button class="download-workflow-btn icon-btn" title="Download Result"><i class="material-icons text-base">download</i></button>`
+    ? `<button class="download-workflow-btn icon-btn" title="Download result"><i class="material-icons text-base">download</i></button>`
     : "";
   actionsDiv.innerHTML = `
-        <button class="edit-workflow-btn icon-btn" title="Edit Result"><i class="material-icons text-base">edit</i></button>
-        <button class="copy-workflow-btn icon-btn" title="Copy Result"><i class="material-icons text-base">content_copy</i></button>
+        <button class="edit-workflow-btn icon-btn" title="Edit result"><i class="material-icons text-base">edit</i></button>
+        <button class="copy-workflow-btn icon-btn" title="Copy result"><i class="material-icons text-base">content_copy</i></button>
         ${downloadButtonHtml}
-        <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete Result"><i class="material-icons text-base">delete</i></button>
+        <button class="delete-workflow-btn icon-btn icon-btn--danger" title="Delete result"><i class="material-icons text-base">delete</i></button>
       `;
 }
 window.Workflow.handleCancelWorkflowEdit = _handleCancelWorkflowEdit;

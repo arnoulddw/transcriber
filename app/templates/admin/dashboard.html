@@ -3,7 +3,7 @@
 {% extends "admin/base_admin.html" %}
 {% import "layout/components/ui_helpers.html" as ui %}
 
-{% block subtitle %}Dashboard Overview{% endblock %}
+{% block subtitle %}Dashboard overview{% endblock %}
 
 {% block admin_content %}
     <p class="page-intro">{{ _('Quick, high-level snapshot of current activity and health.') }}</p>
@@ -16,11 +16,11 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div class="stat-tile is-featured">
-            <div class="stat-tile__top"><p>{{ _('Total Users') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">people</i></span></div>
+            <div class="stat-tile__top"><p>{{ _('Total users') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">people</i></span></div>
             <span class="stat-tile__value">{{ format_number(metrics.get('total_users', 0), locale=formatting_locale) }}</span>
         </div>
         <div class="stat-tile">
-            <div class="stat-tile__top"><p>{{ _('Active Users (24h)') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">person_pin</i></span></div>
+            <div class="stat-tile__top"><p>{{ _('Active users (24h)') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">person_pin</i></span></div>
             <span class="stat-tile__value">{{ format_number(metrics.get('active_users', {}).get('24h', 0), locale=formatting_locale) }}</span>
         </div>
         <div class="stat-tile">
@@ -28,16 +28,16 @@
             <span class="stat-tile__value">{{ format_number(metrics.get('jobs_submitted', {}).get('24h', 0), locale=formatting_locale) }}</span>
         </div>
         <div class="stat-tile">
-            <div class="stat-tile__top"><p>{{ _('Workflows Run (24h)') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">auto_awesome</i></span></div>
+            <div class="stat-tile__top"><p>{{ _('Workflows run (24h)') }}</p><span class="stat-tile__icon" aria-hidden="true"><i class="material-icons text-lg">auto_awesome</i></span></div>
             <span class="stat-tile__value">{{ format_number(metrics.get('workflows_run', {}).get('24h', 0), locale=formatting_locale) }}</span>
         </div>
     </div>
 
-    {% set period_labels = [('24h', _('Last 24h')), ('7d', _('Last 7 Days')), ('30d', _('Last 30 Days')), ('all', _('All Time'))] %}
+    {% set period_labels = [('24h', _('Last 24h')), ('7d', _('Last 7 days')), ('30d', _('Last 30 days')), ('all', _('All time'))] %}
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">{{ _('Active Users (Submitted Job)') }}</h2>
+            <h2 class="section-title mb-4">{{ _('Active users (submitted job)') }}</h2>
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table">
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -63,7 +63,7 @@
         </div>
 
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">{{ _('Jobs Submitted') }}</h2>
+            <h2 class="section-title mb-4">{{ _('Jobs submitted') }}</h2>
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table">
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -91,7 +91,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">{{ _('Workflows Run') }}</h2>
+            <h2 class="section-title mb-4">{{ _('Workflows run') }}</h2>
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table">
                     <thead class="bg-surface-muted hidden sm:table-header-group">
@@ -117,7 +117,7 @@
         </div>
 
         <div class="table-card p-6">
-            <h2 class="section-title mb-4">{{ _('Error Rates') }}</h2>
+            <h2 class="section-title mb-4">{{ _('Error rates') }}</h2>
             <div class="table-card overflow-x-auto mt-4">
                 <table class="table-shell min-w-full divide-y divide-border-default data-table">
                     <thead class="bg-surface-muted hidden sm:table-header-group">
