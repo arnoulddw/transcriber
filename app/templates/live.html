@@ -37,11 +37,28 @@
     <div class="live-toolbar">
         <div class="live-toolbar__heading">
             <p class="live-eyebrow">{{ _('Realtime transcription') }}</p>
-            <div class="flex items-center">
+            <div class="live-toolbar__status-row">
                 <div id="liveStatus" class="live-status" role="status" aria-live="polite">
                     <span id="liveStatusDot" class="live-status__dot" aria-hidden="true"></span>
                     <span id="liveStatusText">{{ _('Ready to listen') }}</span>
                     <span id="liveTimer" class="live-status__timer">00:00</span>
+                </div>
+                {# Space is always reserved (visibility only) so revealing these after saving never shifts the layout. #}
+                <div id="liveTranscriptActions"
+                     class="live-transcript-actions invisible"
+                     role="group"
+                     aria-label="{{ _('Transcript') }}">
+                    <a id="liveHistoryLink"
+                       href="{{ url_for('main.index') }}"
+                       class="icon-btn"
+                       title="{{ _('Open history') }}">
+                        <i class="material-icons text-lg" aria-hidden="true">history</i>
+                        <span class="sr-only">{{ _('Open history') }}</span>
+                    </a>
+                    <button id="liveCopyButton" type="button" class="icon-btn" title="{{ _('Copy transcript') }}" disabled>
+                        <i id="liveCopyIcon" class="material-icons text-lg" aria-hidden="true">content_copy</i>
+                        <span id="liveCopyText" class="sr-only">{{ _('Copy transcript') }}</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -100,21 +117,6 @@
                 <i id="liveActionIcon" class="material-icons text-lg" aria-hidden="true">graphic_eq</i>
                 <span id="liveActionText">{{ _('Start') }}</span>
             </button>
-
-            <div class="live-transcript-actions"
-                 role="group"
-                 aria-label="{{ _('Transcript') }}">
-                <a id="liveHistoryLink"
-                   href="{{ url_for('main.index') }}"
-                   class="live-text-action hidden">
-                    <i class="material-icons text-base" aria-hidden="true">history</i>
-                    {{ _('Open history') }}
-                </a>
-                <button id="liveCopyButton" type="button" class="live-text-action" disabled>
-                    <i class="material-icons text-base" aria-hidden="true">content_copy</i>
-                    <span id="liveCopyText">{{ _('Copy transcript') }}</span>
-                </button>
-            </div>
         </div>
     </div>
 

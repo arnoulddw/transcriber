@@ -72,21 +72,17 @@ These are processed by PostCSS with the Tailwind plugin.
     .live-select {
         @apply form-select h-control rounded-field border-transparent bg-white py-1.5 pl-3 pr-9 text-sm font-medium normal-case tracking-normal text-text-strong shadow-raised focus:border-primary focus:shadow-focus focus:ring-0;
     }
-    .live-icon-button,
-    .live-text-action {
+    .live-icon-button {
         @apply inline-flex items-center justify-center gap-1.5 rounded-full text-sm font-semibold text-text-strong hover:bg-gray-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:pointer-events-none disabled:opacity-40;
     }
     .live-icon-button {
         @apply h-control bg-surface-muted px-4;
     }
-    .live-text-action {
-        @apply h-full rounded-none px-4;
+    .live-toolbar__status-row {
+        @apply flex items-center gap-1;
     }
     .live-transcript-actions {
-        @apply flex h-control flex-none items-stretch overflow-hidden rounded-full bg-surface-muted;
-    }
-    .live-transcript-actions .live-text-action:not(.hidden) ~ .live-text-action:not(.hidden) {
-        @apply border-l border-border-strong;
+        @apply ml-1 flex items-center gap-1;
     }
     .live-meter {
         @apply flex h-control min-w-[7rem] items-center gap-2 rounded-full bg-surface-muted px-4 text-text-muted;

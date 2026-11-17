@@ -347,7 +347,9 @@
             empty: document.getElementById('liveEmptyState'),
             copy: document.getElementById('liveCopyButton'),
             copyText: document.getElementById('liveCopyText'),
+            copyIcon: document.getElementById('liveCopyIcon'),
             history: document.getElementById('liveHistoryLink'),
+            transcriptActions: document.getElementById('liveTranscriptActions'),
             follow: document.getElementById('liveFollowButton'),
         };
         const labels = {
@@ -1154,7 +1156,7 @@
                 setStatus('saved', labels.saved);
                 setAction(labels.newSession, 'add', false, false);
                 elements.history.href = result.history_url || '/';
-                elements.history.classList.remove('hidden');
+                elements.transcriptActions.classList.remove('invisible');
             } catch (error) {
                 setStatus('save-error', labels.idle);
                 setAction(labels.stop, 'save', false, false);
@@ -1175,7 +1177,7 @@
             unsavedTranscript = false;
             startedAt = null;
             elements.timer.textContent = '00:00';
-            elements.history.classList.add('hidden');
+            elements.transcriptActions.classList.add('invisible');
             setError('');
             setControlsDisabled(false);
             setStatus('idle', labels.idle);
@@ -1219,8 +1221,12 @@
             try {
                 await navigator.clipboard.writeText(text);
                 elements.copyText.textContent = labels.copied;
+                elements.copy.title = labels.copied;
+                if (elements.copyIcon) elements.copyIcon.textContent = 'check';
                 global.setTimeout(() => {
                     elements.copyText.textContent = labels.copy;
+                    elements.copy.title = labels.copy;
+                    if (elements.copyIcon) elements.copyIcon.textContent = 'content_copy';
                 }, 1600);
             } catch (error) {
                 setError(labels.copyError);
