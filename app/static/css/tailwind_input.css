@@ -38,11 +38,13 @@ These are processed by PostCSS with the Tailwind plugin.
     .live-toolbar {
         @apply flex flex-col gap-4 border-b border-border-default bg-white px-4 py-4 lg:flex-row lg:items-end lg:justify-between lg:px-8;
     }
+    /* Heading mirrors .live-control (12px label, 4px gap, 42px row) so the
+       eyebrow and status pill line up with the Language/Microphone/Model fields. */
     .live-toolbar__heading {
-        @apply flex-shrink-0;
+        @apply flex flex-shrink-0 flex-col gap-1;
     }
     .live-eyebrow {
-        @apply mb-1 text-xs font-semibold uppercase tracking-caps text-text-muted;
+        @apply text-xs font-semibold uppercase tracking-caps text-text-muted;
     }
     .live-status {
         @apply inline-flex items-center gap-2 rounded-full bg-surface-muted px-3 py-1 text-sm font-semibold text-text-muted;
@@ -79,10 +81,7 @@ These are processed by PostCSS with the Tailwind plugin.
         @apply h-control bg-surface-muted px-4;
     }
     .live-toolbar__status-row {
-        @apply flex items-center gap-1;
-    }
-    .live-transcript-actions {
-        @apply ml-1 flex items-center gap-1;
+        @apply flex h-control items-center;
     }
     .live-meter {
         @apply flex h-control min-w-[7rem] items-center gap-2 rounded-full bg-surface-muted px-4 text-text-muted;
@@ -106,8 +105,31 @@ These are processed by PostCSS with the Tailwind plugin.
     .live-error {
         @apply border-b border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-danger lg:px-8;
     }
+    .live-stage {
+        @apply relative flex min-h-0 flex-1 flex-col;
+    }
+    /* Tab hanging from the border above the transcript, under the main action
+       button: after saving it holds the follow-up actions. */
+    .live-lip {
+        @apply absolute right-4 top-0 z-10 flex items-center gap-0.5 rounded-b-card border border-t-0 border-border-default bg-white p-1 shadow-raised-hover lg:right-8;
+        animation: live-lip-in 200ms ease-out;
+    }
+    .live-lip__action {
+        @apply inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-sm font-semibold text-text-strong transition-colors hover:bg-surface-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:pointer-events-none disabled:opacity-40;
+    }
+    .live-lip__action .material-icons {
+        @apply text-text-muted;
+    }
+    .live-lip__divider {
+        @apply h-4 w-px bg-border-default;
+    }
+    @keyframes live-lip-in {
+        from { transform: translateY(-100%); }
+        to { transform: none; }
+    }
+    /* Top padding keeps the transcript clear of the lip at all times. */
     .live-transcript-scroll {
-        @apply min-h-0 flex-1 overflow-y-auto px-5 pb-16 pt-4 sm:px-8 lg:px-14;
+        @apply min-h-0 flex-1 overflow-y-auto px-5 pb-16 pt-16 sm:px-8 lg:px-14;
         overscroll-behavior: contain;
         touch-action: pan-y;
     }
@@ -146,6 +168,9 @@ These are processed by PostCSS with the Tailwind plugin.
         }
         .live-meter__level {
             transition: none;
+        }
+        .live-lip {
+            animation: none;
         }
     }
 

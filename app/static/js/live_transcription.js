@@ -1156,7 +1156,7 @@
                 setStatus('saved', labels.saved);
                 setAction(labels.newSession, 'add', false, false);
                 elements.history.href = result.history_url || '/';
-                elements.transcriptActions.classList.remove('invisible');
+                elements.transcriptActions.classList.remove('hidden');
             } catch (error) {
                 setStatus('save-error', labels.idle);
                 setAction(labels.stop, 'save', false, false);
@@ -1177,7 +1177,7 @@
             unsavedTranscript = false;
             startedAt = null;
             elements.timer.textContent = '00:00';
-            elements.transcriptActions.classList.add('invisible');
+            elements.transcriptActions.classList.add('hidden');
             setError('');
             setControlsDisabled(false);
             setStatus('idle', labels.idle);
@@ -1220,12 +1220,12 @@
             if (!text) return;
             try {
                 await navigator.clipboard.writeText(text);
+                // Hold the width so the lip doesn't resize for the shorter label.
+                elements.copy.style.minWidth = `${elements.copy.offsetWidth}px`;
                 elements.copyText.textContent = labels.copied;
-                elements.copy.title = labels.copied;
                 if (elements.copyIcon) elements.copyIcon.textContent = 'check';
                 global.setTimeout(() => {
                     elements.copyText.textContent = labels.copy;
-                    elements.copy.title = labels.copy;
                     if (elements.copyIcon) elements.copyIcon.textContent = 'content_copy';
                 }, 1600);
             } catch (error) {

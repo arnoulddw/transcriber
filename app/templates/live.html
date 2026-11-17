@@ -43,23 +43,6 @@
                     <span id="liveStatusText">{{ _('Ready to listen') }}</span>
                     <span id="liveTimer" class="live-status__timer">00:00</span>
                 </div>
-                {# Space is always reserved (visibility only) so revealing these after saving never shifts the layout. #}
-                <div id="liveTranscriptActions"
-                     class="live-transcript-actions invisible"
-                     role="group"
-                     aria-label="{{ _('Transcript') }}">
-                    <a id="liveHistoryLink"
-                       href="{{ url_for('main.index') }}"
-                       class="icon-btn"
-                       title="{{ _('Open history') }}">
-                        <i class="material-icons text-lg" aria-hidden="true">history</i>
-                        <span class="sr-only">{{ _('Open history') }}</span>
-                    </a>
-                    <button id="liveCopyButton" type="button" class="icon-btn" title="{{ _('Copy transcript') }}" disabled>
-                        <i id="liveCopyIcon" class="material-icons text-lg" aria-hidden="true">content_copy</i>
-                        <span id="liveCopyText" class="sr-only">{{ _('Copy transcript') }}</span>
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -136,14 +119,33 @@
 
     <div id="liveError" class="live-error hidden" role="alert"></div>
 
-    <div id="liveTranscriptScroll" class="live-transcript-scroll">
-        <div id="liveTranscript"
-             class="live-transcript"
-             aria-live="polite"
-             aria-atomic="false">
-            <p id="liveEmptyState" class="live-transcript__empty">
-                {{ _('Start listening and spoken words will appear here.') }}
-            </p>
+    <div class="live-stage">
+        {# Hangs from the edge above the transcript; the transcript reserves room for it, so revealing it never shifts anything. #}
+        <div id="liveTranscriptActions"
+             class="live-lip hidden"
+             role="group"
+             aria-label="{{ _('Transcript') }}">
+            <a id="liveHistoryLink"
+               href="{{ url_for('main.index') }}"
+               class="live-lip__action">
+                <i class="material-icons text-base" aria-hidden="true">history</i>
+                <span>{{ _('Open history') }}</span>
+            </a>
+            <span class="live-lip__divider" aria-hidden="true"></span>
+            <button id="liveCopyButton" type="button" class="live-lip__action" disabled>
+                <i id="liveCopyIcon" class="material-icons text-base" aria-hidden="true">content_copy</i>
+                <span id="liveCopyText">{{ _('Copy transcript') }}</span>
+            </button>
+        </div>
+        <div id="liveTranscriptScroll" class="live-transcript-scroll">
+            <div id="liveTranscript"
+                 class="live-transcript"
+                 aria-live="polite"
+                 aria-atomic="false">
+                <p id="liveEmptyState" class="live-transcript__empty">
+                    {{ _('Start listening and spoken words will appear here.') }}
+                </p>
+            </div>
         </div>
     </div>
     <button id="liveFollowButton"
