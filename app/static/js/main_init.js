@@ -461,7 +461,10 @@ function updateApiKeyNotificationVisibility(keyStatus, permissions) {
     const permittedServices = servicePermissions.filter(service => service.permitted);
     const hasAnyPermission = permittedServices.length > 0;
     const hasKeyForPermittedService = permittedServices.some(service => Boolean(normalizedKeyStatus[service.key]));
-    const shouldShow = hasAnyPermission && !hasKeyForPermittedService;
+    // The inline "No transcription models configured" card already tells the
+    // user what to do; don't repeat it as a toast.
+    const hasEmptyStateCard = Boolean(document.querySelector('.js-no-models-empty-state'));
+    const shouldShow = hasAnyPermission && !hasKeyForPermittedService && !hasEmptyStateCard;
     if (shouldShow) {
         if (!notificationElement) {
             initLogger.info("Showing API key needed notification.");

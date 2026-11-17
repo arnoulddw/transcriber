@@ -476,6 +476,12 @@ These are processed by PostCSS with the Tailwind plugin.
         @apply mx-3 my-2.5 border-t border-border-default;
     }
     @media (min-width: theme('screens.lg')) {
+        /* The fixed sidebar spans the full height (pt-16 reserves header
+           room); keep the header, and the app brand in it, painted on top. */
+        body.admin-panel > header {
+            position: relative;
+            z-index: 40;
+        }
         html.admin-collapsed .admin-sidebar {
             width: theme('spacing.rail');
         }

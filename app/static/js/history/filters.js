@@ -247,6 +247,13 @@
                 from.value = '';
                 to.value = '';
                 syncDates();
+                // Clearing the inputs alone leaves an applied date filter in
+                // place (and disables Apply), so drop it from the URL too.
+                const params = new URLSearchParams(root.location.search || '');
+                if (params.get('date') || params.get('date_from') || params.get('date_to')) {
+                    navigate({ date: null, date_from: null, date_to: null });
+                    return;
+                }
                 from.focus();
             });
             syncDates();
