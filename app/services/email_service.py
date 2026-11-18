@@ -39,7 +39,7 @@ def send_password_reset_email(user_email: str, username: str, token: str) -> Non
         logging.error(f"{log_prefix} Failed to generate reset URL (likely missing app context): {e}")
         raise EmailServiceError("Could not generate password reset URL.") from e
 
-    subject = "Reset Your Password - Transcriber Platform"
+    subject = "Reset your password - Transcriber"
     sender = current_app.config['MAIL_DEFAULT_SENDER']
     recipients = [user_email]
 

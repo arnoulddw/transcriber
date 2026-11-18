@@ -1,5 +1,5 @@
 {
-  "name": "transcriber-platform",
+  "name": "transcriber",
   "version": "1.0.0",
   "description": "Self-hosted AI transcription platform for teams with RBAC, admin analytics, public API, and reusable LLM workflows.",
   "main": "index.js",

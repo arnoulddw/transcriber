@@ -21,11 +21,11 @@ services:
       timeout: 5s
       retries: 5
 
-  transcriber-platform:
+  transcriber:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: transcriber-platform
+    container_name: transcriber
     ports:
       - "${APP_PORT:-5004}:5004" # Expose app on APP_PORT (default 5004)
     volumes:
@@ -135,7 +135,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: transcriber-platform-worker
+    container_name: transcriber-worker
     command: ["/app/.local/bin/flask", "worker"]
     env_file:
       - .env
@@ -151,7 +151,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      transcriber-platform:
+      transcriber:
         condition: service_healthy
     restart: unless-stopped
 
@@ -161,7 +161,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: transcriber-platform-cleanup
+    container_name: transcriber-cleanup
     command: ["/app/.local/bin/flask", "cleanup-loop"]
     env_file:
       - .env
@@ -176,7 +176,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      transcriber-platform:
+      transcriber:
         condition: service_healthy
     restart: unless-stopped
 

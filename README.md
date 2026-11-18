@@ -1,16 +1,16 @@
-# Transcriber Platform
+# Transcriber
 
 **Self-hosted AI transcription, live speech-to-text, and reusable LLM workflows for individuals and teams.**
 
-Transcriber Platform turns uploaded audio or a live microphone feed into searchable transcription history. It combines a clean web app, a bearer-token REST API, role-based access control, per-user model keys, usage quotas, and cost analytics—while keeping deployment and data under your control.
+Transcriber turns uploaded audio or a live microphone feed into searchable transcription history. It combines a clean web app, a bearer-token REST API, role-based access control, per-user model keys, usage quotas, and cost analytics—while keeping deployment and data under your control.
 
-[![CI](https://github.com/arnoulddw/transcriber-platform/actions/workflows/docker-build.yml/badge.svg)](https://github.com/arnoulddw/transcriber-platform/actions/workflows/docker-build.yml)
-[![Docker](https://img.shields.io/docker/pulls/arnoulddw/transcriber-platform?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/arnoulddw/transcriber-platform)
+[![CI](https://github.com/arnoulddw/transcriber/actions/workflows/docker-build.yml/badge.svg)](https://github.com/arnoulddw/transcriber/actions/workflows/docker-build.yml)
+[![Docker](https://img.shields.io/docker/pulls/arnoulddw/transcriber?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/arnoulddw/transcriber)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-![Transcriber Platform web interface](transcriber-platform-screenshot.png)
+![Transcriber web interface](transcriber-screenshot.png)
 
-## Why Transcriber Platform?
+## Why Transcriber?
 
 - **Batch and live transcription:** Upload audio files or transcribe a microphone in real time.
 - **Bring your own models and keys:** Use OpenAI, AssemblyAI, Google Gemini, and OpenRouter without locking the app to a hard-coded model list.
@@ -55,7 +55,7 @@ Live sessions can run for up to 120 minutes. The app reserves live minutes again
 
 ### Team and administration
 
-Transcriber Platform starts in **personal mode** and can switch to **team mode** from inside the app, with no restart or redeploy.
+Transcriber starts in **personal mode** and can switch to **team mode** from inside the app, with no restart or redeploy.
 
 | | Personal mode (default) | Team mode |
 |---|---|---|
@@ -90,8 +90,8 @@ The admin panel includes:
 ### 1. Clone and configure
 
 ```bash
-git clone https://github.com/arnoulddw/transcriber-platform.git
-cd transcriber-platform
+git clone https://github.com/arnoulddw/transcriber.git
+cd transcriber
 cp .env.example .env
 ```
 
@@ -129,7 +129,7 @@ Useful operational commands:
 
 ```bash
 docker compose ps
-docker compose logs -f transcriber-platform
+docker compose logs -f transcriber
 docker compose down
 ```
 
@@ -264,6 +264,26 @@ The response includes a machine-readable `status`. A finished job includes `resu
 
 The default rate limits are 10 submissions per hour and 120 status requests per hour per API key.
 
+## Upgrading from transcriber-platform
+
+Transcriber Platform is now just Transcriber, and lives in this repository. To move an existing installation without losing data:
+
+1. Keep your current folder, because Docker Compose names the MySQL volume after it. Point it at the new repository:
+
+   ```bash
+   git remote set-url origin https://github.com/arnoulddw/transcriber.git
+   git fetch origin
+   git checkout -B main origin/main
+   ```
+
+2. The Compose services are now named `transcriber`, `transcriber-worker` and `transcriber-cleanup`. Remove the old containers while starting the new ones:
+
+   ```bash
+   docker compose up -d --build --remove-orphans
+   ```
+
+Existing installations with user accounts stay in team mode. If you use the published image, switch from `arnoulddw/transcriber-platform` to `arnoulddw/transcriber`. The old image name is still published for a few releases.
+
 ## Alternative installation methods
 
 ### Published Docker image
@@ -271,12 +291,12 @@ The default rate limits are 10 submissions per hour and 120 status requests per 
 Create `.env` and provide an accessible MySQL database, then run:
 
 ```bash
-docker pull arnoulddw/transcriber-platform:latest
+docker pull arnoulddw/transcriber:latest
 docker run -d \
-  --name transcriber-platform \
+  --name transcriber \
   --env-file .env \
   -p 5004:5004 \
-  arnoulddw/transcriber-platform:latest
+  arnoulddw/transcriber:latest
 ```
 
 ### Local development
@@ -345,7 +365,7 @@ Save a provider key together with an exact model name and the `transcription` pu
 - Confirm the model was saved with the `live` purpose and the role permits its provider.
 - Check that the user has remaining daily, weekly, and monthly live minutes.
 - For a new OpenRouter STT slug, add it to `OPENROUTER_LIVE_TRANSCRIPTION_MODELS`.
-- Review `docker compose logs -f transcriber-platform` for upstream or transport errors.
+- Review `docker compose logs -f transcriber` for upstream or transport errors.
 
 ### MySQL connection fails
 
@@ -353,7 +373,7 @@ With Docker Compose, use `MYSQL_HOST=mysql`. For a host-installed database, use 
 
 ### I forgot the owner password
 
-Run `docker compose exec transcriber-platform flask reset-owner-password` and enter a new password.
+Run `docker compose exec transcriber flask reset-owner-password` and enter a new password.
 
 ### Google Sign-In or password reset fails
 
@@ -365,4 +385,4 @@ Change `APP_PORT` in `.env`, then recreate the application service with `docker 
 
 ## License
 
-Transcriber Platform is available under the [MIT License](LICENSE).
+Transcriber is available under the [MIT License](LICENSE).

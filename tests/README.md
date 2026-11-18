@@ -1,6 +1,6 @@
 # Functional Tests for Workflow Management
 
-This document outlines the structure and guidelines for the functional test suite for the workflow management features of the transcriber platform.
+This document outlines the structure and guidelines for the functional test suite for the workflow management features of Transcriber.
 
 ## Test Environment Setup
 
@@ -31,7 +31,7 @@ docker compose -f tests/docker-compose.test.yml up -d
 Use the helper script to install dev dependencies inside the test container and execute `pytest`. This ensures every run has the correct tooling without modifying the production image.
 
 ```bash
-docker compose run --rm -e PYTHONPATH=/app transcriber-platform ./tests/run_tests.sh
+docker compose run --rm -e PYTHONPATH=/app transcriber ./tests/run_tests.sh
 ```
 
 **3. Shut Down the Test Database**
@@ -59,7 +59,7 @@ The test suite uses a combination of static fixtures and dynamically generated d
 
 -   **Test Failures:** If a test fails, check the logs for detailed error messages.
 -   **Database Issues:** Ensure the test database is properly configured and running. The `clean_db` fixture should handle most database state issues.
--   **`pytest: command not found`:** If you encounter this error, it likely means the Docker image is stale. Rebuild it with `docker compose build --no-cache transcriber-platform` to ensure all dependencies are installed correctly.
+-   **`pytest: command not found`:** If you encounter this error, it likely means the Docker image is stale. Rebuild it with `docker compose build --no-cache transcriber` to ensure all dependencies are installed correctly.
 
 ## Adding New Tests
 
