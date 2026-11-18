@@ -148,7 +148,7 @@ These are processed by PostCSS with the Tailwind plugin.
         @apply text-text-strong;
     }
     .live-transcript__empty {
-        @apply max-w-4xl font-normal tracking-live text-gray-300;
+        @apply font-normal tracking-live text-gray-300;
     }
     .live-follow-button {
         @apply absolute bottom-5 right-5 z-20 inline-flex h-control items-center gap-2 rounded-full bg-primary px-btn text-sm font-semibold text-white shadow-cta hover:bg-primary-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 sm:bottom-7 sm:right-7;

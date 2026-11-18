@@ -129,19 +129,17 @@ const MODEL_PURPOSE_LABELS = {
     live: 'Live',
 };
 
-// Status badge shared by provider keys and public keys: same width so the
-// "Configured" / "Not configured" column lines up.
-function createKeyStatusBadge(configured) {
+// Shown only for providers without a key. Rows that have a key need no
+// badge: they already sit under the "Configured Keys" heading.
+function createNotConfiguredBadge() {
     const status = document.createElement('span');
-    status.className = configured
-        ? 'inline-flex h-badge w-32 flex-none items-center justify-center gap-1 rounded-full bg-green-50 text-badge font-semibold text-success'
-        : 'inline-flex h-badge w-32 flex-none items-center justify-center gap-1 rounded-full bg-amber-50 text-badge font-semibold text-warning';
+    status.className = 'inline-flex h-badge flex-none items-center justify-center gap-1 rounded-full bg-amber-50 px-2.5 text-badge font-semibold text-warning';
     const icon = document.createElement('i');
     icon.className = 'material-icons text-hero leading-none';
     icon.setAttribute('aria-hidden', 'true');
-    icon.textContent = configured ? 'check_circle' : 'error';
+    icon.textContent = 'error';
     const text = document.createElement('span');
-    text.textContent = configured ? 'Configured' : 'Not configured';
+    text.textContent = 'Not configured';
     status.append(icon, text);
     return status;
 }
@@ -425,8 +423,6 @@ function updatePublicApiKeySection(publicStatus) {
                 const actions = document.createElement('div');
                 actions.className = 'flex items-center gap-2 flex-none';
 
-                const active = createKeyStatusBadge(true);
-
                 const revokeBtn = document.createElement('button');
                 revokeBtn.type = 'button';
                 revokeBtn.className = 'revoke-public-key-btn icon-btn icon-btn--danger';
@@ -435,7 +431,6 @@ function updatePublicApiKeySection(publicStatus) {
                 revokeBtn.setAttribute('aria-label', `Revoke ${key.name || 'public API key'}`);
                 revokeBtn.innerHTML = '<i class="material-icons text-lg">delete</i>';
 
-                actions.appendChild(active);
                 actions.appendChild(revokeBtn);
                 row.appendChild(content);
                 row.appendChild(actions);
@@ -582,15 +577,7 @@ function renderProviderKeyRows(service, keys) {
         const label = document.createElement('span');
         label.className = 'text-sm font-medium text-text-strong';
         label.textContent = providerLabels[service] || service;
-        // Reserve the delete-button slot so 'Not configured' lines up
-        // with 'Configured' (both badges share one fixed width).
-        const actions = document.createElement('div');
-        actions.className = 'flex items-center gap-2';
-        const spacer = document.createElement('span');
-        spacer.className = 'h-8 w-8 flex-none';
-        spacer.setAttribute('aria-hidden', 'true');
-        actions.append(createKeyStatusBadge(false), spacer);
-        row.append(label, actions);
+        row.append(label, createNotConfiguredBadge());
         container.appendChild(row);
         return;
     }
@@ -609,10 +596,6 @@ function renderProviderKeyRows(service, keys) {
             providerLabels[service] || service,
         );
 
-        const actions = document.createElement('div');
-        actions.className = 'flex items-center gap-2';
-        const status = createKeyStatusBadge(true);
-
         const deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.className = 'delete-key-btn icon-btn icon-btn--danger';
@@ -623,8 +606,7 @@ function renderProviderKeyRows(service, keys) {
         }
         deleteBtn.setAttribute('aria-label', `Delete ${modelName} key`);
         deleteBtn.innerHTML = '<i class="material-icons text-lg">delete</i>';
-        actions.append(status, deleteBtn);
-        row.append(label, actions);
+        row.append(label, deleteBtn);
         container.appendChild(row);
     });
 }
