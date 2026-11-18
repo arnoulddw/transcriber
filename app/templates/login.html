@@ -9,7 +9,9 @@
 {# Add Google Sign-In library script #}
 {% block head_extra %}
 {{ super() }}
+{% if is_multi_user and google_client_id %}
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+{% endif %}
 
 {% endblock %}
 
@@ -133,7 +135,7 @@
             </button>
         </div>
 
-        {% if title == 'Login' %}
+        {% if title == 'Login' and is_multi_user %}
         <div class="mt-4 text-center text-sm">
             <a href="{{ url_for('auth.forgot_password') }}" class="font-medium text-primary hover:text-primary-dark">
                 {{ _('Forgot your password?') }}
@@ -141,7 +143,7 @@
         </div>
         {% endif %}
 
-        {% if title == 'Login' %}
+        {% if title == 'Login' and is_multi_user and google_client_id %}
         <div class="relative">
             <div class="absolute inset-0 flex items-center">
                 <div class="w-full surface-divider"></div>

@@ -24,7 +24,7 @@ function initializeProfileModalElements() {
         window.logger.warn(profileLogPrefix, "One or more Profile modal core elements not found.");
         return false;
     }
-    if (profileModalTriggers.length === 0 && window.IS_MULTI_USER) {
+    if (profileModalTriggers.length === 0) {
         window.logger.warn(profileLogPrefix, "Profile modal trigger buttons not found.");
     }
     return true;
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileForm = document.getElementById('profileForm');
     if (profileForm) {
         profileForm.addEventListener('submit', handleProfileSave);
-    } else if (window.IS_MULTI_USER) {
+    } else {
         window.logger.warn(profileLogPrefix, "User settings form element (#profileForm) not found.");
     }
 

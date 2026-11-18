@@ -39,7 +39,10 @@ services:
     environment:
       # --- Core App Settings ---
       SECRET_KEY: ${SECRET_KEY} # CRITICAL: Must be set in .env
-      DEPLOYMENT_MODE: ${DEPLOYMENT_MODE:-multi}
+      # Unset = switch personal/team mode in the app. Set 'single' or 'multi' to lock it.
+      DEPLOYMENT_MODE: ${DEPLOYMENT_MODE:-}
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
       START_EMBEDDED_WORKER: "0" # Compose runs the separate transcriber-worker service
       TZ: ${TZ:-UTC}
 
@@ -81,8 +84,8 @@ services:
       RATELIMIT_DEFAULT: ${RATELIMIT_DEFAULT:-600 per minute;10000 per day}
 
       # --- Admin User Credentials (for initial setup) ---
-      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-password} # WARNING: default for first-time Docker install; override in production # CRITICAL: Must be set in .env
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-} # Optional. When set, sign-in is required and cannot be turned off in the app.
       ADMIN_EMAIL: ${ADMIN_EMAIL}
 
       # --- Email Configuration ---

@@ -38,6 +38,11 @@ def admin_required(func: Callable) -> Callable:
             logging.warning(f"[AUTH:AdminRequired] Access denied to '{endpoint_name}': User not authenticated.")
             abort(403)
 
+        from app.services import access_service
+        if not access_service.is_team_mode():
+            logging.warning(f"[AUTH:AdminRequired] Access denied to '{endpoint_name}': the Admin panel is only available in team mode.")
+            abort(403)
+
         if not role or not getattr(role, 'access_admin_panel', False):
             username = user.username if user else 'Unknown'
             user_id = user.id if user else 'N/A'
@@ -164,3 +169,18 @@ def check_usage_limits(
     except Exception as e:
          logging.error(f"{log_prefix} Error checking usage limits: {e}", exc_info=True)
          return False, _("An error occurred while checking usage limits.")
+
+
+LIVE_ACCESS_PERMISSIONS = (
+    'use_api_openai',
+    'use_api_openai_live_transcribe',
+    'use_api_openrouter',
+    'use_api_google_gemini',
+)
+
+
+def has_live_access(user: Optional[User]) -> bool:
+    """Whether ``user`` may open Live transcription (any live-capable provider)."""
+    if not user or not getattr(user, 'is_authenticated', False):
+        return False
+    return any(check_permission(user, permission) for permission in LIVE_ACCESS_PERMISSIONS)

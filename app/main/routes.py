@@ -17,7 +17,7 @@ from app.models import llm_operation as llm_operation_model
 # --- END ADDED ---
 # Import services for prompt matching
 from app.services import user_service, admin_management_service
-from app.core.decorators import check_permission
+from app.core.decorators import check_permission, has_live_access
 from app.services import history_filter_service
 from app.models.transcription_utils.history_filters import DURATION_MAX, DURATION_STEP, PER_PAGE_OPTIONS
 
@@ -248,15 +248,7 @@ def index():
 @login_required
 def live():
     """Render the full-screen live transcription workspace."""
-    if (
-        current_app.config['DEPLOYMENT_MODE'] == 'multi'
-        and not (
-            check_permission(current_user, 'use_api_openai')
-            or check_permission(current_user, 'use_api_openai_live_transcribe')
-            or check_permission(current_user, 'use_api_openrouter')
-            or check_permission(current_user, 'use_api_google_gemini')
-        )
-    ):
+    if not has_live_access(current_user):
         abort(403)
     return render_template(
         'live.html',

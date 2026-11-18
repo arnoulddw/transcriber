@@ -580,9 +580,7 @@
         } else { console.error("updatePlaceholders function not found."); }
 
         // Initialize button states and context prompt validation
-        if (window.IS_MULTI_USER && typeof window.checkTranscribeButtonState === 'function') {
-            window.checkTranscribeButtonState();
-        } else if (typeof window.checkTranscribeButtonState === 'function') {
+        if (typeof window.checkTranscribeButtonState === 'function') {
              window.checkTranscribeButtonState();
         } else {
              console.error("checkTranscribeButtonState function not found.");

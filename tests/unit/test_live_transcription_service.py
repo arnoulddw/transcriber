@@ -29,6 +29,16 @@ def live_app():
 
 
 @pytest.fixture(autouse=True)
+def personal_mode_owner(monkeypatch):
+    """Personal mode now has a real owner with the admin role: every live
+    permission is granted and saved keys are checked before the .env key.
+    Tests that exercise denial or saved keys override these."""
+    monkeypatch.setattr(service, "check_permission", MagicMock(return_value=True))
+    monkeypatch.setattr(service.user_service, "get_decrypted_api_key", MagicMock(return_value=None))
+    monkeypatch.setattr(service.user_service, "get_user_api_key_status", MagicMock(return_value={}))
+
+
+@pytest.fixture(autouse=True)
 def allow_live_reservation(monkeypatch):
     """Default live-minutes reservation to success; individual tests override."""
     monkeypatch.setattr(

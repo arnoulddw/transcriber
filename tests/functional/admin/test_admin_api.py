@@ -67,7 +67,7 @@ def test_create_user_duplicate_username(admin_client):
     ):
         response = admin_client.post(
             "/api/admin/users",
-            json={"username": "existing", "password": "password123"},
+            json={"username": "existing", "password": "password123", "email": "existing@company.org"},
         )
 
     assert response.status_code == 409

@@ -1940,3 +1940,365 @@ msgstr "Workflow intégré - "
 #: app/templates/live.html
 msgid "Back to live"
 msgstr "Revenir au direct"
+
+# Personal and team mode (User Settings > Access)
+msgid "Password set. You'll need it the next time you sign in."
+msgstr "Mot de passe enregistré. Vous en aurez besoin à votre prochaine connexion."
+
+msgid "Sign-in is off. Transcriber now opens without a login."
+msgstr "La connexion est désactivée. Transcriber s'ouvre désormais sans identification."
+
+msgid "Team mode is on. You're the admin."
+msgstr "Le mode équipe est activé. Vous êtes l'administrateur."
+
+msgid "Personal mode is on. Only you can use Transcriber now."
+msgstr "Le mode personnel est activé. Vous seul pouvez désormais utiliser Transcriber."
+
+msgid "Missing \"enabled\" (true or false)."
+msgstr "Paramètre \"enabled\" manquant (true ou false)."
+
+msgid "Missing \"allowed\" (true or false)."
+msgstr "Paramètre \"allowed\" manquant (true ou false)."
+
+msgid "New sign-ups are on."
+msgstr "Les nouvelles inscriptions sont activées."
+
+msgid "New sign-ups are off."
+msgstr "Les nouvelles inscriptions sont désactivées."
+
+msgid "Transcriber is in personal mode, so only its owner can sign in."
+msgstr "Transcriber est en mode personnel : seul son propriétaire peut se connecter."
+
+msgid "Logged in successfully"
+msgstr "Connexion réussie"
+
+msgid "Invalid username or password."
+msgstr "Nom d'utilisateur ou mot de passe incorrect."
+
+msgid "An unexpected error occurred during login. Please try again."
+msgstr "Une erreur inattendue s'est produite lors de la connexion. Veuillez réessayer."
+
+msgid "Sign-ups are turned off. Ask an admin to create an account for you."
+msgstr "Les inscriptions sont désactivées. Demandez à un administrateur de vous créer un compte."
+
+msgid "Account created for %(username)s! You can now log in."
+msgstr "Compte créé pour %(username)s ! Vous pouvez maintenant vous connecter."
+
+msgid "Registration failed. Please try again."
+msgstr "L'inscription a échoué. Veuillez réessayer."
+
+msgid "An unexpected error occurred during registration. Please try again."
+msgstr "Une erreur inattendue s'est produite lors de l'inscription. Veuillez réessayer."
+
+msgid "You have been logged out successfully."
+msgstr "Vous avez été déconnecté."
+
+msgid "Password reset by email is only available in team mode."
+msgstr "La réinitialisation du mot de passe par e-mail n'est disponible qu'en mode équipe."
+
+msgid "If an account with that email exists, a password reset link has been sent. Please check your inbox and spam folder if you don't see it within a few minutes."
+msgstr "Si un compte existe avec cette adresse e-mail, un lien de réinitialisation a été envoyé. Vérifiez votre boîte de réception et vos courriers indésirables si vous ne le voyez pas d'ici quelques minutes."
+
+msgid "An error occurred while processing your request. Please try again."
+msgstr "Une erreur s'est produite lors du traitement de votre demande. Veuillez réessayer."
+
+msgid "The password reset link is invalid or has expired."
+msgstr "Le lien de réinitialisation est invalide ou a expiré."
+
+msgid "Your password has been reset successfully. You can now log in."
+msgstr "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter."
+
+msgid "Password reset failed. Please try again."
+msgstr "La réinitialisation du mot de passe a échoué. Veuillez réessayer."
+
+msgid "An error occurred while resetting your password. Please try again."
+msgstr "Une erreur s'est produite lors de la réinitialisation du mot de passe. Veuillez réessayer."
+
+msgid "Google Sign-In is only available in team mode."
+msgstr "La connexion avec Google n'est disponible qu'en mode équipe."
+
+msgid "Password must be at least 8 characters long."
+msgstr "Le mot de passe doit contenir au moins 8 caractères."
+
+msgid "Passwords do not match."
+msgstr "Les mots de passe ne correspondent pas."
+
+msgid "Username must be between 4 and 25 characters."
+msgstr "Le nom d'utilisateur doit contenir entre 4 et 25 caractères."
+
+msgid "That username is already taken."
+msgstr "Ce nom d'utilisateur est déjà pris."
+
+msgid "Email is required for team mode (it is used for password resets)."
+msgstr "L'adresse e-mail est obligatoire en mode équipe (elle sert à réinitialiser le mot de passe)."
+
+msgid "Please enter a valid email address."
+msgstr "Veuillez saisir une adresse e-mail valide."
+
+msgid "Please enter your real email address."
+msgstr "Veuillez saisir votre véritable adresse e-mail."
+
+msgid "That email address is already used by another account."
+msgstr "Cette adresse e-mail est déjà utilisée par un autre compte."
+
+msgid "Your current password is incorrect."
+msgstr "Votre mot de passe actuel est incorrect."
+
+msgid "Could not save your username or email. Please try again."
+msgstr "Impossible d'enregistrer votre nom d'utilisateur ou votre e-mail. Veuillez réessayer."
+
+msgid "This account already has a password. Use Change Password instead."
+msgstr "Ce compte a déjà un mot de passe. Utilisez plutôt Changer le mot de passe."
+
+msgid "Could not save your password. Please try again."
+msgstr "Impossible d'enregistrer votre mot de passe. Veuillez réessayer."
+
+msgid "Sign-in cannot be turned off in team mode."
+msgstr "La connexion ne peut pas être désactivée en mode équipe."
+
+msgid "Only the owner can change this."
+msgstr "Seul le propriétaire peut modifier ce réglage."
+
+msgid "Sign-in is required by your server's .env file (ADMIN_PASSWORD)."
+msgstr "Le fichier .env de votre serveur impose la connexion (ADMIN_PASSWORD)."
+
+msgid "The mode is set by DEPLOYMENT_MODE in your server's .env file."
+msgstr "Le mode est défini par DEPLOYMENT_MODE dans le fichier .env de votre serveur."
+
+msgid "Team mode is already on."
+msgstr "Le mode équipe est déjà activé."
+
+msgid "Only the owner can turn on team mode."
+msgstr "Seul le propriétaire peut activer le mode équipe."
+
+msgid "Team mode is already off."
+msgstr "Le mode équipe est déjà désactivé."
+
+msgid "Only an admin can switch back to personal mode."
+msgstr "Seul un administrateur peut revenir au mode personnel."
+
+msgid "Set a password first: Google sign-in is turned off in personal mode."
+msgstr "Définissez d'abord un mot de passe : la connexion avec Google est désactivée en mode personnel."
+
+msgid "Sign-ups are set by ALLOW_REGISTRATION in your server's .env file."
+msgstr "Les inscriptions sont définies par ALLOW_REGISTRATION dans le fichier .env de votre serveur."
+
+msgid "Only an admin can change sign-ups in team mode."
+msgstr "Seul un administrateur peut modifier les inscriptions en mode équipe."
+
+msgid "No owner account found. Run `flask bootstrap` first."
+msgstr "Aucun compte propriétaire trouvé. Lancez d'abord `flask bootstrap`."
+
+msgid "Could not save the password."
+msgstr "Impossible d'enregistrer le mot de passe."
+
+msgid "Sign-ups and team mode are in"
+msgstr "Les inscriptions et le mode équipe se trouvent dans"
+
+msgid "User Settings > Access"
+msgstr "Paramètres utilisateur > Accès"
+
+msgid "Add user"
+msgstr "Ajouter un utilisateur"
+
+msgid "Share the temporary password with them. They can change it in User Settings > Access."
+msgstr "Communiquez-lui le mot de passe temporaire. Il pourra le modifier dans Paramètres utilisateur > Accès."
+
+msgid "Role"
+msgstr "Rôle"
+
+msgid "Temporary password"
+msgstr "Mot de passe temporaire"
+
+msgid "At least 8 characters."
+msgstr "Au moins 8 caractères."
+
+msgid "Create user"
+msgstr "Créer l'utilisateur"
+
+msgid "Password & sign-in"
+msgstr "Mot de passe et connexion"
+
+msgid "Sign-in: Off."
+msgstr "Connexion : désactivée."
+
+msgid "Transcriber opens without a login."
+msgstr "Transcriber s'ouvre sans identification."
+
+msgid "Anyone who can reach this address can use Transcriber. Set a password before you make it reachable from the internet."
+msgstr "Toute personne pouvant accéder à cette adresse peut utiliser Transcriber. Définissez un mot de passe avant de le rendre accessible depuis Internet."
+
+msgid "Set a password"
+msgstr "Définir un mot de passe"
+
+msgid "Email (optional)"
+msgstr "E-mail (facultatif)"
+
+msgid "Needed later for password resets if you turn on team mode."
+msgstr "Nécessaire plus tard pour réinitialiser le mot de passe si vous activez le mode équipe."
+
+msgid "Confirm password"
+msgstr "Confirmer le mot de passe"
+
+msgid "Protect Transcriber"
+msgstr "Protéger Transcriber"
+
+msgid "Sign-in: On."
+msgstr "Connexion : activée."
+
+msgid "You need your password to open Transcriber."
+msgstr "Votre mot de passe est nécessaire pour ouvrir Transcriber."
+
+msgid "Turn off sign-in"
+msgstr "Désactiver la connexion"
+
+msgid "Anyone who can reach this address will be able to use Transcriber without signing in."
+msgstr "Toute personne pouvant accéder à cette adresse pourra utiliser Transcriber sans se connecter."
+
+msgid "You sign in with Google. You can also add a password."
+msgstr "Vous vous connectez avec Google. Vous pouvez aussi ajouter un mot de passe."
+
+msgid "Add a password"
+msgstr "Ajouter un mot de passe"
+
+msgid "Save password"
+msgstr "Enregistrer le mot de passe"
+
+msgid "Team mode"
+msgstr "Mode équipe"
+
+msgid "Team mode: Off."
+msgstr "Mode équipe : désactivé."
+
+msgid "Right now Transcriber has one account: yours."
+msgstr "Pour l'instant, Transcriber n'a qu'un seul compte : le vôtre."
+
+msgid "Turning on team mode will:"
+msgstr "Activer le mode équipe va :"
+
+msgid "Open a sign-up page so other people can create their own accounts"
+msgstr "Ouvrir une page d'inscription pour que d'autres personnes créent leur propre compte"
+
+msgid "(you can turn this off at any time)"
+msgstr "(vous pouvez la désactiver à tout moment)"
+
+msgid "Give each person their own history, workflows, API keys and settings"
+msgstr "Donner à chacun son propre historique, ses workflows, ses clés API et ses paramètres"
+
+msgid "Turn on Google sign-in and password resets, if they're set up on your server"
+msgstr "Activer la connexion avec Google et la réinitialisation du mot de passe, s'ils sont configurés sur votre serveur"
+
+msgid "Make you the admin, adding an Admin panel to your menu for managing users, roles, usage limits, pricing and analytics"
+msgstr "Faire de vous l'administrateur, avec un Panneau d'administration dans votre menu pour gérer les utilisateurs, les rôles, les limites d'utilisation, les tarifs et les statistiques"
+
+msgid "Require everyone to sign in, you included"
+msgstr "Obliger tout le monde à se connecter, vous compris"
+
+msgid "It won't:"
+msgstr "Cela ne va pas :"
+
+msgid "Change or share anything you already have. Your history, workflows and keys stay private to you"
+msgstr "Modifier ou partager ce que vous avez déjà. Votre historique, vos workflows et vos clés restent privés"
+
+msgid "Require a restart or redeploy"
+msgstr "Nécessiter un redémarrage ou un redéploiement"
+
+msgid "You can switch back to personal mode at any time."
+msgstr "Vous pouvez revenir au mode personnel à tout moment."
+
+msgid "Set by DEPLOYMENT_MODE in your server's .env file."
+msgstr "Défini par DEPLOYMENT_MODE dans le fichier .env de votre serveur."
+
+msgid "Enable team mode"
+msgstr "Activer le mode équipe"
+
+msgid "Step 1 of 2"
+msgstr "Étape 1 sur 2"
+
+msgid "Set your password"
+msgstr "Définissez votre mot de passe"
+
+msgid "In team mode everyone signs in, you included."
+msgstr "En mode équipe, tout le monde se connecte, vous compris."
+
+msgid "Your email is used for password resets."
+msgstr "Votre e-mail sert à réinitialiser le mot de passe."
+
+msgid "Continue"
+msgstr "Continuer"
+
+msgid "Step 2 of 2"
+msgstr "Étape 2 sur 2"
+
+msgid "Confirm"
+msgstr "Confirmer"
+
+msgid "After this, everyone signs in and you become the admin. Your data stays private to you, and you can switch back at any time."
+msgstr "Ensuite, tout le monde se connecte et vous devenez l'administrateur. Vos données restent privées et vous pouvez revenir en arrière à tout moment."
+
+msgid "Let people sign up themselves"
+msgstr "Laisser les gens s'inscrire eux-mêmes"
+
+msgid "If you untick this, only people you add in Admin panel > Users can sign in."
+msgstr "Si vous décochez cette case, seules les personnes ajoutées dans Panneau d'administration > Utilisateurs pourront se connecter."
+
+msgid "Set by ALLOW_REGISTRATION in your server's .env file."
+msgstr "Défini par ALLOW_REGISTRATION dans le fichier .env de votre serveur."
+
+msgid "Turn on team mode"
+msgstr "Activer le mode équipe"
+
+msgid "Back"
+msgstr "Retour"
+
+msgid "Team mode: On"
+msgstr "Mode équipe : activé"
+
+msgid "Allow new sign-ups"
+msgstr "Autoriser les nouvelles inscriptions"
+
+msgid "When off, the sign-up page disappears and Google sign-in only works for existing accounts. You can still add people in Admin panel > Users."
+msgstr "Désactivé, la page d'inscription disparaît et la connexion avec Google ne fonctionne que pour les comptes existants. Vous pouvez toujours ajouter des personnes dans Panneau d'administration > Utilisateurs."
+
+msgid "Switch back to personal mode"
+msgstr "Revenir au mode personnel"
+
+msgid "Switch back to personal mode?"
+msgstr "Revenir au mode personnel ?"
+
+msgid "The sign-up page and Admin panel disappear"
+msgstr "La page d'inscription et le Panneau d'administration disparaissent"
+
+msgid "You become the owner and keep your password. You can turn sign-in off afterwards"
+msgstr "Vous devenez le propriétaire et gardez votre mot de passe. Vous pourrez ensuite désactiver la connexion"
+
+msgid "Enter your password to confirm"
+msgstr "Saisissez votre mot de passe pour confirmer"
+
+msgid "Switch to personal mode"
+msgstr "Passer en mode personnel"
+
+msgid "Google sign-in is turned off in personal mode, so add a password in Password & sign-in above first."
+msgstr "La connexion avec Google est désactivée en mode personnel : ajoutez d'abord un mot de passe dans Mot de passe et connexion, ci-dessus."
+
+msgid "Settings sections"
+msgstr "Sections des paramètres"
+
+msgid "General"
+msgstr "Général"
+
+msgid "Access"
+msgstr "Accès"
+
+msgid "%(num)s user"
+msgid_plural "%(num)s users"
+msgstr[0] "%(num)s utilisateur"
+msgstr[1] "%(num)s utilisateurs"
+
+msgid "The other account and its data are kept, but it can't sign in or use its API keys until team mode is back on. Jobs it already started will still finish."
+msgid_plural "The %(num)s other accounts and all their data are kept, but they can't sign in or use their API keys until team mode is back on. Jobs they already started will still finish."
+msgstr[0] "L'autre compte et ses données sont conservés, mais il ne pourra ni se connecter ni utiliser ses clés API tant que le mode équipe n'est pas réactivé. Les tâches déjà lancées se termineront."
+msgstr[1] "Les %(num)s autres comptes et toutes leurs données sont conservés, mais ils ne pourront ni se connecter ni utiliser leurs clés API tant que le mode équipe n'est pas réactivé. Les tâches déjà lancées se termineront."
+
+msgid "Add your email"
+msgstr "Ajoutez votre e-mail"

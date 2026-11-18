@@ -10,6 +10,7 @@ from app.core.decorators import admin_required, permission_required # Added perm
 # Import management service
 from app.services import admin_management_service, pricing_service
 from app.services.admin_management_service import AdminServiceError # Specific exception
+from app.services.auth_service import AuthServiceError
 from app.services.pricing_service import PricingServiceError
 from app.extensions import limiter
 from app.models import llm_catalog as llm_catalog_model
@@ -99,6 +100,10 @@ def create_user():
     if not username or not password:
         logging.warning(f"{log_prefix} Missing username or password in request.")
         return jsonify({'error': 'Missing username or password in request body.'}), 400
+    if not data.get('email'):
+        return jsonify({'error': 'An email address is required.'}), 400
+    if len(password) < 8:
+        return jsonify({'error': 'Password must be at least 8 characters long.'}), 400
 
     try:
         # Call the service layer function
@@ -113,12 +118,13 @@ def create_user():
                 'role': role_name # Return the requested role name
             }
         }), 201 # HTTP 201 Created
-    except AdminServiceError as ase:
+    except (AdminServiceError, AuthServiceError) as ase:
         # Handle specific errors from the service (e.g., duplicate user, invalid role)
         logging.error(f"{log_prefix} Failed to create user '{username}': {ase}")
-        # Return 409 Conflict for duplicate username, 400 for others
-        status_code = 409 if 'already taken' in str(ase) else 400
-        return jsonify({'error': str(ase)}), status_code
+        # Return 409 Conflict for duplicate username/email, 400 for others
+        message = str(ase)
+        status_code = 409 if ('already taken' in message or 'already registered' in message) else 400
+        return jsonify({'error': message}), status_code
     except Exception as e:
         # Handle unexpected errors
         logging.error(f"{log_prefix} Unexpected error creating user '{username}': {e}", exc_info=True)

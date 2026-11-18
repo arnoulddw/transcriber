@@ -184,7 +184,7 @@ def verify_google_id_token(token: str) -> Optional[Dict[str, Any]]:
         raise AuthServiceError("An unexpected error occurred during Google Sign-In verification.") from e
 
 
-def handle_google_login(idinfo: Dict[str, Any]) -> Optional[User]:
+def handle_google_login(idinfo: Dict[str, Any], allow_create: bool = True) -> Optional[User]:
     """
     Handles user login/registration based on verified Google ID token info.
     Finds existing user by Google ID or email, or creates a new user.
@@ -223,6 +223,9 @@ def handle_google_login(idinfo: Dict[str, Any]) -> Optional[User]:
                 raise AuthServiceError(f"Failed to link Google account to existing user {user.id}.")
             return user
 
+        if not allow_create:
+            logger.info("No existing user found and sign-ups are turned off; refusing Google sign-in.")
+            raise AuthServiceError("Sign-ups are turned off. Ask an admin to create an account for you.")
         logger.info("No existing user found; creating new OAuth user.")
         language_from_session = session.get('language')
         if language_from_session:

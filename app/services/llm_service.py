@@ -22,6 +22,7 @@ from app.models import llm_operation as llm_operation_model
 from app.models import llm_catalog as llm_catalog_model
 from app.database import close_db
 from app.services.pricing_service import get_price as get_pricing_service_price, PricingServiceError
+from app.services import access_service
 # --- END MODIFIED ---
  
  # Import models if needed (e.g., for logging operations)
@@ -172,14 +173,14 @@ def generate_text_via_llm(
     if not effective_api_key:
         # --- MODIFICATION: Check 'allow_api_key_management' permission ---
         user_can_manage_keys = False
-        if current_app.config['DEPLOYMENT_MODE'] == 'multi' and user_id is not None:
+        if user_id is not None:
             user = user_model.get_user_by_id(user_id)
             if user and user.role:
                 user_can_manage_keys = user.has_permission('allow_api_key_management')
             else:
                 logger.warning(f"User or role not found for ID {user_id} when checking API key management permission.")
 
-        if current_app.config['DEPLOYMENT_MODE'] == 'multi' and user_id is not None and user_can_manage_keys:
+        if user_id is not None and user_can_manage_keys:
             # --- END MODIFICATION ---
             key_service_name: Optional[str] = None
             logger.debug(f"Checking for user-specific key for provider: {provider_name}")
@@ -214,7 +215,7 @@ def generate_text_via_llm(
                     logger.warning(f"Error fetching user-specific API key for '{key_service_name}': {e}. Will try global key.")
                     effective_api_key = None # Ensure fallback if error occurs
         # --- MODIFICATION: Added else for when user cannot manage keys in multi-mode ---
-        elif current_app.config['DEPLOYMENT_MODE'] == 'multi' and user_id is not None and not user_can_manage_keys:
+        elif access_service.is_team_mode() and user_id is not None and not user_can_manage_keys:
             logger.debug("User key management disabled for role. Will attempt to use an admin-configured model key.")
             key_service_name = None
             if provider_name.upper().startswith("OPENROUTER"):

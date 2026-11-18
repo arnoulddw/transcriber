@@ -15,8 +15,9 @@ def _setup_google_mocks(monkeypatch):
 
     dummy_user = SimpleNamespace(id=42, email='user@example.com')
 
-    def fake_handle(idinfo):
+    def fake_handle(idinfo, allow_create=True):
         captured['idinfo'] = idinfo
+        captured['allow_create'] = allow_create
         return dummy_user
 
     login_spy = MagicMock(name="login_user_spy")

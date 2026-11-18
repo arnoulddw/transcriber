@@ -132,16 +132,32 @@ def worker_command_cli():
         raise SystemExit(1) from exc
 
 
+@click.command("reset-owner-password")
+@click.option("--password", prompt=True, hide_input=True, confirmation_prompt=True,
+              help="The new password (at least 8 characters).")
+@with_appcontext
+def reset_owner_password_command_cli(password):
+    """Set a new password for the owner account (recovery)."""
+    from app.services import access_service
+    try:
+        username = access_service.reset_owner_password(password)
+    except access_service.AccessError as exc:
+        click.echo(click.style(f"Error: {exc.message}", fg="red"), err=True)
+        raise SystemExit(1) from exc
+    click.echo(click.style(f"Password updated. Sign in as '{username}'.", fg="green"))
+
+
 @click.command("bootstrap")
 @with_appcontext
 def bootstrap_command_cli():
-    """Run all bootstrap steps (schema, migrations, marker creation)."""
+    """Run all bootstrap steps (schema, migrations, owner account, marker creation)."""
     log_prefix = "[CLI:bootstrap]"
     logging.info(f"{log_prefix} Requested bootstrap run.")
     click.echo("Running bootstrap tasks (schema + migrations)...")
     try:
         initialize_database_schema()
         run_migrations()
+        create_initial_admin()
         interrupted_count = recover_abandoned_jobs(current_app._get_current_object())
         if interrupted_count:
             click.echo(f"Marked {interrupted_count} abandoned transcription job(s) as interrupted.")
@@ -164,6 +180,7 @@ def register_cli_commands(app):
     app.cli.add_command(cleanup_loop_command_cli)
     app.cli.add_command(worker_command_cli)
     app.cli.add_command(bootstrap_command_cli)
+    app.cli.add_command(reset_owner_password_command_cli)
     logging.info(
-        "[SYSTEM] Registered CLI commands: init-db, create-roles, create-admin, db-migrate, cleanup-once, cleanup-loop, worker, bootstrap."
+        "[SYSTEM] Registered CLI commands: init-db, create-roles, create-admin, db-migrate, cleanup-once, cleanup-loop, worker, bootstrap, reset-owner-password."
     )

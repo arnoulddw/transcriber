@@ -14,7 +14,7 @@ from flask_wtf.csrf import CSRFError
 from werkzeug.exceptions import BadRequest
 
 # Import Flask-Login current_user proxy
-from flask_login import current_user
+from flask_login import current_user, login_user
 # --- NEW: Import get_locale and gettext ---
 from flask_babel import get_locale, gettext as _, lazy_gettext as _l
 from babel.numbers import format_currency as babel_format_currency, format_decimal, format_percent as babel_format_percent
@@ -29,7 +29,8 @@ from app.models import user as user_model
 from app.models import transcription as transcription_model, llm_operation as llm_operation_model
 from app.models.user import User
 from app.models.role import Role
-from app.services import user_service, auth_service
+from app.services import user_service, auth_service, access_service
+from app.core.decorators import has_live_access
 from app.services.auth_service import AuthServiceError
 # --- Import new initialization functions ---
 from app.initialization import (
@@ -287,6 +288,11 @@ def create_app(config_class=Config) -> Flask:
             user_id = int(user_id_str)
             _loader_logger = get_logger(__name__, user_id=user_id, component="Auth:UserLoader")
             user = user_model.get_user_by_id(user_id)
+            if user and not access_service.user_allowed_in_current_mode(user):
+                # Personal mode: only the owner may use the app. Other
+                # accounts (kept from team mode) are treated as signed out.
+                _loader_logger.info("Rejecting session: personal mode allows only the owner.")
+                return None
             if user: _loader_logger.debug("User loaded successfully.")
             else: _loader_logger.warning("User not found in database.")
             return user
@@ -309,6 +315,7 @@ def create_app(config_class=Config) -> Flask:
     from app.api.workflows import workflows_bp
     from app.api.llm import llm_bp
     from app.api.live import live_bp
+    from app.api.access import access_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -319,6 +326,7 @@ def create_app(config_class=Config) -> Flask:
     app.register_blueprint(workflows_bp)
     app.register_blueprint(llm_bp)
     app.register_blueprint(live_bp)
+    app.register_blueprint(access_bp)
     _sys_logger.debug("Blueprints registered.")
 
 
@@ -354,8 +362,24 @@ def create_app(config_class=Config) -> Flask:
             _req_logger.warning(f"Initialization pending. Blocking request to {request.endpoint}. Returning 503.")
             return jsonify({'error': _('Service temporarily unavailable. Initialization in progress.')}), 503
 
-        if (app.config['DEPLOYMENT_MODE'] == 'multi' and
-                not current_user.is_authenticated and
+        # Open personal mode: sign the owner in automatically. The public
+        # API never gets this; it always needs a bearer token.
+        if (not current_user.is_authenticated and
+                request.endpoint and
+                not request.endpoint.startswith('static') and
+                not request.path.startswith('/api/v1/')):
+            try:
+                owner = access_service.get_owner() if access_service.is_personal_mode() else None
+            except Exception as owner_err:
+                owner = None
+                _req_logger.error(f"Could not load the owner account: {owner_err}", exc_info=True)
+            if owner is not None and access_service.owner_needs_no_sign_in(owner):
+                login_user(owner, remember=False)
+                g.user = owner
+                g.role = owner.role
+                _req_logger.debug("Signed in the owner automatically (personal mode, sign-in off).")
+
+        if (not current_user.is_authenticated and
                 request.endpoint and
                 not request.endpoint.startswith('static') and
                 request.endpoint not in allowed_endpoints):
@@ -391,8 +415,17 @@ def create_app(config_class=Config) -> Flask:
             "frame-src https://accounts.google.com; "
             "object-src 'none';"
         )
-        if app.config.get('DEPLOYMENT_MODE') == 'multi':
+        if request.is_secure:
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+            # Behind HTTPS (directly or via a proxy Gunicorn trusts), mark
+            # every cookie Secure so plain-HTTP setups keep working too.
+            cookies = response.headers.getlist('Set-Cookie')
+            if cookies and any('; secure' not in cookie.lower() for cookie in cookies):
+                response.headers.remove('Set-Cookie')
+                for cookie in cookies:
+                    if '; secure' not in cookie.lower():
+                        cookie = f"{cookie}; Secure"
+                    response.headers.add('Set-Cookie', cookie)
         return response
 
     # Cache-bust every static asset URL so browsers pick up new JS/CSS after a
@@ -414,7 +447,7 @@ def create_app(config_class=Config) -> Flask:
     def inject_global_vars():
         user: Optional[User] = current_user if current_user.is_authenticated else None
         role: Optional[Role] = user.role if user else None
-        is_multi = app.config['DEPLOYMENT_MODE'] == 'multi'
+        is_multi = access_service.is_team_mode()
         initial_key_status = {}
         user_permissions = {}
         from app.models import transcription_catalog as transcription_catalog_model
@@ -474,8 +507,9 @@ def create_app(config_class=Config) -> Flask:
             "#ffb347": "Orange"
         }
 
-        if is_multi and user:
+        if user:
             try:
+                # Personal mode also counts the provider keys from .env.
                 initial_key_status = user_service.get_effective_key_status(user)
             except Exception as e:
                 _ctx_logger.error(f"Error fetching initial key status: {e}", exc_info=True)
@@ -494,7 +528,7 @@ def create_app(config_class=Config) -> Flask:
                     'allow_download_transcript': role.allow_download_transcript,
                     'allow_api_key_management': role.allow_api_key_management,
                     'allow_public_api_access': getattr(role, 'allow_public_api_access', False),
-                    'access_admin_panel': role.access_admin_panel,
+                    'access_admin_panel': access_service.can_access_admin_panel(user),
                     'allow_workflows': role.allow_workflows,
                     'manage_workflow_templates': role.manage_workflow_templates,
                     'allow_auto_title_generation': role.allow_auto_title_generation,
@@ -503,32 +537,7 @@ def create_app(config_class=Config) -> Flask:
 
             live_transcription_models = transcription_catalog_model.get_live_models(initial_key_status)
             _update_live_model_context(live_transcription_models)
-        elif not is_multi:
-             initial_key_status = {
-                 'openai': bool(app.config.get('OPENAI_API_KEY')),
-                 'assemblyai': bool(app.config.get('ASSEMBLYAI_API_KEY')),
-                 'gemini': bool(app.config.get('GEMINI_API_KEY')),
-                 'openrouter': bool(app.config.get('OPENROUTER_API_KEY'))
-             }
-             user_permissions = {
-                 'use_api_openai': True, 'use_api_google': True,
-                 'use_api_assemblyai': True, 'use_api_openai_whisper': True,
-                 'use_api_openai_gpt_4o_transcribe': True, 'use_api_openai_live_transcribe': True,
-                 'use_api_google_gemini': True,
-                 'use_api_openrouter': True,
-                 'allow_large_files': True, 'allow_context_prompt': True,
-                 'allow_download_transcript': True, 'allow_api_key_management': False,
-                 'allow_public_api_access': True,
-                 'access_admin_panel': False, 'allow_workflows': True,
-                 'manage_workflow_templates': False, 'allow_auto_title_generation': True,
-                 'allow_speaker_diarization': True
-             }
 
-        if not is_multi:
-            live_transcription_models = transcription_catalog_model.get_live_models(initial_key_status)
-            _update_live_model_context(live_transcription_models)
-
-        if user or not is_multi:
             # ``initial_key_status`` already contains the admin-configured
             # models shared with users who cannot manage their own keys.
             effective_key_status = dict(initial_key_status)
@@ -579,8 +588,10 @@ def create_app(config_class=Config) -> Flask:
             csp_nonce=getattr(g, 'csp_nonce', ''),
             compass_branding=bool(app.config.get('COMPASS_BRANDING')),
             app_name='Compass Platform' if app.config.get('COMPASS_BRANDING') else 'Transcriber',
-            deployment_mode=app.config['DEPLOYMENT_MODE'],
+            deployment_mode=access_service.get_deployment_mode(),
             is_multi_user=is_multi,
+            access=access_service.access_context(user),
+            can_use_live=has_live_access(user),
             current_user=user,
             current_role=role,
             display_name=display_name,

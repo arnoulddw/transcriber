@@ -26,6 +26,7 @@ from app.services import pricing_service, user_service
 from app.services.openrouter import normalize_openrouter_model
 from app.services.user_service import MissingApiKeyError
 from app.tasks.background_queue import enqueue_title_generation
+from app.services import access_service
 
 
 LOGGER = logging.getLogger(__name__)
@@ -146,12 +147,11 @@ def _resolve_live_model(user, requested: Optional[str] = None) -> str:
                     candidate = str(candidate or "").strip()
                     if candidate:
                         allowed_models.add(candidate)
-            if current_app.config.get("DEPLOYMENT_MODE") == "multi":
-                for entry in (key_status.get("provider_keys", {}).get("openrouter", []) or []):
-                    purposes = entry.get("model_purposes", []) or []
-                    model_name = str(entry.get("model_slug") or entry.get("model_name") or "").strip()
-                    if "live" in purposes and model_name:
-                        allowed_models.add(model_name)
+            for entry in (key_status.get("provider_keys", {}).get("openrouter", []) or []):
+                purposes = entry.get("model_purposes", []) or []
+                model_name = str(entry.get("model_slug") or entry.get("model_name") or "").strip()
+                if "live" in purposes and model_name:
+                    allowed_models.add(model_name)
         except Exception:
             LOGGER.debug("Could not add user-configured Live models.", exc_info=True)
     configured_provider = str(
@@ -194,8 +194,6 @@ def _resolve_provider(user, model: str) -> str:
 
 def _ensure_live_provider_permission(user, provider: str, model: str) -> None:
     """Enforce the resolved provider permission after model selection."""
-    if current_app.config.get("DEPLOYMENT_MODE") != "multi":
-        return
     permission_key = LIVE_PROVIDER_PERMISSION_KEYS.get(provider)
     if permission_key and not check_permission(user, permission_key):
         LOGGER.warning(
@@ -349,16 +347,16 @@ def _release_openrouter_chunk_claim(session_id: str, sequence: int) -> None:
 
 
 def _resolve_provider_api_key(user, provider: str, model: Optional[str] = None) -> str:
-    mode = current_app.config["DEPLOYMENT_MODE"]
-    if mode == "multi":
-        api_key = user_service.get_decrypted_api_key(user.id, provider, model)
-        if api_key:
-            return api_key
+    api_key = user_service.get_decrypted_api_key(user.id, provider, model)
+    if api_key:
+        return api_key
+    if access_service.is_team_mode():
         if check_permission(user, "allow_api_key_management"):
             raise MissingApiKeyError(_("%(provider)s API key is not configured.", provider=provider.title()))
         api_key = user_service.get_admin_decrypted_api_key(provider, model)
         if api_key:
             return api_key
+    # Personal mode (or no admin key): fall back to the .env key.
     api_key = current_app.config.get(f"{provider.upper()}_API_KEY")
     if not api_key:
         raise MissingApiKeyError(_("%(provider)s API key is not configured.", provider=provider.title()))

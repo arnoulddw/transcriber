@@ -822,6 +822,12 @@ def get_effective_key_status(user: Optional[Any]) -> Dict[str, Any]:
     """
     if not user:
         return {}
+    from app.services import access_service
+    if access_service.is_personal_mode():
+        # Personal mode: the owner's own keys plus provider keys from .env.
+        user_id = getattr(user, 'id', None)
+        own_status = get_user_api_key_status(user_id) if user_id is not None else {}
+        return access_service.merge_env_provider_keys(own_status)
     role = getattr(user, 'role', None)
     if role and getattr(role, 'access_admin_panel', False):
         return get_aggregate_api_key_status()

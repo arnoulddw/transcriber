@@ -5,7 +5,7 @@ from flask import Blueprint, current_app, jsonify, request
 from flask_babel import gettext as _
 from flask_login import current_user, login_required
 
-from app.core.decorators import check_permission
+from app.core.decorators import has_live_access
 from app.extensions import build_user_limit_key, limiter
 from app.services import live_transcription_service
 from app.services.live_transcription_service import (
@@ -24,12 +24,7 @@ def live_permission_required(view):
     @wraps(view)
     @login_required
     def wrapped(*args, **kwargs):
-        if current_app.config["DEPLOYMENT_MODE"] == "multi" and not (
-            check_permission(current_user, "use_api_openai")
-            or check_permission(current_user, "use_api_openai_live_transcribe")
-            or check_permission(current_user, "use_api_openrouter")
-            or check_permission(current_user, "use_api_google_gemini")
-        ):
+        if not has_live_access(current_user):
             return jsonify({"error": _("You do not have access to Live transcription.")}), 403
         return view(*args, **kwargs)
 

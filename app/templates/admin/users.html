@@ -13,7 +13,44 @@
 
 {# Define the main content for the user management page #}
 {% block admin_content %}
-    <p class="page-intro">View and manage user accounts for the application.</p>
+    <p class="page-intro">View and manage user accounts for the application.
+        {{ _('Sign-ups and team mode are in') }} <a href="{{ url_for('main.index', _anchor='settings-access') }}" class="text-primary hover:text-primary-dark">{{ _('User Settings > Access') }}</a>.</p>
+
+    <div class="mt-4">
+        {{ ui.button(_('Add user'), variant='primary', icon='person_add', attrs='data-access-reveal-admin="addUserForm" aria-expanded="false" aria-controls="addUserForm"') }}
+    </div>
+    <form id="addUserForm" class="table-card mt-4 hidden space-y-4 p-6" novalidate>
+        <h2 class="section-title">{{ _('Add user') }}</h2>
+        <p class="form-hint">{{ _('Share the temporary password with them. They can change it in User Settings > Access.') }}</p>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+                <label for="addUserUsername" class="form-label">{{ _('Username') }}</label>
+                <input id="addUserUsername" name="username" type="text" class="input-control mt-1" autocomplete="off" required minlength="4" maxlength="25">
+            </div>
+            <div>
+                <label for="addUserEmail" class="form-label">{{ _('Email') }}</label>
+                <input id="addUserEmail" name="email" type="email" class="input-control mt-1" autocomplete="off" required>
+            </div>
+            <div>
+                <label for="addUserRole" class="form-label">{{ _('Role') }}</label>
+                <select id="addUserRole" name="role" class="input-select mt-1">
+                    {% for role in all_roles %}
+                    <option value="{{ role.name | e }}" {% if role.name == 'beta-tester' %}selected{% endif %}>{{ role.name | e }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="addUserPassword" class="form-label">{{ _('Temporary password') }}</label>
+                <input id="addUserPassword" name="password" type="text" class="input-control mt-1" autocomplete="off" required minlength="8">
+                <p class="form-hint mt-1">{{ _('At least 8 characters.') }}</p>
+            </div>
+        </div>
+        <p id="addUserError" class="form-error" role="alert"></p>
+        <div class="flex flex-wrap gap-2">
+            {{ ui.button(_('Create user'), variant='primary', type='submit', icon='person_add', id='addUserSubmit') }}
+            {{ ui.button(_('Cancel'), variant='muted', id='addUserCancel') }}
+        </div>
+    </form>
 
     {# Display error if loading failed #}
     {% if error %}
@@ -42,7 +79,7 @@
             <tbody id="usersTableBody" class="bg-surface divide-y divide-border-default">
                 {% if users %}
                     {% for user in users %}
-                    {% set is_initial_admin = (user.username == config.ADMIN_USERNAME) %}
+                    {% set is_initial_admin = (user.id == access.owner_id) %}
                     <tr data-user-id="{{ user.id }}" class="block sm:table-row border-b sm:border-none mb-4 sm:mb-0">
                         <td data-label="ID" class="px-6 py-4 whitespace-nowrap text-sm text-text-muted block sm:table-cell sm:text-center relative border-b sm:border-none"> {# Centered data #}
                             {{ user.id }}

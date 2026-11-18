@@ -18,7 +18,7 @@ from app.models import user as user_model
 from app.models import transcription_catalog as transcription_catalog_model
 
 # Import other services
-from app.services import file_service, workflow_service # Added workflow_service
+from app.services import file_service, workflow_service, access_service
 from app.services.user_service import (
     get_admin_decrypted_api_key,
     get_decrypted_api_key,
@@ -271,65 +271,53 @@ def process_transcription(app: Flask, job_id: str, user_id: int, temp_filename: 
                 raise ValueError("OpenRouter model is required.")
 
             api_key: Optional[str] = None
-            mode = current_app.config['DEPLOYMENT_MODE']
+            team_mode = access_service.is_team_mode()
             try:
-                if mode == 'multi':
-                    key_service_name = provider_code
-                    api_key = get_decrypted_api_key(
-                        user_id,
-                        key_service_name,
-                        model_slug=api_model,
-                    )
+                key_service_name = provider_code
+                api_key = get_decrypted_api_key(
+                    user_id,
+                    key_service_name,
+                    model_slug=api_model,
+                )
 
-                    if api_key:
-                        logger.debug(f"Using user-specific API key for '{api_display_name}'.")
-                    else:
-                        # No user-specific key found, decide fallback strategy
-                        if user.has_permission('allow_api_key_management'):
-                            # User is allowed to set a key, but hasn't. This is an error.
-                            raise MissingApiKeyError(f"ERROR: {api_display_name} API key not configured by user.")
-                        else:
-                            # User is not allowed to set a key, so use the exact
-                            # model key configured by an admin before trying the
-                            # legacy global environment key.
-                            api_key = get_admin_decrypted_api_key(
-                                key_service_name,
-                                model_slug=api_model,
+                if api_key:
+                    logger.debug(f"Using user-specific API key for '{api_display_name}'.")
+                else:
+                    # No user-specific key found, decide fallback strategy
+                    if team_mode and user.has_permission('allow_api_key_management'):
+                        # User is allowed to set a key, but hasn't. This is an error.
+                        raise MissingApiKeyError(f"ERROR: {api_display_name} API key not configured by user.")
+                    elif team_mode:
+                        # User is not allowed to set a key, so use the exact
+                        # model key configured by an admin before trying the
+                        # legacy global environment key.
+                        api_key = get_admin_decrypted_api_key(
+                            key_service_name,
+                            model_slug=api_model,
+                        )
+                        if api_key:
+                            logger.debug(
+                                "Using admin-configured API key for '%s' and model '%s'.",
+                                api_display_name,
+                                api_model,
                             )
-                            if api_key:
-                                logger.debug(
-                                    "Using admin-configured API key for '%s' and model '%s'.",
-                                    api_display_name,
-                                    api_model,
-                                )
+
+                    if not api_key:
+                        # Personal mode, or no admin model key: fall back to the .env key.
+                        logger.debug(f"No saved key for '{api_display_name}'. Falling back to the global API key.")
+                        key_env_var = None
+                        provider_for_key = provider_code
+                        if provider_for_key == 'assemblyai': key_env_var = 'ASSEMBLYAI_API_KEY'
+                        elif provider_for_key == 'openai': key_env_var = 'OPENAI_API_KEY'
+                        elif provider_for_key == 'openrouter': key_env_var = 'OPENROUTER_API_KEY'
+                        elif provider_for_key == 'gemini': key_env_var = 'GEMINI_API_KEY'
+
+                        if key_env_var:
+                            api_key = current_app.config.get(key_env_var)
 
                         if not api_key:
-                            # No admin model key: fall back to global config.
-                            logger.debug(f"User key not found and role does not allow key management. Falling back to global API key for '{api_display_name}'.")
-                            key_env_var = None
-                            provider_for_key = provider_code
-                            if provider_for_key == 'assemblyai': key_env_var = 'ASSEMBLYAI_API_KEY'
-                            elif provider_for_key == 'openai': key_env_var = 'OPENAI_API_KEY'
-                            elif provider_for_key == 'openrouter': key_env_var = 'OPENROUTER_API_KEY'
-                            
-                            if key_env_var:
-                                api_key = current_app.config.get(key_env_var)
-                            
-                            if not api_key:
-                                raise MissingApiKeyError(f"ERROR: Global {api_display_name} API key ({key_env_var}) is not configured for role.")
-                            logger.debug(f"Using global API key for '{api_display_name}' (user key management disabled).")
-                elif mode == 'single':
-                    key_env_var = None
-                    provider_for_key = provider_code
-                    if provider_for_key == 'assemblyai': key_env_var = 'ASSEMBLYAI_API_KEY'
-                    elif provider_for_key == 'openai': key_env_var = 'OPENAI_API_KEY'
-                    elif provider_for_key == 'openrouter': key_env_var = 'OPENROUTER_API_KEY'
-                    if key_env_var: api_key = current_app.config.get(key_env_var)
-                    if not api_key:
-                        raise ValueError(f"ERROR: Global {api_display_name} API key ({key_env_var}) is not configured.")
-                    logger.debug(f"Using global API key for '{api_display_name}' (single-user mode).")
-                else:
-                    raise ValueError(f"Invalid DEPLOYMENT_MODE: {mode}")
+                            raise MissingApiKeyError(f"ERROR: {api_display_name} API key is not configured.")
+                        logger.debug(f"Using global API key for '{api_display_name}'.")
 
                 api_client = get_transcription_client(api_choice, api_key, app.config)
 

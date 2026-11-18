@@ -68,8 +68,8 @@ window.invalidateReadinessCache = invalidateReadinessCache;
 
 function updateApiDropdownState(apiKeyStatus) {
     const apiSelect = document.getElementById('apiSelect');
-    if (!apiSelect || !window.IS_MULTI_USER) {
-        initLogger.debug("Skipping API dropdown update (not multi-user or element missing).");
+    if (!apiSelect) {
+        initLogger.debug("Skipping API dropdown update (element missing).");
         return;
     }
     const currentKeyStatus = (typeof apiKeyStatus === 'object' && apiKeyStatus !== null) ? apiKeyStatus : {};
@@ -113,25 +113,6 @@ function updateApiDropdownState(apiKeyStatus) {
 window.updateApiDropdownState = updateApiDropdownState;
 
 async function fetchReadinessData() {
-    if (!window.IS_MULTI_USER) {
-        initLogger.debug("Single-user mode: Assuming readiness.");
-        return {
-            api_keys: { openai: true, assemblyai: true, gemini: true, openrouter: true, provider_keys: {} },
-            permissions: {
-                use_api_openai: true, use_api_assemblyai: true, use_api_google: true, use_api_openrouter: true, use_api_openai_whisper: true,
-                use_api_openai_gpt_4o_transcribe: true, use_api_openai_live_transcribe: true,
-                use_api_google_gemini: true,
-                allow_large_files: true, allow_context_prompt: true, allow_download_transcript: true,
-                allow_workflows: true,
-                manage_workflow_templates: true,
-                allow_auto_title_generation: true,
-                allow_speaker_diarization: true,
-            },
-            limits: {},
-            usage: {}
-        };
-    }
-
     const now = Date.now();
     if (readinessCache && (now - readinessCacheTimestamp < READINESS_CACHE_DURATION_MS)) {
         if (!hasLoggedReadinessCacheHit) {
@@ -254,9 +235,7 @@ async function checkTranscribeButtonState() {
     const apiKeys = readinessData.api_keys || {};
     const permissions = readinessData.permissions || {};
 
-    if (window.IS_MULTI_USER) {
-        updateApiDropdownState(apiKeys); 
-    }
+    updateApiDropdownState(apiKeys);
 
     const selectedApiOption = apiSelect.selectedOptions[0];
     const selectedApiValue = apiSelect.value;
@@ -308,7 +287,7 @@ async function checkTranscribeButtonState() {
         isPermissionError = true;
     }
 
-    if (!disableReason && window.IS_MULTI_USER && apiKeyRequired && !(apiKeys[apiKeyRequired])) {
+    if (!disableReason && apiKeyRequired && !(apiKeys[apiKeyRequired])) {
         const apiName = window.API_NAME_MAP_FRONTEND[selectedApiValue] || selectedApiValue;
         disableReason = `ERROR: ${apiName} API key not configured.`;
     }
@@ -355,7 +334,7 @@ async function checkTranscribeButtonState() {
         }
     }
 
-    if (!disableReason && window.IS_MULTI_USER) {
+    if (!disableReason) {
         // The server is authoritative, but keep the upload gate aligned with
         // the same daily/weekly/monthly cost and minutes dimensions. The
         // upload duration and final provider cost are not known in the
@@ -442,7 +421,6 @@ function validateContextPrompt() {
 window.validateContextPrompt = validateContextPrompt;
 
 function updateApiKeyNotificationVisibility(keyStatus, permissions) {
-    if (!window.IS_MULTI_USER) return;
     const notificationElement = document.getElementById('api-key-notification');
     const normalizedKeyStatus = (typeof keyStatus === 'object' && keyStatus !== null) ? keyStatus : {};
     const normalizedPermissions = (typeof permissions === 'object' && permissions !== null) ? permissions : {};
@@ -530,7 +508,7 @@ function updateSpeakerDiarizationVisibility(selectedApi, permissions = {}) {
     if (!speakerDiarizationBtnRef) return;
     const supportsApi = selectedApi && SPEAKER_DIARIZATION_SUPPORTED_APIS.includes(selectedApi);
     const hasAssemblyPermission = permissions.use_api_assemblyai !== false;
-    const hasDiarizationPermission = permissions.allow_speaker_diarization === true || (!window.IS_MULTI_USER && permissions.allow_speaker_diarization !== false);
+    const hasDiarizationPermission = permissions.allow_speaker_diarization === true;
     const shouldShow = supportsApi && hasAssemblyPermission && hasDiarizationPermission;
 
     if (shouldShow) {
@@ -777,14 +755,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    if (window.IS_MULTI_USER) {
-        const initialKeys = window.API_KEY_STATUS || {};
-        const initialPermissions = window.USER_PERMISSIONS || {};
-        updateApiKeyNotificationVisibility(initialKeys, initialPermissions);
-        checkTranscribeButtonState();
-    } else {
-        checkTranscribeButtonState();
-    }
+    const initialKeys = window.API_KEY_STATUS || {};
+    const initialPermissions = window.USER_PERMISSIONS || {};
+    updateApiKeyNotificationVisibility(initialKeys, initialPermissions);
+    checkTranscribeButtonState();
 
     initLogger.info("Event listeners attached.");
 });

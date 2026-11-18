@@ -31,7 +31,8 @@ def mock_db_models(app):
 
             user_instance = User(id=1, username='testuser', email='test@test.com', password_hash='dummy_hash', role_id=1, created_at=datetime.now(timezone.utc))
             
-            # Mock the 'role' property
+            # Mock the 'role' property (restored below so it can't leak into later tests)
+            original_role_property = User.__dict__['role']
             type(user_instance).role = PropertyMock(return_value=Role(id=1, name='admin'))
             
             mock_user.get_user_by_id.return_value = user_instance
@@ -45,6 +46,7 @@ def mock_db_models(app):
                 "user_utils": mock_user_utils, "auth": mock_auth, "user_service": mock_user_service,
                 "metrics": mock_metrics
             }
+            User.role = original_role_property
 
 # --- User Management Tests ---
 

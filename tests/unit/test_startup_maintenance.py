@@ -149,6 +149,7 @@ def test_empty_database_uses_model_baseline_initializers(monkeypatch):
     monkeypatch.setattr(initialization.llm_catalog_model, "init_db_command", lambda: calls.append("llm_catalog"))
     monkeypatch.setattr(initialization.background_job_model, "init_db_command", lambda: calls.append("background_jobs"))
     monkeypatch.setattr(initialization.role_model, "init_user_usage_table", lambda: calls.append("user_usage"))
+    monkeypatch.setattr(initialization.app_settings_model, "init_db_command", lambda: calls.append("app_settings"))
 
     initialization.initialize_database_schema(create_roles=False)
 
@@ -168,6 +169,7 @@ def test_empty_database_uses_model_baseline_initializers(monkeypatch):
         "transcription_catalog",
         "llm_catalog",
         "user_usage",
+        "app_settings",
     ]
 
 

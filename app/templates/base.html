@@ -32,7 +32,7 @@
                 <div class="flex items-center justify-between h-16">
                     <div class="flex items-center">
                         {% block mobile_trigger %}
-                            {% if is_multi_user %}
+                            {% if current_user.is_authenticated or is_multi_user %}
                             <button type="button"
                                     id="mobile-menu-button"
                                     aria-expanded="false"
@@ -55,7 +55,7 @@
                         </a>
                     </div>
                     <div class="flex items-center">
-                        {% if current_user.is_authenticated and (not is_multi_user or user_permissions.use_api_openai or user_permissions.use_api_openai_live_transcribe) %}
+                        {% if can_use_live %}
                             <a href="{{ url_for('main.live') }}"
                                class="inline-flex h-9 items-center rounded-full bg-primary-soft px-3.5 text-sm font-semibold text-primary hover:bg-primary-track focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 aria-[current=page]:bg-primary aria-[current=page]:text-white lg:hidden"
                                {% if request.endpoint == 'main.live' %}aria-current="page"{% endif %}>
@@ -64,7 +64,7 @@
                             </a>
                         {% endif %}
                         <div class="hidden lg:flex lg:items-center lg:space-x-4">
-                            {% if current_user.is_authenticated and (not is_multi_user or user_permissions.use_api_openai or user_permissions.use_api_openai_live_transcribe) %}
+                            {% if can_use_live %}
                                 <a href="{{ url_for('main.live') }}"
                                    class="inline-flex h-9 items-center rounded-full bg-primary-soft px-3.5 text-sm font-semibold text-primary hover:bg-primary-track focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 aria-[current=page]:bg-primary aria-[current=page]:text-white"
                                    {% if request.endpoint == 'main.live' %}aria-current="page"{% endif %}>
@@ -72,7 +72,7 @@
                                     {{ _('Live') }}
                                 </a>
                             {% endif %}
-                            {% if is_multi_user %}
+                            {% if current_user.is_authenticated or is_multi_user %}
                                 {% if current_user.is_authenticated %}
                                     <div class="relative" id="desktop-user-menu-container">
                                         <button type="button"
@@ -94,17 +94,16 @@
                                                 {% if user_permissions.allow_workflows %}
                                                 <a href="{{ url_for('main.manage_prompts') }}" class="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">playlist_add_check</i>{{ _('Manage your Workflows') }}</a>
                                                 {% endif %}
-                                                {% set is_admin_user = current_user.role and current_user.role.access_admin_panel %}
-                                                {% if is_admin_user %}
+                                                {% if access.can_access_admin %}
                                                 <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">admin_panel_settings</i>{{ _('Admin panel') }}</a>
                                                 {% endif %}
-                                                {% if current_user.role and (current_user.role.allow_api_key_management or is_admin_user or user_permissions.allow_workflows) %}
+                                                {% if not access.open_mode %}
                                                 <div class="border-t border-border-default my-1.5 mx-2" role="separator"></div>
-                                                {% endif %}
                                                 <form action="{{ url_for('auth.logout') }}" method="post">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                     <button type="submit" class="w-full flex items-center rounded-xl px-3 py-2 text-sm font-medium text-text-strong hover:bg-surface-muted" role="menuitem" tabindex="-1"><i class="material-icons tiny text-text-muted mr-2">exit_to_app</i>{{ _('Logout') }}</button>
                                                 </form>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
@@ -112,7 +111,7 @@
                                     {% if request.endpoint != 'auth.login' %}
                                     <a href="{{ url_for('auth.login') }}" class="rounded-full px-3 py-2 text-sm font-semibold text-text-strong hover:bg-surface-muted">{{ _('Login') }}</a>
                                     {% endif %}
-                                    {% if request.endpoint != 'auth.register' %}
+                                    {% if request.endpoint != 'auth.register' and access.registration_allowed and is_multi_user %}
                                     <a href="{{ url_for('auth.register') }}" class="rounded-full px-3 py-2 text-sm font-semibold text-text-strong hover:bg-surface-muted">{{ _('Register') }}</a>
                                     {% endif %}
                                 {% endif %}
@@ -148,7 +147,7 @@
             </div>
         </nav>
 
-        {% if is_multi_user %}
+        {% if current_user.is_authenticated or is_multi_user %}
         {# Mobile Sidenav - Implemented with Tailwind and Vanilla JS #}
         <div id="mobile-nav"
              class="fixed inset-y-0 left-0 w-72 bg-white shadow-surface-xl rounded-r-modal transform -translate-x-full transition-transform duration-300 ease-in-out z-50 lg:hidden"
@@ -179,12 +178,12 @@
                             <i class="material-icons mr-3 text-text-muted">playlist_add_check</i>{{ _('Manage your Workflows') }}
                         </a>
                         {% endif %}
-                        {% set is_admin_user = current_user.role and current_user.role.access_admin_panel %}
-                        {% if is_admin_user %}
+                        {% if access.can_access_admin %}
                         <a href="{{ url_for('admin_panel.dashboard') }}" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">
                             <i class="material-icons mr-3 text-text-muted">admin_panel_settings</i>{{ _('Admin panel') }}
                         </a>
                         {% endif %}
+                        {% if not access.open_mode %}
                         <div class="border-t border-border-default my-2"></div>
                         <form action="{{ url_for('auth.logout') }}" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -192,13 +191,14 @@
                                 <i class="material-icons mr-3 text-text-muted">exit_to_app</i>{{ _('Logout') }}
                             </button>
                         </form>
+                        {% endif %}
                     </nav>
                 {% else %}
                     <nav class="mt-2 space-y-1">
                         {% if request.endpoint != 'auth.login' %}
                         <a href="{{ url_for('auth.login') }}" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">{{ _('Login') }}</a>
                         {% endif %}
-                        {% if request.endpoint != 'auth.register' %}
+                        {% if request.endpoint != 'auth.register' and access.registration_allowed and is_multi_user %}
                         <a href="{{ url_for('auth.register') }}" class="flex items-center px-3 py-2.5 text-text-strong hover:bg-surface-muted rounded-xl text-sm font-medium">{{ _('Register') }}</a>
                         {% endif %}
                     </nav>
@@ -265,13 +265,12 @@
         <script src="{{ url_for('static', filename='js/workflow_polling.js') }}"></script>
         <script src="{{ url_for('static', filename='js/workflow_results.js') }}"></script>
         
-        {% if is_multi_user %}
-            {% if current_user.is_authenticated and current_user.role and current_user.role.allow_api_key_management %}
-                <script src="{{ url_for('static', filename='js/user_settings.js', v='public-api-keys-2') }}"></script>
-            {% endif %}
-            {% if current_user.is_authenticated %}
-                <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
-            {% endif %}
+        {% if current_user.is_authenticated and current_user.role and current_user.role.allow_api_key_management %}
+            <script src="{{ url_for('static', filename='js/user_settings.js', v='public-api-keys-2') }}"></script>
+        {% endif %}
+        {% if current_user.is_authenticated %}
+            <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/access_settings.js') }}"></script>
         {% endif %}
         
         {# Page-specific scripts should come after common scripts #}

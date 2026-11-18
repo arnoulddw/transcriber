@@ -660,8 +660,8 @@ function pollProgress(jobId, initialJobData = null) {
                         window.logger.warn(mainPollLogPrefix, "Readiness refresh failed after completed transcription; using current permissions for history controls.", readinessError);
                     }
                 }
-                const canDownload = window.IS_MULTI_USER ? (permissions.allow_download_transcript === true) : true;
-                const canRunWorkflow = window.IS_MULTI_USER ? (permissions.allow_workflows === true) : true;
+                const canDownload = permissions.allow_download_transcript === true;
+                const canRunWorkflow = permissions.allow_workflows === true;
 
                 try {
                     if (typeof window.addTranscriptionToHistory === 'function') {

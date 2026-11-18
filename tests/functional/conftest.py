@@ -49,6 +49,7 @@ def clean_db(app):
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
+        cursor.execute("TRUNCATE TABLE app_settings")
         cursor.execute("TRUNCATE TABLE user_prompts")
         cursor.execute("TRUNCATE TABLE template_prompts")
         cursor.execute("TRUNCATE TABLE llm_operations")
@@ -76,6 +77,8 @@ def clean_db(app):
         # Invalidate in-memory role cache so stale entries from previous tests
         # don't cause ID collisions after AUTO_INCREMENT reset.
         invalidate_role_cache()
+        from app.services import access_service
+        access_service.invalidate_cache()
 
 @pytest.fixture(scope='function')
 def logged_in_client(app, clean_db):
@@ -234,7 +237,7 @@ def app():
         # Drop all tables first to ensure clean state
         cursor = get_db().cursor()
         cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
-        cursor.execute("DROP TABLE IF EXISTS user_prompts, template_prompts, llm_operations, background_jobs, live_transcription_sessions, transcription_job_leases, transcriptions, user_usage, public_api_keys, user_api_keys, users, roles;")
+        cursor.execute("DROP TABLE IF EXISTS app_settings, user_prompts, template_prompts, llm_operations, background_jobs, live_transcription_sessions, transcription_job_leases, transcriptions, user_usage, public_api_keys, user_api_keys, users, roles;")
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
         get_db().commit()
         
@@ -252,7 +255,7 @@ def app():
         from app.services.admin_metrics_service import invalidate_metrics_cache
         cursor = get_db().cursor()
         cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
-        cursor.execute("DROP TABLE IF EXISTS user_prompts, template_prompts, llm_operations, background_jobs, live_transcription_sessions, transcription_job_leases, transcriptions, user_usage, public_api_keys, user_api_keys, users, roles;")
+        cursor.execute("DROP TABLE IF EXISTS app_settings, user_prompts, template_prompts, llm_operations, background_jobs, live_transcription_sessions, transcription_job_leases, transcriptions, user_usage, public_api_keys, user_api_keys, users, roles;")
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
         get_db().commit()
         # Clear in-memory caches to prevent bleed into the next test's app instance.

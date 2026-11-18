@@ -23,11 +23,10 @@ from app.models import template_prompt as template_prompt_model
 # --- ADDED: Import llm_operation model ---
 from app.models import llm_operation as llm_operation_model
 from app.models import pricing as pricing_model
+from app.models import app_settings as app_settings_model
 from app.models import transcription_catalog as transcription_catalog_model
 from app.models import llm_catalog as llm_catalog_model
 # --- END ADDED ---
-from app.services import auth_service
-from app.services.auth_service import AuthServiceError # Import specific exception
 
 # Removed MARKER_FILENAME definition here, now defined in Config
 
@@ -137,6 +136,8 @@ def initialize_database_schema(create_roles: bool = True) -> None:
         llm_catalog_model.init_db_command()
         logger.debug(f"{log_prefix} Initializing 'user_usage' table...")
         role_model.init_user_usage_table()
+        logger.debug(f"{log_prefix} Initializing 'app_settings' table...")
+        app_settings_model.init_db_command()
         logger.info(f"{log_prefix} Database schema initialization complete.")
 
         if create_roles:
@@ -166,6 +167,7 @@ def create_default_roles() -> None:
                 'use_api_google_gemini': True, 'use_api_openrouter': True,
                 'access_admin_panel': True, 'allow_large_files': True, 'allow_context_prompt': True,
                 'allow_api_key_management': True, 'allow_download_transcript': True,
+                'allow_public_api_access': True,
                 'allow_workflows': True, 'manage_workflow_templates': True,
                 'allow_auto_title_generation': True, 'allow_speaker_diarization': True,
                 'limit_daily_cost': 0, 'limit_weekly_cost': 0, 'limit_monthly_cost': 0,
@@ -224,45 +226,13 @@ def create_default_roles() -> None:
         raise
 
 def create_initial_admin() -> None:
-    """Creates the initial admin user based on .env variables if in multi mode and user doesn't exist."""
-    log_prefix = "[INIT:Admin]"
-    admin_username = current_app.config.get('ADMIN_USERNAME')
-    admin_password = current_app.config.get('ADMIN_PASSWORD')
-    admin_email = current_app.config.get('ADMIN_EMAIL', f"{admin_username}@example.com")
-    if current_app.config['DEPLOYMENT_MODE'] != 'multi':
-         logger.info(f"{log_prefix} Skipping admin creation: Not in 'multi' deployment mode.")
-         return
-    if not admin_username or not admin_password:
-        logger.error(f"{log_prefix} ADMIN_USERNAME or ADMIN_PASSWORD not set. Cannot create admin.")
-        return
-    logger.debug(f"{log_prefix} Checking/Creating initial admin user '{admin_username}'...")
-    try:
-        existing_admin = auth_service.get_user_by_username(admin_username)
-        if not existing_admin:
-            logger.debug(f"{log_prefix} Admin user '{admin_username}' not found. Creating...")
-            admin_role = role_model.get_role_by_name('admin')
-            if not admin_role:
-                 logger.error(f"{log_prefix} Cannot create admin user: 'admin' role not found. Run role creation first.")
-                 raise RuntimeError("Admin role 'admin' not found during initial admin creation.")
-            created_user = auth_service.create_user(admin_username, password=admin_password, email=admin_email, role_name='admin')
-            if created_user:
-                logger.info(f"{log_prefix} Admin user '{admin_username}' created successfully.")
-            else:
-                logger.error(f"{log_prefix} Failed to create admin user '{admin_username}' (auth_service returned None).")
-                raise RuntimeError(f"Failed to create admin user '{admin_username}'.")
-        else:
-            logger.debug(f"{log_prefix} Admin user '{admin_username}' already exists.")
-            admin_role = role_model.get_role_by_name('admin')
-            if admin_role and existing_admin.role_id != admin_role.id:
-                 logger.warning(f"{log_prefix} Existing admin user '{admin_username}' has incorrect role ID ({existing_admin.role_id}). Consider updating manually.")
-            if not existing_admin.email:
-                 logger.warning(f"{log_prefix} Existing admin user '{admin_username}' is missing an email address. Consider updating manually.")
-    except AuthServiceError as ase:
-         logger.error(f"{log_prefix} Failed to create admin user: {ase}")
-         raise RuntimeError(f"Failed to create admin user: {ase}") from ase
-    except Exception as e:
-        logger.error(f"{log_prefix} Unexpected error creating admin user: {e}", exc_info=True)
-        raise RuntimeError(f"Unexpected error creating admin user: {e}") from e
+    """Ensure the instance settings and the owner account exist.
+
+    Personal mode (the default for new installs) creates an owner without a
+    password unless ADMIN_PASSWORD is set; team mode requires ADMIN_PASSWORD.
+    """
+    from app.services import access_service
+    access_service.ensure_access_settings()
 
 def run_initialization_sequence(app: Flask) -> None:
     """

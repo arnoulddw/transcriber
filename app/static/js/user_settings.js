@@ -42,7 +42,7 @@ function initializeApiKeyModalElements() {
         window.logger.warn(userSettingsLogPrefix, "One or more API Key modal core elements not found.");
         return false;
     }
-    if (apiKeyModalTriggers.length === 0 && window.IS_MULTI_USER) { // Only warn if multi-user and triggers expected
+    if (apiKeyModalTriggers.length === 0) {
         window.logger.warn(userSettingsLogPrefix, "API Key trigger buttons not found.");
     }
     return true;
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (apiKeyForm) {
         apiKeyForm.addEventListener('submit', handleApiKeySave);
         window.logger.debug(userSettingsLogPrefix, "API Key save form listener attached.");
-    } else if (window.IS_MULTI_USER) {
+    } else {
          window.logger.warn(userSettingsLogPrefix, "API Key form element (#apiKeyForm) not found.");
     }
 
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         window.logger.debug(userSettingsLogPrefix, "API Key delete listener (delegation) attached.");
-    } else if (window.IS_MULTI_USER) {
+    } else {
          window.logger.warn(userSettingsLogPrefix, "API Key status list container not found for delete listener.");
     }
 

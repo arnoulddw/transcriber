@@ -1,7 +1,7 @@
 <!-- app/templates/layout/modals/api_key_modal.html -->
 {# API Key Modal - Implemented with Tailwind and Vanilla JS #}
 {% import "layout/components/ui_helpers.html" as ui %}
-{% if is_multi_user and current_user.role and current_user.role.allow_api_key_management %}
+{% if current_user.is_authenticated and current_user.role and current_user.role.allow_api_key_management %}
 {% call ui.modal_shell('apiKeyModal', labelledby='apiKeyModalTitle', overlay_id='apiKeyModalOverlay', panel_id='apiKeyModalPanel', size='md', panel_classes='max-h-[90vh] flex flex-col') %}
     <div class="modal-header">
         <h3 id="apiKeyModalTitle" class="modal-title">

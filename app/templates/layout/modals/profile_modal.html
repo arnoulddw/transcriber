@@ -1,7 +1,7 @@
 <!-- app/templates/layout/modals/profile_modal.html -->
 {# User Settings Modal (Profile Modal) - Implemented with Tailwind and Vanilla JS #}
 {% import "layout/components/ui_helpers.html" as ui %}
-{% if is_multi_user and current_user.is_authenticated %}
+{% if current_user.is_authenticated %}
 {% call ui.modal_shell('profileModal', labelledby='profileModalTitle', overlay_id='profileModalOverlay', panel_id='profileModalPanel', size='lg', panel_classes='max-h-[90vh] flex flex-col') %}
         <div class="modal-header">
             <h3 id="profileModalTitle" class="modal-title">
@@ -13,7 +13,22 @@
                 <i class="material-icons">close</i>
             </button>
         </div>
+        <div class="px-6 pt-1 sm:px-modal">
+            <div class="grid grid-cols-2 gap-1 rounded-field bg-surface-muted p-1 sm:w-80" role="tablist" aria-label="{{ _('Settings sections') }}">
+                <button type="button" role="tab" id="profileTabGeneral" data-profile-tab="general"
+                        aria-controls="profilePanelGeneral" aria-selected="true"
+                        class="profile-tab rounded-segment px-3 py-1.5 text-sm font-medium text-text-muted transition hover:text-text-strong aria-selected:bg-white aria-selected:font-semibold aria-selected:text-primary aria-selected:shadow-raised focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20">
+                    {{ _('General') }}
+                </button>
+                <button type="button" role="tab" id="profileTabAccess" data-profile-tab="access"
+                        aria-controls="profilePanelAccess" aria-selected="false" tabindex="-1"
+                        class="profile-tab rounded-segment px-3 py-1.5 text-sm font-medium text-text-muted transition hover:text-text-strong aria-selected:bg-white aria-selected:font-semibold aria-selected:text-primary aria-selected:shadow-raised focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20">
+                    {{ _('Access') }}
+                </button>
+            </div>
+        </div>
         <div class="modal-body space-y-6">
+            <div id="profilePanelGeneral" role="tabpanel" aria-labelledby="profileTabGeneral">
             <form id="profileForm" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -123,49 +138,9 @@
                     {{ ui.button(_('Save Changes'), variant='primary', type='submit', icon='save', icon_position='end', id='saveProfileBtn') }}
                 </div>
             </form>
-            <div class="surface-divider"></div>
-            <button id="changePasswordToggleBtn"
-                    class="w-full flex items-center justify-between rounded-xl py-2 text-sm font-semibold text-primary hover:text-primary-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20">
-                <span class="flex items-center gap-2"><i class="material-icons text-lg">lock_reset</i>{{ _('Change Password') }}</span>
-                <i class="material-icons text-text-muted" id="passwordToggleIconDisplay">expand_more</i>
-            </button>
-            <div id="changePasswordSection" class="hidden mt-4 space-y-4">
-                <form id="changePasswordForm" class="space-y-4">
-                    <input type="text"
-                           name="username"
-                           value="{{ current_user.username }}"
-                           autocomplete="username"
-                           class="sr-only"
-                           tabindex="-1"
-                           aria-hidden="true">
-                    <div>
-                        <label for="currentPassword" class="form-label">{{ _('Current Password') }}</label>
-                        <div class="mt-1 relative">
-                            <input id="currentPassword" type="password" name="current_password"
-                                   class="input-control" autocomplete="current-password">
-                        </div>
-                        <span id="currentPasswordError" class="form-error"></span>
-                    </div>
-                    <div>
-                        <label for="newPassword" class="form-label">{{ _('New Password') }}</label>
-                        <div class="mt-1 relative">
-                            <input id="newPassword" type="password" name="new_password"
-                                   class="input-control" autocomplete="new-password">
-                        </div>
-                        <span id="newPasswordError" class="form-error"></span>
-                    </div>
-                    <div>
-                        <label for="confirmNewPassword" class="form-label">{{ _('Confirm New Password') }}</label>
-                        <div class="mt-1 relative">
-                            <input id="confirmNewPassword" type="password" name="confirm_new_password"
-                                   class="input-control" autocomplete="new-password">
-                        </div>
-                        <span id="confirmNewPasswordError" class="form-error"></span>
-                    </div>
-                    <div class="pt-2">
-                        {{ ui.button(_('Update Password'), variant='primary', type='submit', icon='lock_reset', icon_position='end', id='submitPasswordChangeBtn') }}
-                    </div>
-                </form>
+            </div>
+            <div id="profilePanelAccess" role="tabpanel" aria-labelledby="profileTabAccess" class="hidden space-y-6">
+                {% include 'layout/modals/profile_access_tab.html' %}
             </div>
         </div>
         <div class="modal-footer">

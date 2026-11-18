@@ -55,10 +55,18 @@ Live sessions can run for up to 120 minutes. The app reserves live minutes again
 
 ### Team and administration
 
-Transcriber Platform has two deployment modes:
+Transcriber Platform starts in **personal mode** and can switch to **team mode** from inside the app, with no restart or redeploy.
 
-- `single` — a personal, no-login experience backed by global provider keys.
-- `multi` — user registration and login, Google Sign-In, password resets, personal provider keys, and role-based permissions.
+| | Personal mode (default) | Team mode |
+|---|---|---|
+| Accounts | One owner account, created on first start | Everyone gets their own account, history, workflows and API keys |
+| Sign-in | Off by default; turn it on with a password in **User Settings > Access** | Required. Sign-up page (can be turned off), Google Sign-In, password resets |
+| User Settings, Manage API Keys, workflows, Live | Yes | Yes |
+| Admin panel | No | Yes, for admins |
+
+Switch modes in **User Settings > Access**. The owner becomes the admin when team mode is turned on, and nothing they already have is shared. Switching back keeps every other account and its data, but those accounts can't sign in or use their API keys until team mode is on again.
+
+Anyone who can reach an instance in personal mode without a password can use it. Set a password before you make it reachable from the internet.
 
 The admin panel includes:
 
@@ -101,11 +109,11 @@ MYSQL_USER=transcriber_user
 MYSQL_PASSWORD=<strong-database-password>
 MYSQL_DB=transcriber_db
 MYSQL_ROOT_PASSWORD=<strong-root-password>
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=<strong-admin-password>
 ```
 
-Add the global provider keys you need, such as `OPENAI_API_KEY`, `ASSEMBLYAI_API_KEY`, `GEMINI_API_KEY`, or `OPENROUTER_API_KEY`. In `multi` mode, permitted users can instead save model-specific keys in the UI.
+That starts Transcriber in personal mode with sign-in off. To require a password from the first start, also set `ADMIN_USERNAME` and `ADMIN_PASSWORD`. You can instead set one later in **User Settings > Access**.
+
+Add the global provider keys you need, such as `OPENAI_API_KEY`, `ASSEMBLYAI_API_KEY`, `GEMINI_API_KEY`, or `OPENROUTER_API_KEY`, or save model-specific keys later in **Manage API Keys**.
 
 ### 2. Start the stack
 
@@ -113,7 +121,7 @@ Add the global provider keys you need, such as `OPENAI_API_KEY`, `ASSEMBLYAI_API
 docker compose up -d --build
 ```
 
-Open [http://localhost:5004](http://localhost:5004). The application initializes the database, migrations, default roles, languages, and initial admin account on first startup. Compose also starts a durable `transcriber-worker` for transcription, workflow, and title jobs, plus a `transcriber-cleanup` process that runs retention cleanup every six hours.
+Open [http://localhost:5004](http://localhost:5004). The application initializes the database, migrations, default roles, languages, and the owner account on first startup. Compose also starts a durable `transcriber-worker` for transcription, workflow, and title jobs, plus a `transcriber-cleanup` process that runs retention cleanup every six hours.
 
 When running the published image as a single container, its default command starts both Gunicorn and a background worker. The worker must share the application's database and uploads directory. Set `START_EMBEDDED_WORKER=0` only if a separately supervised worker runs `flask worker` against those same resources.
 
@@ -144,7 +152,7 @@ The application has four built-in provider integrations, but it does not assume 
 | Google Gemini | Yes | WebSocket | Yes | Save the exact Gemini model name, such as `gemini-3.5-transcribe` |
 | OpenRouter | Yes | Chunked streaming | Yes | Save the full vendor/model slug, such as `openai/gpt-transcribe` |
 
-In `multi` mode:
+In either mode:
 
 1. Open **Manage API Keys**.
 2. Choose a provider and enter its API key.
@@ -152,7 +160,7 @@ In `multi` mode:
 4. Select one or more purposes: file transcription, live transcription, or LLM use.
 5. Save the key. The new model becomes available immediately in the relevant selectors.
 
-If a role allows personal API key management, the application uses that user's model-specific key. Otherwise it can fall back to an administrator or environment-level provider key. Roles still determine which providers and features a user may access.
+In personal mode, the owner's saved key is used first, then the matching `.env` provider key. In team mode, if a role allows personal API key management, the application uses that user's model-specific key. Otherwise it can fall back to an administrator or environment-level provider key. Roles still determine which providers and features a user may access.
 
 ### Live transcription configuration
 
@@ -172,7 +180,12 @@ Start from [`.env.example`](.env.example). These are the settings most deploymen
 
 | Variable | Purpose | Default |
 |---|---|---|
-| `DEPLOYMENT_MODE` | `single` for personal/no-login use or `multi` for accounts and RBAC | `multi` |
+| `DEPLOYMENT_MODE` | Leave unset to switch modes in the app. `single` (personal) or `multi` (team) locks the mode | unset (personal mode on a fresh install) |
+| `ALLOW_REGISTRATION` | Leave unset to control team-mode sign-ups in the app. `true` or `false` locks it | unset |
+| `ADMIN_USERNAME` / `ADMIN_EMAIL` | Owner account created on first start | `admin` / unset |
+| `ADMIN_PASSWORD` | Turns sign-in on and stops it being turned off in the app. Required for team mode on a fresh install | unset |
+| `SESSION_COOKIE_SECURE` | Always mark cookies `Secure`. They are already marked on HTTPS requests | `false` |
+| `APP_SETTINGS_CACHE_SECONDS` | How quickly other processes see a mode or sign-up change | `5` |
 | `APP_PORT` | Host port exposed by Docker Compose | `5004` |
 | `TZ` | Time zone used for quota periods and display | `UTC` |
 | `TRANSCRIPTION_PROVIDERS` | Enabled built-in provider integrations | `assemblyai,openai,gemini,openrouter` |
@@ -188,13 +201,13 @@ Start from [`.env.example`](.env.example). These are the settings most deploymen
 | `WORKFLOW_MAX_OUTPUT_TOKENS` | Maximum generated tokens for a workflow result | `1024` |
 | `WORKFLOW_RATE_LIMIT` | Per-user workflow endpoint limit | `10 per hour` |
 | `PHYSICAL_DELETION_DAYS` | Delay before soft-deleted records are purged | `120` |
-| `GOOGLE_CLIENT_ID` | Enables Google Sign-In in `multi` mode | unset |
+| `GOOGLE_CLIENT_ID` | Enables Google Sign-In in team mode | unset |
 | `MAIL_*` | SMTP settings used for password reset email | unset |
 | `RECAPTCHA_V3_*` | Optional reCAPTCHA v3 or Enterprise login protection | unset |
 
 Additional settings in `.env.example` cover MySQL, title/workflow defaults, OpenRouter, live models, rate limiting, upload cleanup, logging, OAuth, email, and transcription queue behavior.
 
-> **Production note:** use strong unique values for `SECRET_KEY`, `ADMIN_PASSWORD`, `MYSQL_PASSWORD`, and `MYSQL_ROOT_PASSWORD`; terminate TLS in front of the app; and keep `.env` out of version control.
+> **Production note:** use strong unique values for `SECRET_KEY`, `MYSQL_PASSWORD`, and `MYSQL_ROOT_PASSWORD`; set a sign-in password (in the app or with `ADMIN_PASSWORD`) before the app is reachable from the internet; terminate TLS in front of the app; and keep `.env` out of version control.
 
 ## Using the app
 
@@ -324,7 +337,7 @@ See [`tests/README.md`](tests/README.md) for the container-based test workflow a
 
 ### No transcription models appear
 
-In `multi` mode, save a provider key together with an exact model name and the `transcription` purpose. Confirm the user's role allows that provider. If personal key management is disabled, configure an administrator or global provider key and role default.
+Save a provider key together with an exact model name and the `transcription` purpose in **Manage API Keys**, or set a provider key in `.env` (personal mode). Confirm the user's role allows that provider. If personal key management is disabled, configure an administrator or global provider key and role default.
 
 ### Live transcription will not start
 
@@ -338,9 +351,13 @@ In `multi` mode, save a provider key together with an exact model name and the `
 
 With Docker Compose, use `MYSQL_HOST=mysql`. For a host-installed database, use `MYSQL_HOST=localhost` and verify the port, database, user, and password. Check service health with `docker compose ps` and database logs with `docker compose logs mysql`.
 
+### I forgot the owner password
+
+Run `docker compose exec transcriber-platform flask reset-owner-password` and enter a new password.
+
 ### Google Sign-In or password reset fails
 
-Set `GOOGLE_CLIENT_ID` and configure the matching authorized origin for Google Sign-In. Password reset requires valid `MAIL_*` SMTP settings. If reCAPTCHA is enabled, verify the site/secret key pair and allowed domain.
+Both only exist in team mode. Set `GOOGLE_CLIENT_ID` and configure the matching authorized origin for Google Sign-In. Password reset requires valid `MAIL_*` SMTP settings. If reCAPTCHA is enabled, verify the site/secret key pair and allowed domain.
 
 ### The app port is already in use
 

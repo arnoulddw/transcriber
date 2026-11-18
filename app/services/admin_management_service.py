@@ -204,10 +204,10 @@ def admin_delete_user(user_id_to_delete: int, current_admin_id: int) -> bool:
                 logging.warning(f"{log_prefix} Attempt to delete non-existent user ID {user_id_to_delete} by admin {current_admin_id}.")
                 raise AdminServiceError("User to delete not found.")
 
-            initial_admin_username = current_app.config.get('ADMIN_USERNAME')
-            if user_to_delete.username == initial_admin_username:
-                logging.error(f"{log_prefix} Admin (ID: {current_admin_id}) attempted to delete the initial admin user '{initial_admin_username}' (ID: {user_id_to_delete}).")
-                raise AdminServiceError("Cannot delete the initial administrator account.")
+            from app.services import access_service
+            if access_service.get_owner_id() == user_to_delete.id:
+                logging.error(f"{log_prefix} Admin (ID: {current_admin_id}) attempted to delete the owner account (ID: {user_id_to_delete}).")
+                raise AdminServiceError("Cannot delete the owner account.")
 
             success = user_model.delete_user_by_id(user_id_to_delete)
 
@@ -294,10 +294,10 @@ def update_user_role_admin(user_id_to_update: int, new_role_id: int, current_adm
                 logging.warning(f"{log_prefix} Attempt to update role for non-existent user ID {user_id_to_update}.")
                 raise AdminServiceError("User not found.")
 
-            initial_admin_username = current_app.config.get('ADMIN_USERNAME')
-            if user_to_update.username == initial_admin_username:
-                logging.error(f"{log_prefix} Admin (ID: {current_admin_id}) attempted to change the role of the initial admin user '{initial_admin_username}' (ID: {user_id_to_update}).")
-                raise AdminServiceError("Cannot change the role of the initial administrator account.")
+            from app.services import access_service
+            if access_service.get_owner_id() == user_to_update.id:
+                logging.error(f"{log_prefix} Admin (ID: {current_admin_id}) attempted to change the role of the owner account (ID: {user_id_to_update}).")
+                raise AdminServiceError("Cannot change the role of the owner account.")
 
             new_role = role_model.get_role_by_id(new_role_id)
             if not new_role:

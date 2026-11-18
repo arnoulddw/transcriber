@@ -30,6 +30,7 @@ from app.models import role as role_model
 from app.models.user import User # For type hinting
 from app.services.user_service import MissingApiKeyError
 from app.services import history_filter_service
+from app.services import access_service
 from app.services.api_clients.exceptions import TranscriptionApiError
 from app.core.decorators import check_permission
 from app.extensions import limiter, build_user_limit_key, csrf
@@ -208,6 +209,9 @@ def _authenticate_public_api_user():
         return None, (jsonify({'error': _('A valid API key is required.')}), 401)
 
     user = user_service.authenticate_public_api_key(token)
+    if user and not access_service.user_allowed_in_current_mode(user):
+        # Personal mode: keys of accounts kept from team mode stop working.
+        user = None
     if not user:
         return None, (jsonify({'error': _('Authentication failed. Please check your API key.')}), 401)
     if not check_permission(user, 'allow_public_api_access'):

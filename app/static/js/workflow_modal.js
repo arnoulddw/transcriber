@@ -334,8 +334,7 @@ async function _handleSubmitWorkflow() {
     }
 
     if (
-        window.IS_MULTI_USER
-        && typeof window.fetchReadinessData === 'function'
+        typeof window.fetchReadinessData === 'function'
         && typeof window.getUsageQuotaExceededReason === 'function'
     ) {
         try {

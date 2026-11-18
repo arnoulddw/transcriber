@@ -24,6 +24,7 @@ from app.models.user_prompt import UserPrompt
 from app.models import transcription as transcription_model 
 from app.core.decorators import check_permission, permission_required
 from app.extensions import limiter
+from app.services import access_service
 
 # Define the Blueprint
 user_settings_bp = Blueprint('user_settings', __name__, url_prefix='/api/user') 
@@ -49,6 +50,8 @@ def get_user_readiness():
         user_service.sync_templates_for_user(user_id)
 
         key_status = user_service.get_user_api_key_status(user_id)
+        if access_service.is_personal_mode():
+            key_status = access_service.merge_env_provider_keys(key_status)
 
         permissions = {}
         limits = {}
@@ -68,7 +71,7 @@ def get_user_readiness():
                 'allow_download_transcript': role.has_permission('allow_download_transcript'),
                 'allow_api_key_management': role.has_permission('allow_api_key_management'), 
                 'allow_public_api_access': role.has_permission('allow_public_api_access'),
-                'access_admin_panel': role.has_permission('access_admin_panel'), 
+                'access_admin_panel': access_service.can_access_admin_panel(user_obj),
                 'allow_workflows': role.has_permission('allow_workflows'), 
                 'manage_workflow_templates': role.has_permission('manage_workflow_templates'), 
                 'allow_auto_title_generation': role.has_permission('allow_auto_title_generation'),
@@ -342,17 +345,9 @@ def get_model_catalog():
     user_obj: User = current_user
     log_prefix = f"[API:UserModelCatalog:{user_obj.id}:GET]"
     try:
-        is_multi = current_app.config['DEPLOYMENT_MODE'] == 'multi'
-        initial_key_status = {}
-        if is_multi:
-            initial_key_status = user_service.get_effective_key_status(user_obj)
-        else:
-            initial_key_status = {
-                'openai': bool(current_app.config.get('OPENAI_API_KEY')),
-                'assemblyai': bool(current_app.config.get('ASSEMBLYAI_API_KEY')),
-                'gemini': bool(current_app.config.get('GEMINI_API_KEY')),
-                'openrouter': bool(current_app.config.get('OPENROUTER_API_KEY'))
-            }
+        is_multi = access_service.is_team_mode()
+        # Personal mode merges the .env provider keys into this status.
+        initial_key_status = user_service.get_effective_key_status(user_obj)
 
         from app.models import transcription_catalog as transcription_catalog_model
         from app.models import llm_catalog as llm_catalog_model

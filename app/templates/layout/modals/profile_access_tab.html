@@ -1,0 +1,297 @@
+{# User Settings > Access: "Password & sign-in" and "Team mode". State comes from `access` (access_service.access_context). #}
+{% import "layout/components/ui_helpers.html" as ui %}
+{% set env_note_class = 'form-hint flex items-start gap-1.5' %}
+
+{# ------------------------------------------------------------------ #}
+{# Password & sign-in                                                  #}
+{# ------------------------------------------------------------------ #}
+<section class="space-y-4" aria-labelledby="accessPasswordHeading">
+    <h4 id="accessPasswordHeading" class="section-title">{{ _('Password & sign-in') }}</h4>
+
+    {% if not access.team_mode and access.is_owner and access.open_mode %}
+        {# Personal, open: no password yet #}
+        <div class="space-y-1">
+            <p class="text-sm text-text-strong"><span class="font-semibold">{{ _('Sign-in: Off.') }}</span> {{ _('Transcriber opens without a login.') }}</p>
+            <p class="form-hint">{{ _('Anyone who can reach this address can use Transcriber. Set a password before you make it reachable from the internet.') }}</p>
+        </div>
+        <div>
+            {{ ui.button(_('Set a password'), variant='primary', icon='lock', attrs='data-access-reveal="accessSetPasswordForm" aria-expanded="false" aria-controls="accessSetPasswordForm"') }}
+        </div>
+        <form id="accessSetPasswordForm" class="hidden space-y-4" data-access-form="set-password" novalidate>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                    <label for="accessSetUsername" class="form-label">{{ _('Username') }}</label>
+                    <input id="accessSetUsername" type="text" name="username" value="{{ current_user.username }}" class="input-control mt-1" autocomplete="username">
+                    <span class="form-error" data-error-for="username"></span>
+                </div>
+                <div>
+                    <label for="accessSetEmail" class="form-label">{{ _('Email (optional)') }}</label>
+                    <input id="accessSetEmail" type="email" name="email" value="{{ '' if access.placeholder_email else current_user.email }}" class="input-control mt-1" autocomplete="email">
+                    <p class="form-hint mt-1">{{ _('Needed later for password resets if you turn on team mode.') }}</p>
+                    <span class="form-error" data-error-for="email"></span>
+                </div>
+                <div>
+                    <label for="accessSetPassword" class="form-label">{{ _('Password') }}</label>
+                    <input id="accessSetPassword" type="password" name="password" class="input-control mt-1" autocomplete="new-password" minlength="8">
+                    <p class="form-hint mt-1">{{ _('At least 8 characters.') }}</p>
+                    <span class="form-error" data-error-for="password"></span>
+                </div>
+                <div>
+                    <label for="accessSetConfirm" class="form-label">{{ _('Confirm password') }}</label>
+                    <input id="accessSetConfirm" type="password" name="confirm_password" class="input-control mt-1" autocomplete="new-password">
+                    <span class="form-error" data-error-for="confirm_password"></span>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                {{ ui.button(_('Protect Transcriber'), variant='primary', type='submit', icon='lock') }}
+                {{ ui.button(_('Cancel'), variant='muted', attrs='data-access-hide="accessSetPasswordForm"') }}
+            </div>
+        </form>
+
+    {% elif access.has_password %}
+        {% if not access.team_mode and access.is_owner %}
+            <div class="space-y-1">
+                <p class="text-sm text-text-strong"><span class="font-semibold">{{ _('Sign-in: On.') }}</span> {{ _('You need your password to open Transcriber.') }}</p>
+                {% if access.sign_in_locked %}
+                <p class="{{ env_note_class }}"><i class="material-icons text-base" aria-hidden="true">lock</i>{{ _("Sign-in is required by your server's .env file (ADMIN_PASSWORD).") }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <button id="changePasswordToggleBtn" type="button" aria-expanded="false" aria-controls="changePasswordSection"
+                class="flex w-full items-center justify-between rounded-xl py-2 text-sm font-semibold text-primary hover:text-primary-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20">
+            <span class="flex items-center gap-2"><i class="material-icons text-lg" aria-hidden="true">lock_reset</i>{{ _('Change Password') }}</span>
+            <i class="material-icons text-text-muted" id="passwordToggleIconDisplay" aria-hidden="true">expand_more</i>
+        </button>
+        <div id="changePasswordSection" class="hidden space-y-4">
+            <form id="changePasswordForm" class="space-y-4">
+                <input type="text" name="username" value="{{ current_user.username }}" autocomplete="username" class="sr-only" tabindex="-1" aria-hidden="true">
+                <div>
+                    <label for="currentPassword" class="form-label">{{ _('Current Password') }}</label>
+                    <input id="currentPassword" type="password" name="current_password" class="input-control mt-1" autocomplete="current-password">
+                    <span id="currentPasswordError" class="form-error"></span>
+                </div>
+                <div>
+                    <label for="newPassword" class="form-label">{{ _('New Password') }}</label>
+                    <input id="newPassword" type="password" name="new_password" class="input-control mt-1" autocomplete="new-password">
+                    <span id="newPasswordError" class="form-error"></span>
+                </div>
+                <div>
+                    <label for="confirmNewPassword" class="form-label">{{ _('Confirm New Password') }}</label>
+                    <input id="confirmNewPassword" type="password" name="confirm_new_password" class="input-control mt-1" autocomplete="new-password">
+                    <span id="confirmNewPasswordError" class="form-error"></span>
+                </div>
+                <div class="pt-1">
+                    {{ ui.button(_('Update Password'), variant='primary', type='submit', icon='lock_reset', id='submitPasswordChangeBtn') }}
+                </div>
+            </form>
+        </div>
+
+        {% if not access.team_mode and access.is_owner and not access.sign_in_locked %}
+            <div>
+                {{ ui.button(_('Turn off sign-in'), variant='link', icon='lock_open', extra_classes='text-danger', attrs='data-access-reveal="accessRemovePasswordForm" aria-expanded="false" aria-controls="accessRemovePasswordForm"') }}
+            </div>
+            <form id="accessRemovePasswordForm" class="hidden space-y-4" data-access-form="remove-password" novalidate>
+                {{ ui.alert('warning', message=_('Anyone who can reach this address will be able to use Transcriber without signing in.')) }}
+                <div>
+                    <label for="accessRemoveCurrent" class="form-label">{{ _('Current Password') }}</label>
+                    <input id="accessRemoveCurrent" type="password" name="current_password" class="input-control mt-1" autocomplete="current-password">
+                    <span class="form-error" data-error-for="current_password"></span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    {{ ui.button(_('Turn off sign-in'), variant='danger', type='submit', icon='lock_open') }}
+                    {{ ui.button(_('Cancel'), variant='muted', attrs='data-access-hide="accessRemovePasswordForm"') }}
+                </div>
+            </form>
+        {% endif %}
+
+    {% else %}
+        {# Team mode account without a password (signs in with Google) #}
+        <p class="text-sm text-text-strong">{{ _('You sign in with Google. You can also add a password.') }}</p>
+        <div>
+            {{ ui.button(_('Add a password'), variant='secondary', icon='lock', attrs='data-access-reveal="accessSetPasswordForm" aria-expanded="false" aria-controls="accessSetPasswordForm"') }}
+        </div>
+        <form id="accessSetPasswordForm" class="hidden space-y-4" data-access-form="set-password" novalidate>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                    <label for="accessSetPassword" class="form-label">{{ _('Password') }}</label>
+                    <input id="accessSetPassword" type="password" name="password" class="input-control mt-1" autocomplete="new-password">
+                    <p class="form-hint mt-1">{{ _('At least 8 characters.') }}</p>
+                    <span class="form-error" data-error-for="password"></span>
+                </div>
+                <div>
+                    <label for="accessSetConfirm" class="form-label">{{ _('Confirm password') }}</label>
+                    <input id="accessSetConfirm" type="password" name="confirm_password" class="input-control mt-1" autocomplete="new-password">
+                    <span class="form-error" data-error-for="confirm_password"></span>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                {{ ui.button(_('Save password'), variant='primary', type='submit', icon='lock') }}
+                {{ ui.button(_('Cancel'), variant='muted', attrs='data-access-hide="accessSetPasswordForm"') }}
+            </div>
+        </form>
+    {% endif %}
+</section>
+
+{# ------------------------------------------------------------------ #}
+{# Team mode                                                           #}
+{# ------------------------------------------------------------------ #}
+{% if access.can_manage %}
+<div class="surface-divider"></div>
+<section class="space-y-4" aria-labelledby="accessTeamHeading">
+    <h4 id="accessTeamHeading" class="section-title">{{ _('Team mode') }}</h4>
+
+    {% if not access.team_mode %}
+        <p class="text-sm text-text-strong"><span class="font-semibold">{{ _('Team mode: Off.') }}</span> {{ _('Right now Transcriber has one account: yours.') }}</p>
+
+        <div class="space-y-3 text-sm text-text-strong">
+            <div>
+                <p class="font-semibold">{{ _('Turning on team mode will:') }}</p>
+                <ul class="mt-1 list-disc space-y-1 pl-5">
+                    <li>{{ _('Open a sign-up page so other people can create their own accounts') }} <span class="text-text-muted">{{ _('(you can turn this off at any time)') }}</span></li>
+                    <li>{{ _('Give each person their own history, workflows, API keys and settings') }}</li>
+                    <li>{{ _("Turn on Google sign-in and password resets, if they're set up on your server") }}</li>
+                    <li>{{ _('Make you the admin, adding an Admin panel to your menu for managing users, roles, usage limits, pricing and analytics') }}</li>
+                    <li>{{ _('Require everyone to sign in, you included') }}</li>
+                </ul>
+            </div>
+            <div>
+                <p class="font-semibold">{{ _("It won't:") }}</p>
+                <ul class="mt-1 list-disc space-y-1 pl-5">
+                    <li>{{ _('Change or share anything you already have. Your history, workflows and keys stay private to you') }}</li>
+                    <li>{{ _('Require a restart or redeploy') }}</li>
+                </ul>
+            </div>
+            <p class="text-text-muted">{{ _('You can switch back to personal mode at any time.') }}</p>
+        </div>
+
+        {% if access.mode_locked %}
+            <p class="{{ env_note_class }}"><i class="material-icons text-base" aria-hidden="true">lock</i>{{ _("Set by DEPLOYMENT_MODE in your server's .env file.") }}</p>
+        {% else %}
+            {% set needs_password = not access.has_password %}
+            {% set needs_email = access.placeholder_email %}
+            {% set has_step_one = needs_password or needs_email %}
+            <div>
+                {{ ui.button(_('Enable team mode'), variant='primary', icon='group_add', attrs='data-access-reveal="accessTeamEnableFlow" aria-expanded="false" aria-controls="accessTeamEnableFlow"') }}
+            </div>
+            <form id="accessTeamEnableFlow" class="hidden space-y-4 raised-card p-5" data-access-form="enable-team" data-has-step-one="{{ 'true' if has_step_one else 'false' }}" novalidate>
+                {% if has_step_one %}
+                <div data-team-step="1" class="space-y-4">
+                    <p class="eyebrow">{{ _('Step 1 of 2') }}</p>
+                    {% if needs_password %}
+                    <p class="text-group font-semibold text-text-strong">{{ _('Set your password') }}</p>
+                    <p class="text-sm text-text-muted">{{ _('In team mode everyone signs in, you included.') }}{% if needs_email %} {{ _('Your email is used for password resets.') }}{% endif %}</p>
+                    {% else %}
+                    <p class="text-group font-semibold text-text-strong">{{ _('Add your email') }}</p>
+                    <p class="text-sm text-text-muted">{{ _('Your email is used for password resets.') }}</p>
+                    {% endif %}
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        {% if needs_email %}
+                        <div class="md:col-span-2">
+                            <label for="accessTeamEmail" class="form-label">{{ _('Email') }}</label>
+                            <input id="accessTeamEmail" type="email" name="email" class="input-control mt-1" autocomplete="email" required>
+                            <span class="form-error" data-error-for="email"></span>
+                        </div>
+                        {% endif %}
+                        {% if needs_password %}
+                        <div>
+                            <label for="accessTeamPassword" class="form-label">{{ _('Password') }}</label>
+                            <input id="accessTeamPassword" type="password" name="password" class="input-control mt-1" autocomplete="new-password" required minlength="8">
+                            <p class="form-hint mt-1">{{ _('At least 8 characters.') }}</p>
+                            <span class="form-error" data-error-for="password"></span>
+                        </div>
+                        <div>
+                            <label for="accessTeamConfirm" class="form-label">{{ _('Confirm password') }}</label>
+                            <input id="accessTeamConfirm" type="password" name="confirm_password" class="input-control mt-1" autocomplete="new-password" required>
+                            <span class="form-error" data-error-for="confirm_password"></span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        {{ ui.button(_('Continue'), variant='primary', icon='arrow_forward', attrs='data-team-next') }}
+                        {{ ui.button(_('Cancel'), variant='muted', attrs='data-access-hide="accessTeamEnableFlow"') }}
+                    </div>
+                </div>
+                {% endif %}
+                <div data-team-step="2" class="space-y-4 {{ 'hidden' if has_step_one else '' }}">
+                    {% if has_step_one %}<p class="eyebrow">{{ _('Step 2 of 2') }}</p>{% endif %}
+                    <p class="text-group font-semibold text-text-strong">{{ _('Confirm') }}</p>
+                    <p class="text-sm text-text-strong">{{ _("After this, everyone signs in and you become the admin. Your data stays private to you, and you can switch back at any time.") }}</p>
+                    <div>
+                        <label class="flex items-start gap-2.5">
+                            <input type="checkbox" name="allow_registration" class="checkbox-control mt-0.5"
+                                   {% if access.registration_allowed %}checked{% endif %}
+                                   {% if access.registration_locked %}disabled{% endif %}>
+                            <span class="text-sm text-text-strong">{{ _('Let people sign up themselves') }}
+                                <span class="block form-hint">{{ _('If you untick this, only people you add in Admin panel > Users can sign in.') }}</span>
+                            </span>
+                        </label>
+                        {% if access.registration_locked %}
+                        <p class="{{ env_note_class }} mt-2"><i class="material-icons text-base" aria-hidden="true">lock</i>{{ _("Set by ALLOW_REGISTRATION in your server's .env file.") }}</p>
+                        {% endif %}
+                    </div>
+                    <span class="form-error" data-error-for="_form"></span>
+                    <div class="flex flex-wrap gap-2">
+                        {{ ui.button(_('Turn on team mode'), variant='primary', type='submit', icon='group_add') }}
+                        {% if has_step_one %}
+                        {{ ui.button(_('Back'), variant='muted', icon='arrow_back', attrs='data-team-back') }}
+                        {% else %}
+                        {{ ui.button(_('Cancel'), variant='muted', attrs='data-access-hide="accessTeamEnableFlow"') }}
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+
+    {% else %}
+        {% set other_accounts = (access.user_count or 1) - 1 %}
+        <p class="text-sm text-text-strong"><span class="font-semibold">{{ _('Team mode: On') }}</span>
+            &middot; {{ ngettext('%(num)s user', '%(num)s users', access.user_count or 1) }}</p>
+
+        <div class="space-y-1">
+            <label class="flex items-start gap-2.5">
+                <input type="checkbox" id="accessRegistrationToggle" class="checkbox-control mt-0.5"
+                       {% if access.registration_allowed %}checked{% endif %}
+                       {% if access.registration_locked %}disabled{% endif %}>
+                <span class="text-sm text-text-strong"><span class="font-semibold">{{ _('Allow new sign-ups') }}</span>
+                    <span class="block form-hint">{{ _('When off, the sign-up page disappears and Google sign-in only works for existing accounts. You can still add people in Admin panel > Users.') }}</span>
+                </span>
+            </label>
+            {% if access.registration_locked %}
+            <p class="{{ env_note_class }}"><i class="material-icons text-base" aria-hidden="true">lock</i>{{ _("Set by ALLOW_REGISTRATION in your server's .env file.") }}</p>
+            {% endif %}
+        </div>
+
+        {% if access.mode_locked %}
+            <p class="{{ env_note_class }}"><i class="material-icons text-base" aria-hidden="true">lock</i>{{ _("Set by DEPLOYMENT_MODE in your server's .env file.") }}</p>
+        {% else %}
+            <div>
+                {{ ui.button(_('Switch back to personal mode'), variant='danger', icon='person', attrs='data-access-reveal="accessTeamDisableForm" aria-expanded="false" aria-controls="accessTeamDisableForm"') }}
+            </div>
+            <form id="accessTeamDisableForm" class="hidden space-y-4 raised-card p-5" data-access-form="disable-team" novalidate>
+                <p class="text-group font-semibold text-text-strong">{{ _('Switch back to personal mode?') }}</p>
+                <ul class="list-disc space-y-1 pl-5 text-sm text-text-strong">
+                    {% if other_accounts > 0 %}
+                    <li>{{ ngettext("The other account and its data are kept, but it can't sign in or use its API keys until team mode is back on. Jobs it already started will still finish.", "The %(num)s other accounts and all their data are kept, but they can't sign in or use their API keys until team mode is back on. Jobs they already started will still finish.", other_accounts) }}</li>
+                    {% endif %}
+                    <li>{{ _('The sign-up page and Admin panel disappear') }}</li>
+                    <li>{{ _('You become the owner and keep your password. You can turn sign-in off afterwards') }}</li>
+                </ul>
+                {% if access.has_password %}
+                <div>
+                    <label for="accessTeamDisableCurrent" class="form-label">{{ _('Enter your password to confirm') }}</label>
+                    <input id="accessTeamDisableCurrent" type="password" name="current_password" class="input-control mt-1" autocomplete="current-password">
+                    <span class="form-error" data-error-for="current_password"></span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    {{ ui.button(_('Switch to personal mode'), variant='danger', type='submit', icon='person') }}
+                    {{ ui.button(_('Cancel'), variant='muted', attrs='data-access-hide="accessTeamDisableForm"') }}
+                </div>
+                {% else %}
+                {{ ui.alert('info', message=_('Google sign-in is turned off in personal mode, so add a password in Password & sign-in above first.')) }}
+                {% endif %}
+            </form>
+        {% endif %}
+    {% endif %}
+</section>
+{% endif %}

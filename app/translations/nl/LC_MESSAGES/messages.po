@@ -1926,3 +1926,365 @@ msgstr "Systeemgedefinieerd - "
 #: app/templates/live.html
 msgid "Back to live"
 msgstr "Terug naar live"
+
+# Personal and team mode (User Settings > Access)
+msgid "Password set. You'll need it the next time you sign in."
+msgstr "Wachtwoord ingesteld. Je hebt het nodig wanneer je je de volgende keer aanmeldt."
+
+msgid "Sign-in is off. Transcriber now opens without a login."
+msgstr "Aanmelden staat uit. Transcriber opent nu zonder aanmelding."
+
+msgid "Team mode is on. You're the admin."
+msgstr "Teammodus staat aan. Jij bent de beheerder."
+
+msgid "Personal mode is on. Only you can use Transcriber now."
+msgstr "Persoonlijke modus staat aan. Alleen jij kunt Transcriber nu gebruiken."
+
+msgid "Missing \"enabled\" (true or false)."
+msgstr "\"enabled\" ontbreekt (true of false)."
+
+msgid "Missing \"allowed\" (true or false)."
+msgstr "\"allowed\" ontbreekt (true of false)."
+
+msgid "New sign-ups are on."
+msgstr "Nieuwe registraties staan aan."
+
+msgid "New sign-ups are off."
+msgstr "Nieuwe registraties staan uit."
+
+msgid "Transcriber is in personal mode, so only its owner can sign in."
+msgstr "Transcriber staat in persoonlijke modus, dus alleen de eigenaar kan zich aanmelden."
+
+msgid "Logged in successfully"
+msgstr "Succesvol aangemeld"
+
+msgid "Invalid username or password."
+msgstr "Ongeldige gebruikersnaam of wachtwoord."
+
+msgid "An unexpected error occurred during login. Please try again."
+msgstr "Er is een onverwachte fout opgetreden bij het aanmelden. Probeer het opnieuw."
+
+msgid "Sign-ups are turned off. Ask an admin to create an account for you."
+msgstr "Registreren staat uit. Vraag een beheerder om een account voor je aan te maken."
+
+msgid "Account created for %(username)s! You can now log in."
+msgstr "Account aangemaakt voor %(username)s! Je kunt je nu aanmelden."
+
+msgid "Registration failed. Please try again."
+msgstr "Registratie mislukt. Probeer het opnieuw."
+
+msgid "An unexpected error occurred during registration. Please try again."
+msgstr "Er is een onverwachte fout opgetreden bij het registreren. Probeer het opnieuw."
+
+msgid "You have been logged out successfully."
+msgstr "Je bent afgemeld."
+
+msgid "Password reset by email is only available in team mode."
+msgstr "Wachtwoord opnieuw instellen via e-mail kan alleen in teammodus."
+
+msgid "If an account with that email exists, a password reset link has been sent. Please check your inbox and spam folder if you don't see it within a few minutes."
+msgstr "Als er een account met dat e-mailadres bestaat, is er een link verstuurd om je wachtwoord opnieuw in te stellen. Kijk ook in je spammap als je hem na een paar minuten niet ziet."
+
+msgid "An error occurred while processing your request. Please try again."
+msgstr "Er is een fout opgetreden bij het verwerken van je verzoek. Probeer het opnieuw."
+
+msgid "The password reset link is invalid or has expired."
+msgstr "De link om je wachtwoord opnieuw in te stellen is ongeldig of verlopen."
+
+msgid "Your password has been reset successfully. You can now log in."
+msgstr "Je wachtwoord is opnieuw ingesteld. Je kunt je nu aanmelden."
+
+msgid "Password reset failed. Please try again."
+msgstr "Wachtwoord opnieuw instellen mislukt. Probeer het opnieuw."
+
+msgid "An error occurred while resetting your password. Please try again."
+msgstr "Er is een fout opgetreden bij het opnieuw instellen van je wachtwoord. Probeer het opnieuw."
+
+msgid "Google Sign-In is only available in team mode."
+msgstr "Aanmelden met Google kan alleen in teammodus."
+
+msgid "Password must be at least 8 characters long."
+msgstr "Het wachtwoord moet minstens 8 tekens lang zijn."
+
+msgid "Passwords do not match."
+msgstr "De wachtwoorden komen niet overeen."
+
+msgid "Username must be between 4 and 25 characters."
+msgstr "De gebruikersnaam moet tussen 4 en 25 tekens lang zijn."
+
+msgid "That username is already taken."
+msgstr "Die gebruikersnaam is al in gebruik."
+
+msgid "Email is required for team mode (it is used for password resets)."
+msgstr "Een e-mailadres is verplicht in teammodus (het wordt gebruikt om wachtwoorden opnieuw in te stellen)."
+
+msgid "Please enter a valid email address."
+msgstr "Vul een geldig e-mailadres in."
+
+msgid "Please enter your real email address."
+msgstr "Vul je echte e-mailadres in."
+
+msgid "That email address is already used by another account."
+msgstr "Dat e-mailadres wordt al door een ander account gebruikt."
+
+msgid "Your current password is incorrect."
+msgstr "Je huidige wachtwoord is onjuist."
+
+msgid "Could not save your username or email. Please try again."
+msgstr "Je gebruikersnaam of e-mailadres kon niet worden opgeslagen. Probeer het opnieuw."
+
+msgid "This account already has a password. Use Change Password instead."
+msgstr "Dit account heeft al een wachtwoord. Gebruik Wachtwoord wijzigen."
+
+msgid "Could not save your password. Please try again."
+msgstr "Je wachtwoord kon niet worden opgeslagen. Probeer het opnieuw."
+
+msgid "Sign-in cannot be turned off in team mode."
+msgstr "Aanmelden kan in teammodus niet worden uitgezet."
+
+msgid "Only the owner can change this."
+msgstr "Alleen de eigenaar kan dit wijzigen."
+
+msgid "Sign-in is required by your server's .env file (ADMIN_PASSWORD)."
+msgstr "Aanmelden is verplicht door het .env-bestand van je server (ADMIN_PASSWORD)."
+
+msgid "The mode is set by DEPLOYMENT_MODE in your server's .env file."
+msgstr "De modus wordt bepaald door DEPLOYMENT_MODE in het .env-bestand van je server."
+
+msgid "Team mode is already on."
+msgstr "Teammodus staat al aan."
+
+msgid "Only the owner can turn on team mode."
+msgstr "Alleen de eigenaar kan teammodus aanzetten."
+
+msgid "Team mode is already off."
+msgstr "Teammodus staat al uit."
+
+msgid "Only an admin can switch back to personal mode."
+msgstr "Alleen een beheerder kan terugschakelen naar persoonlijke modus."
+
+msgid "Set a password first: Google sign-in is turned off in personal mode."
+msgstr "Stel eerst een wachtwoord in: aanmelden met Google staat uit in persoonlijke modus."
+
+msgid "Sign-ups are set by ALLOW_REGISTRATION in your server's .env file."
+msgstr "Registraties worden bepaald door ALLOW_REGISTRATION in het .env-bestand van je server."
+
+msgid "Only an admin can change sign-ups in team mode."
+msgstr "Alleen een beheerder kan registraties wijzigen in teammodus."
+
+msgid "No owner account found. Run `flask bootstrap` first."
+msgstr "Geen eigenaarsaccount gevonden. Voer eerst `flask bootstrap` uit."
+
+msgid "Could not save the password."
+msgstr "Het wachtwoord kon niet worden opgeslagen."
+
+msgid "Sign-ups and team mode are in"
+msgstr "Registraties en teammodus vind je in"
+
+msgid "User Settings > Access"
+msgstr "Gebruikersinstellingen > Toegang"
+
+msgid "Add user"
+msgstr "Gebruiker toevoegen"
+
+msgid "Share the temporary password with them. They can change it in User Settings > Access."
+msgstr "Deel het tijdelijke wachtwoord met de gebruiker. Die kan het wijzigen in Gebruikersinstellingen > Toegang."
+
+msgid "Role"
+msgstr "Rol"
+
+msgid "Temporary password"
+msgstr "Tijdelijk wachtwoord"
+
+msgid "At least 8 characters."
+msgstr "Minstens 8 tekens."
+
+msgid "Create user"
+msgstr "Gebruiker aanmaken"
+
+msgid "Password & sign-in"
+msgstr "Wachtwoord en aanmelden"
+
+msgid "Sign-in: Off."
+msgstr "Aanmelden: uit."
+
+msgid "Transcriber opens without a login."
+msgstr "Transcriber opent zonder aanmelding."
+
+msgid "Anyone who can reach this address can use Transcriber. Set a password before you make it reachable from the internet."
+msgstr "Iedereen die dit adres kan bereiken, kan Transcriber gebruiken. Stel een wachtwoord in voordat je het via internet bereikbaar maakt."
+
+msgid "Set a password"
+msgstr "Wachtwoord instellen"
+
+msgid "Email (optional)"
+msgstr "E-mail (optioneel)"
+
+msgid "Needed later for password resets if you turn on team mode."
+msgstr "Later nodig om je wachtwoord opnieuw in te stellen als je teammodus aanzet."
+
+msgid "Confirm password"
+msgstr "Wachtwoord bevestigen"
+
+msgid "Protect Transcriber"
+msgstr "Transcriber beveiligen"
+
+msgid "Sign-in: On."
+msgstr "Aanmelden: aan."
+
+msgid "You need your password to open Transcriber."
+msgstr "Je hebt je wachtwoord nodig om Transcriber te openen."
+
+msgid "Turn off sign-in"
+msgstr "Aanmelden uitzetten"
+
+msgid "Anyone who can reach this address will be able to use Transcriber without signing in."
+msgstr "Iedereen die dit adres kan bereiken, kan Transcriber gebruiken zonder zich aan te melden."
+
+msgid "You sign in with Google. You can also add a password."
+msgstr "Je meldt je aan met Google. Je kunt ook een wachtwoord toevoegen."
+
+msgid "Add a password"
+msgstr "Wachtwoord toevoegen"
+
+msgid "Save password"
+msgstr "Wachtwoord opslaan"
+
+msgid "Team mode"
+msgstr "Teammodus"
+
+msgid "Team mode: Off."
+msgstr "Teammodus: uit."
+
+msgid "Right now Transcriber has one account: yours."
+msgstr "Op dit moment heeft Transcriber één account: dat van jou."
+
+msgid "Turning on team mode will:"
+msgstr "Teammodus aanzetten zal:"
+
+msgid "Open a sign-up page so other people can create their own accounts"
+msgstr "Een registratiepagina openen zodat anderen hun eigen account kunnen aanmaken"
+
+msgid "(you can turn this off at any time)"
+msgstr "(je kunt dit op elk moment uitzetten)"
+
+msgid "Give each person their own history, workflows, API keys and settings"
+msgstr "Iedereen een eigen geschiedenis, eigen workflows, API-sleutels en instellingen geven"
+
+msgid "Turn on Google sign-in and password resets, if they're set up on your server"
+msgstr "Aanmelden met Google en wachtwoordherstel aanzetten, als die op je server zijn ingesteld"
+
+msgid "Make you the admin, adding an Admin panel to your menu for managing users, roles, usage limits, pricing and analytics"
+msgstr "Jou beheerder maken, met een Beheerpaneel in je menu voor gebruikers, rollen, gebruikslimieten, prijzen en statistieken"
+
+msgid "Require everyone to sign in, you included"
+msgstr "Iedereen moet zich aanmelden, jij ook"
+
+msgid "It won't:"
+msgstr "Het zal niet:"
+
+msgid "Change or share anything you already have. Your history, workflows and keys stay private to you"
+msgstr "Iets veranderen of delen van wat je al hebt. Je geschiedenis, workflows en sleutels blijven privé"
+
+msgid "Require a restart or redeploy"
+msgstr "Een herstart of nieuwe deployment vereisen"
+
+msgid "You can switch back to personal mode at any time."
+msgstr "Je kunt op elk moment terug naar persoonlijke modus."
+
+msgid "Set by DEPLOYMENT_MODE in your server's .env file."
+msgstr "Ingesteld door DEPLOYMENT_MODE in het .env-bestand van je server."
+
+msgid "Enable team mode"
+msgstr "Teammodus aanzetten"
+
+msgid "Step 1 of 2"
+msgstr "Stap 1 van 2"
+
+msgid "Set your password"
+msgstr "Stel je wachtwoord in"
+
+msgid "In team mode everyone signs in, you included."
+msgstr "In teammodus meldt iedereen zich aan, jij ook."
+
+msgid "Your email is used for password resets."
+msgstr "Je e-mailadres wordt gebruikt om je wachtwoord opnieuw in te stellen."
+
+msgid "Continue"
+msgstr "Doorgaan"
+
+msgid "Step 2 of 2"
+msgstr "Stap 2 van 2"
+
+msgid "Confirm"
+msgstr "Bevestigen"
+
+msgid "After this, everyone signs in and you become the admin. Your data stays private to you, and you can switch back at any time."
+msgstr "Hierna meldt iedereen zich aan en word jij beheerder. Je gegevens blijven privé en je kunt op elk moment terugschakelen."
+
+msgid "Let people sign up themselves"
+msgstr "Mensen zelf laten registreren"
+
+msgid "If you untick this, only people you add in Admin panel > Users can sign in."
+msgstr "Als je dit uitvinkt, kunnen alleen mensen die je toevoegt in Beheerpaneel > Gebruikers zich aanmelden."
+
+msgid "Set by ALLOW_REGISTRATION in your server's .env file."
+msgstr "Ingesteld door ALLOW_REGISTRATION in het .env-bestand van je server."
+
+msgid "Turn on team mode"
+msgstr "Teammodus aanzetten"
+
+msgid "Back"
+msgstr "Terug"
+
+msgid "Team mode: On"
+msgstr "Teammodus: aan"
+
+msgid "Allow new sign-ups"
+msgstr "Nieuwe registraties toestaan"
+
+msgid "When off, the sign-up page disappears and Google sign-in only works for existing accounts. You can still add people in Admin panel > Users."
+msgstr "Als dit uit staat, verdwijnt de registratiepagina en werkt aanmelden met Google alleen voor bestaande accounts. Je kunt nog steeds mensen toevoegen in Beheerpaneel > Gebruikers."
+
+msgid "Switch back to personal mode"
+msgstr "Terug naar persoonlijke modus"
+
+msgid "Switch back to personal mode?"
+msgstr "Terug naar persoonlijke modus?"
+
+msgid "The sign-up page and Admin panel disappear"
+msgstr "De registratiepagina en het Beheerpaneel verdwijnen"
+
+msgid "You become the owner and keep your password. You can turn sign-in off afterwards"
+msgstr "Jij wordt de eigenaar en houdt je wachtwoord. Daarna kun je aanmelden uitzetten"
+
+msgid "Enter your password to confirm"
+msgstr "Vul je wachtwoord in om te bevestigen"
+
+msgid "Switch to personal mode"
+msgstr "Naar persoonlijke modus"
+
+msgid "Google sign-in is turned off in personal mode, so add a password in Password & sign-in above first."
+msgstr "Aanmelden met Google staat uit in persoonlijke modus, dus voeg eerst hierboven een wachtwoord toe bij Wachtwoord en aanmelden."
+
+msgid "Settings sections"
+msgstr "Onderdelen van instellingen"
+
+msgid "General"
+msgstr "Algemeen"
+
+msgid "Access"
+msgstr "Toegang"
+
+msgid "%(num)s user"
+msgid_plural "%(num)s users"
+msgstr[0] "%(num)s gebruiker"
+msgstr[1] "%(num)s gebruikers"
+
+msgid "The other account and its data are kept, but it can't sign in or use its API keys until team mode is back on. Jobs it already started will still finish."
+msgid_plural "The %(num)s other accounts and all their data are kept, but they can't sign in or use their API keys until team mode is back on. Jobs they already started will still finish."
+msgstr[0] "Het andere account en de gegevens ervan blijven bewaard, maar het kan zich niet aanmelden of de API-sleutels gebruiken tot teammodus weer aan staat. Taken die al gestart zijn, worden nog afgerond."
+msgstr[1] "De %(num)s andere accounts en al hun gegevens blijven bewaard, maar ze kunnen zich niet aanmelden of hun API-sleutels gebruiken tot teammodus weer aan staat. Taken die al gestart zijn, worden nog afgerond."
+
+msgid "Add your email"
+msgstr "Voeg je e-mailadres toe"

@@ -16,6 +16,7 @@ from app.models import transcription_catalog as transcription_catalog_model
 from app.models import llm_catalog as llm_catalog_model
 from app.services import user_service
 from app.services.openrouter import normalize_openrouter_model
+from app.services import access_service
 try:
     from .models.user import get_user_by_username, get_user_by_email
     from .models.role import get_role_by_name
@@ -348,7 +349,7 @@ class UserProfileForm(FlaskForm):
             catalog_llm_models = llm_catalog_model.filter_models_by_api_key_status(
                 catalog_llm_models,
                 availability_status,
-                allow_provider_wide=current_app.config.get('DEPLOYMENT_MODE') != 'multi',
+                allow_provider_wide=not access_service.is_team_mode(),
             )
         except Exception as filter_err:
             logging.warning(f"[FORMS] Failed to filter LLM models for profile form: {filter_err}", exc_info=True)
@@ -588,7 +589,7 @@ class AdminRoleForm(FlaskForm):
             catalog_llm_models = llm_catalog_model.filter_models_by_api_key_status(
                 catalog_llm_models,
                 admin_key_status,
-                allow_provider_wide=current_app.config.get('DEPLOYMENT_MODE') != 'multi',
+                allow_provider_wide=not access_service.is_team_mode(),
             )
         except Exception as catalog_err:
             logging.warning(f"[FORMS] Failed to load LLM models from catalog for admin role form: {catalog_err}", exc_info=True)

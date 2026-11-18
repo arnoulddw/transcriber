@@ -948,8 +948,7 @@
 
         async function ensureLiveQuota() {
             if (
-                !global.IS_MULTI_USER
-                || typeof global.fetchReadinessData !== 'function'
+                typeof global.fetchReadinessData !== 'function'
                 || typeof global.getUsageQuotaExceededReason !== 'function'
             ) {
                 return;

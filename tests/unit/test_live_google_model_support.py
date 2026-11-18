@@ -22,6 +22,9 @@ def test_gemini_live_model_resolves_to_gemini_and_serves_websocket_session(monke
     Babel(app)
     monkeypatch.setattr(service, "_validate_settings", lambda *_: ("auto", ""))
     monkeypatch.setattr(service, "_resolve_provider_api_key", lambda *_: "k")
+    # Personal-mode owner: admin role, every live permission granted.
+    monkeypatch.setattr(service, "check_permission", MagicMock(return_value=True))
+    monkeypatch.setattr(service.user_service, "get_user_api_key_status", MagicMock(return_value={}))
     monkeypatch.setattr(
         service.role_model,
         "reserve_usage_if_allowed",

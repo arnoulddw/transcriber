@@ -37,9 +37,22 @@ class Config:
         raise ValueError("No SECRET_KEY set for Flask application. Please set it in .env")
 
     # --- Deployment Mode ---
-    DEPLOYMENT_MODE = os.environ.get('DEPLOYMENT_MODE', 'multi').lower()
-    if DEPLOYMENT_MODE not in ['single', 'multi']:
-        raise ValueError(f"Invalid DEPLOYMENT_MODE: '{DEPLOYMENT_MODE}'. Must be 'single' or 'multi'.")
+    # 'single' = personal mode, 'multi' = team mode. When unset, the mode is
+    # stored in the database and can be switched in User Settings > Access.
+    # When set, it wins and the switch in the app is locked.
+    DEPLOYMENT_MODE = (os.environ.get('DEPLOYMENT_MODE') or '').strip().lower() or None
+    if DEPLOYMENT_MODE not in (None, 'single', 'multi'):
+        raise ValueError(f"Invalid DEPLOYMENT_MODE: '{DEPLOYMENT_MODE}'. Must be 'single', 'multi' or unset.")
+
+    # Team mode sign-ups. Unset = controlled in the app; set = locked.
+    _allow_registration_raw = (os.environ.get('ALLOW_REGISTRATION') or '').strip().lower()
+    ALLOW_REGISTRATION = (
+        None if not _allow_registration_raw
+        else _allow_registration_raw in ('1', 'true', 'yes', 'on')
+    )
+
+    # Seconds that web and worker processes cache instance-wide settings.
+    APP_SETTINGS_CACHE_SECONDS = float(os.environ.get('APP_SETTINGS_CACHE_SECONDS', 5))
 
     # --- Branding (internal; intentionally undocumented) ---
     COMPASS_BRANDING = os.environ.get('COMPASS_BRANDING', '').strip().lower() in ('1', 'true', 'yes', 'on')
@@ -193,14 +206,21 @@ class Config:
     RATELIMIT_STORAGE_URI = "memory://" # Consider redis for production
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_SECURE = DEPLOYMENT_MODE == 'multi'
+    # Cookies are marked Secure automatically on HTTPS requests (see
+    # app/__init__.py). Set SESSION_COOKIE_SECURE=true to force it always.
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'false').strip().lower() in ('1', 'true', 'yes', 'on')
+    REMEMBER_COOKIE_SECURE = SESSION_COOKIE_SECURE
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SAMESITE = 'Lax'
     PASSWORD_RESET_TOKEN_MAX_AGE_SECONDS = int(os.environ.get('PASSWORD_RESET_TOKEN_MAX_AGE_SECONDS', 3600))
 
 
-    # --- Admin User Credentials ---
-    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
-    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')
-    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+    # --- Owner / first admin account ---
+    # Used once, when the owner account is first created. ADMIN_PASSWORD also
+    # makes sign-in mandatory (it cannot be turned off in the app).
+    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME') or 'admin'
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD') or None
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or None
 
     # --- File Upload Limits ---
     # Server-level limit (in bytes). Flask will reject requests larger than this with a 413 error.
@@ -220,8 +240,6 @@ class Config:
 
     # --- OAuth Configuration ---
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
-    if DEPLOYMENT_MODE == 'multi' and not GOOGLE_CLIENT_ID:
-        print("WARNING: DEPLOYMENT_MODE is 'multi' but GOOGLE_CLIENT_ID is not set in .env. Google Sign-In will not work.")
 
     # --- Data Retention Configuration ---
     PHYSICAL_DELETION_DAYS = int(os.environ.get('PHYSICAL_DELETION_DAYS', 120)) # Days after soft-delete

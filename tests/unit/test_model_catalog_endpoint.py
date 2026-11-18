@@ -32,6 +32,7 @@ def catalog_app():
 
 
 FAKE_USER = SimpleNamespace(id=7, username="cataloguser", is_authenticated=True)
+_REAL_EFFECTIVE_KEY_STATUS = user_service.get_effective_key_status
 
 
 def register_builder_patches(stack: ExitStack, key_status):
@@ -117,7 +118,7 @@ def test_multi_user_passes_effective_key_status_to_every_builder(catalog_app):
         assert merged_status[service] is False
 
 
-def test_single_user_skips_per_user_key_status_and_allows_provider_wide(catalog_app):
+def test_personal_mode_uses_owner_keys_and_allows_provider_wide(catalog_app):
     catalog_app.config["DEPLOYMENT_MODE"] = "single"
     catalog_app.config["OPENAI_API_KEY"] = "env-openai-key"
     catalog_app.config["ASSEMBLYAI_API_KEY"] = None
@@ -128,8 +129,10 @@ def test_single_user_skips_per_user_key_status_and_allows_provider_wide(catalog_
         register_builder_patches(stack, {})
         with patch.object(user_settings, "current_user", FAKE_USER):
             with patch.object(
-                user_service, "get_effective_key_status"
-            ) as effective_spy, patch.object(
+                user_service, "get_effective_key_status", side_effect=_REAL_EFFECTIVE_KEY_STATUS
+            ), patch.object(
+                user_service, "get_user_api_key_status", return_value={"provider_keys": {}}
+            ) as own_keys_spy, patch.object(
                 llm_catalog, "filter_models_by_api_key_status",
                 side_effect=lambda models, status, *, allow_provider_wide: [],
             ) as filter_spy, patch.object(
@@ -139,10 +142,14 @@ def test_single_user_skips_per_user_key_status_and_allows_provider_wide(catalog_
                 response = catalog_app.test_client().get("/api/user/model-catalog")
 
     assert response.status_code == 200
-    effective_spy.assert_not_called()
+    # Personal mode: the owner's own saved keys, plus the .env provider keys.
+    own_keys_spy.assert_called_once_with(FAKE_USER.id)
 
     build_status = build_options_spy.call_args.args[1]
-    assert build_status == {"openai": True, "assemblyai": False, "gemini": False, "openrouter": False}
+    assert build_status == {
+        "provider_keys": {},
+        "openai": True, "assemblyai": False, "gemini": False, "openrouter": False,
+    }
 
     assert filter_spy.call_args.kwargs["allow_provider_wide"] is True
 

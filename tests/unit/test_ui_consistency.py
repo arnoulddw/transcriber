@@ -119,7 +119,7 @@ def test_gemini_permission_gate_present_in_transcribe_button_matrix():
 def test_transcribe_button_gate_checks_daily_weekly_monthly_cost_and_minutes_limits():
     script = Path("app/static/js/main_init.js").read_text(encoding="utf-8")
     quota_utils = Path("app/static/js/quota_utils.js").read_text(encoding="utf-8")
-    quota_block_start = script.index("if (!disableReason && window.IS_MULTI_USER) {")
+    quota_block_start = script.index("if (!disableReason) {\n        // The server is authoritative")
     quota_block_end = script.index("if (!disableReason && !isFileSelected)", quota_block_start)
     quota_block = script[quota_block_start:quota_block_end]
 
@@ -641,7 +641,9 @@ def test_llm_model_options_merge_user_added_llm_slugs(monkeypatch):
 
 def test_effective_key_status_aggregates_for_admins_but_not_users(monkeypatch):
     _set_minimal_app_environment(monkeypatch)
-    from app.services import user_service
+    from app.services import access_service, user_service
+
+    monkeypatch.setattr(access_service, "is_personal_mode", lambda: False)
 
     admin = SimpleNamespace(id=1, role=SimpleNamespace(access_admin_panel=True))
     regular = SimpleNamespace(
@@ -672,6 +674,23 @@ def test_effective_key_status_aggregates_for_admins_but_not_users(monkeypatch):
         assert admin_configured.call_count == 2
         assert own.call_args_list[0].args == (2,)
         assert own.call_args_list[1].args == (3,)
+
+
+def test_effective_key_status_in_personal_mode_uses_owner_keys_and_env(monkeypatch):
+    _set_minimal_app_environment(monkeypatch)
+    from app.services import access_service, user_service
+
+    monkeypatch.setattr(access_service, "is_personal_mode", lambda: True)
+    monkeypatch.setattr(
+        access_service, "merge_env_provider_keys", lambda status: {**status, "openai": True}
+    )
+    owner = SimpleNamespace(id=1, role=SimpleNamespace(access_admin_panel=True))
+    with patch.object(user_service, "get_aggregate_api_key_status") as aggregate, patch.object(
+        user_service, "get_user_api_key_status", return_value={"own": True}
+    ) as own:
+        assert user_service.get_effective_key_status(owner) == {"own": True, "openai": True}
+    aggregate.assert_not_called()
+    own.assert_called_once_with(1)
 
 
 def test_all_jinja_templates_parse_without_escaping_artifacts():

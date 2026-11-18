@@ -569,3 +569,63 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+// --- Add user (Admin > Users) ---
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('addUserForm');
+    const opener = document.querySelector('[data-access-reveal-admin="addUserForm"]');
+    if (!form || !opener) return;
+    const errorSlot = document.getElementById('addUserError');
+    const submit = document.getElementById('addUserSubmit');
+
+    const toggle = (show) => {
+        form.classList.toggle('hidden', !show);
+        opener.classList.toggle('hidden', show);
+        opener.setAttribute('aria-expanded', show ? 'true' : 'false');
+        errorSlot.textContent = '';
+        if (show) {
+            form.querySelector('input').focus();
+        } else {
+            form.reset();
+            opener.focus();
+        }
+    };
+    opener.addEventListener('click', () => toggle(true));
+    document.getElementById('addUserCancel').addEventListener('click', () => toggle(false));
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorSlot.textContent = '';
+        if (!form.checkValidity()) {
+            errorSlot.textContent = 'Fill in every field: username (4 to 25 characters), a valid email and a password of at least 8 characters.';
+            return;
+        }
+        const body = Object.fromEntries(new FormData(form).entries());
+        submit.disabled = true;
+        try {
+            const response = await fetch('/api/admin/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRFToken': window.csrfToken,
+                },
+                body: JSON.stringify(body),
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                errorSlot.textContent = data.error || 'Could not create the user.';
+                return;
+            }
+            if (typeof window.showNotification === 'function') {
+                window.showNotification(`User ${body.username} created.`, 'success', 4000, false);
+            }
+            setTimeout(() => window.location.reload(), 800);
+        } catch (error) {
+            errorSlot.textContent = 'Could not reach the server. Please try again.';
+        } finally {
+            submit.disabled = false;
+        }
+    });
+});

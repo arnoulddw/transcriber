@@ -50,6 +50,9 @@ class TestConfig:
     # --- Add other necessary overrides from base config to avoid errors ---
     SECRET_KEY = 'a-super-secret-key-for-testing'
     DEPLOYMENT_MODE = 'multi'
+    ALLOW_REGISTRATION = None
+    ADMIN_PASSWORD = None
+    APP_SETTINGS_CACHE_SECONDS = 0
     LOG_DIR = '/tmp'
     LOG_FILE = '/tmp/test_app.log'
     RATELIMIT_STORAGE_URI = "memory://"

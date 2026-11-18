@@ -22,6 +22,7 @@ from app.forms import LoginForm, RegistrationForm, ForgotPasswordForm, ResetPass
 from app.services import auth_service, email_service
 from app.services.auth_service import AuthServiceError # Specific exception
 from app.models import user as user_model
+from app.services import access_service
 
 # Define the Blueprint
 # No url_prefix here, routes like /login, /register are defined directly
@@ -83,6 +84,11 @@ def login():
 
         try:
             user = auth_service.verify_password(username, password)
+            if user and not access_service.user_allowed_in_current_mode(user):
+                logger.warning("Login refused: personal mode allows only the owner.", extra={"refused_user_id": user.id})
+                flash(_l('Transcriber is in personal mode, so only its owner can sign in.'), 'danger')
+                user = None
+                return render_template('login.html', title='Login', form=form)
             if user:
                 login_user(user, remember=remember)
                 logger.info("Login successful.", extra={"logged_in_user_id": user.id})
@@ -126,9 +132,9 @@ def login():
 @limiter.limit(limit_auth_attempts) # Limit registration attempts by IP
 def register():
     """Handles user registration page (GET) and form submission (POST)."""
-    # Registration is only allowed in multi-user mode
-    if current_app.config['DEPLOYMENT_MODE'] != 'multi':
-        flash(_l('User registration is disabled in single-user mode.'), 'warning')
+    # Sign-ups need team mode with sign-ups turned on.
+    if not access_service.registration_allowed():
+        flash(_l('Sign-ups are turned off. Ask an admin to create an account for you.'), 'warning')
         return redirect(url_for('auth.login'))
 
     # Redirect if user is already authenticated
@@ -194,6 +200,9 @@ def forgot_password():
     """Handles the 'Forgot Password' request page and form submission."""
     if current_user.is_authenticated:
         return redirect(url_for('main.index')) # No need if already logged in
+    if not access_service.is_team_mode():
+        flash(_l('Password reset by email is only available in team mode.'), 'warning')
+        return redirect(url_for('auth.login'))
 
     form = ForgotPasswordForm()
     if form.validate_on_submit():
@@ -229,6 +238,9 @@ def reset_password_request(token):
     """Handles the password reset link verification (GET) and new password submission (POST)."""
     if current_user.is_authenticated:
         return redirect(url_for('main.index')) # No need if already logged in
+    if not access_service.is_team_mode():
+        flash(_l('Password reset by email is only available in team mode.'), 'warning')
+        return redirect(url_for('auth.login'))
 
     logger = get_logger(__name__, component="Auth:ResetPwd")
 
@@ -271,6 +283,10 @@ def google_callback():
         logger.warning("Received callback while user already logged in.", extra={"current_user_id": current_user.id})
         return jsonify({'success': True, 'message': _('Already logged in.'), 'redirect': url_for('main.index')})
 
+    if not access_service.is_team_mode():
+        logger.warning("Google Sign-In attempted outside team mode.")
+        return jsonify({'success': False, 'error': _('Google Sign-In is only available in team mode.')}), 403
+
     if not current_app.config.get('GOOGLE_CLIENT_ID'):
         logger.error("Attempted Google Sign-In callback, but GOOGLE_CLIENT_ID is not configured.")
         return jsonify({'success': False, 'error': _('Google Sign-In is not configured on the server.')}), 500
@@ -295,7 +311,7 @@ def google_callback():
         if not idinfo:
             return jsonify({'success': False, 'error': _('Invalid Google token.')}), 401
 
-        user = auth_service.handle_google_login(idinfo)
+        user = auth_service.handle_google_login(idinfo, allow_create=access_service.registration_allowed())
         if not user:
             return jsonify({'success': False, 'error': _('Failed to process Google Sign-In.')}), 500
 
