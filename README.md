@@ -264,26 +264,6 @@ The response includes a machine-readable `status`. A finished job includes `resu
 
 The default rate limits are 10 submissions per hour and 120 status requests per hour per API key.
 
-## Upgrading from transcriber-platform
-
-Transcriber Platform is now just Transcriber, and lives in this repository. To move an existing installation without losing data:
-
-1. Keep your current folder, because Docker Compose names the MySQL volume after it. Point it at the new repository:
-
-   ```bash
-   git remote set-url origin https://github.com/arnoulddw/transcriber.git
-   git fetch origin
-   git checkout -B main origin/main
-   ```
-
-2. The Compose services are now named `transcriber`, `transcriber-worker` and `transcriber-cleanup`. Remove the old containers while starting the new ones:
-
-   ```bash
-   docker compose up -d --build --remove-orphans
-   ```
-
-Existing installations with user accounts stay in team mode. If you use the published image, switch from `arnoulddw/transcriber-platform` to `arnoulddw/transcriber`. The old image name is still published for a few releases.
-
 ## Alternative installation methods
 
 ### Published Docker image
