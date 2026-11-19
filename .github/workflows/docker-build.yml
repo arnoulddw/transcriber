@@ -119,7 +119,5 @@ jobs:
           tags: |
             arnoulddw/transcriber:latest
             arnoulddw/transcriber:${{ steps.datetime.outputs.tag }}
-            arnoulddw/transcriber-platform:latest
-            arnoulddw/transcriber-platform:${{ steps.datetime.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
