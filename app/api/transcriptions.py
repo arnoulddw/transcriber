@@ -646,6 +646,7 @@ def get_progress(job_id):
             'filename': job_data.get('filename', 'unknown'),
             'created_at': _format_public_datetime(job_data.get('created_at')),
             'has_transcription_warning': bool(job_data.get('has_transcription_warning', False)),
+            'transcription_warning_message': job_data.get('transcription_warning_message'),
             'should_poll_title': should_poll_title,
             '_llm_status_note': str(_('LLM/Workflow status must be polled separately.'))
         }
@@ -664,6 +665,7 @@ def get_progress(job_id):
                 'generated_title': job_data.get('generated_title'),
                 'title_generation_status': job_data.get('title_generation_status', 'pending'),
                 'has_transcription_warning': bool(job_data.get('has_transcription_warning', False)),
+                'transcription_warning_message': job_data.get('transcription_warning_message'),
                 'pending_workflow_prompt_text': job_data.get('pending_workflow_prompt_text'),
                 'pending_workflow_prompt_title': job_data.get('pending_workflow_prompt_title'),
                 'pending_workflow_prompt_color': job_data.get('pending_workflow_prompt_color'),

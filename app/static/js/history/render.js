@@ -148,7 +148,10 @@ function addTranscriptionToHistory(transcription, canDownload, canRunWorkflow, p
                              : (transcription.filename || 'Unknown Filename');
     const showInitialTitleIcon = transcription.generated_title && transcription.title_generation_status === 'success';
     const hasTranscriptionWarning = transcription.has_transcription_warning === true;
-    const transcriptionWarningIconHtml = `<i class="material-icons tiny text-red-600 align-middle ml-1${hasTranscriptionWarning ? '' : ' hidden'}" id="title-warning-icon-${transcription.id}" title="Transcript may be incomplete" aria-label="Transcript may be incomplete">error_outline</i>`;
+    const transcriptionWarningText = window.escapeHtml(
+        transcription.transcription_warning_message || 'Transcript may be incomplete'
+    );
+    const transcriptionWarningIconHtml = `<i class="material-icons tiny text-red-600 align-middle ml-1${hasTranscriptionWarning ? '' : ' hidden'}" id="title-warning-icon-${transcription.id}" title="${transcriptionWarningText}" aria-label="${transcriptionWarningText}">error_outline</i>`;
 
 
     listItem.innerHTML = `

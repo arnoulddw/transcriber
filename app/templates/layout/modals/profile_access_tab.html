@@ -249,13 +249,13 @@
             &middot; {{ ngettext('%(num)s user', '%(num)s users', access.user_count or 1) }}</p>
 
         <div class="space-y-1">
-            <label class="flex items-start gap-2.5">
-                <input type="checkbox" id="accessRegistrationToggle" class="checkbox-control mt-0.5"
-                       {% if access.registration_allowed %}checked{% endif %}
-                       {% if access.registration_locked %}disabled{% endif %}>
+            <label class="flex items-start justify-between gap-4 {{ 'cursor-not-allowed' if access.registration_locked else 'cursor-pointer' }}">
                 <span class="text-sm text-text-strong"><span class="font-semibold">{{ _('Allow new sign-ups') }}</span>
                     <span class="block form-hint">{{ _('When off, the sign-up page disappears and Google sign-in only works for existing accounts. You can still add people in Admin panel > Users.') }}</span>
                 </span>
+                <input type="checkbox" role="switch" id="accessRegistrationToggle" class="switch-control mt-0.5"
+                       {% if access.registration_allowed %}checked{% endif %}
+                       {% if access.registration_locked %}disabled{% endif %}>
             </label>
             {% if access.registration_locked %}
             <p class="{{ env_note_class }}"><i class="material-icons text-base" aria-hidden="true">lock</i>{{ _("Set by ALLOW_REGISTRATION in your server's .env file.") }}</p>

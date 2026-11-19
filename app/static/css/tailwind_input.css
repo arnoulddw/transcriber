@@ -677,6 +677,22 @@ These are processed by PostCSS with the Tailwind plugin.
         @apply form-checkbox h-check w-check rounded-md border-border-strong bg-white text-primary focus:ring-primary/30 focus:ring-offset-0;
     }
 
+    /* On/off switch for settings that take effect immediately.
+       Use on <input type="checkbox" role="switch">. */
+    .switch-control {
+        @apply relative inline-flex h-6 w-11 shrink-0 cursor-pointer appearance-none rounded-full bg-border-strong transition-colors duration-150 ease-swift focus:outline-none focus-visible:shadow-focus disabled:cursor-not-allowed disabled:opacity-50;
+    }
+    .switch-control::before {
+        content: '';
+        @apply absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-raised transition-transform duration-150 ease-swift;
+    }
+    .switch-control:checked {
+        @apply bg-primary;
+    }
+    .switch-control:checked::before {
+        @apply translate-x-5;
+    }
+
     .toolbar {
         @apply flex flex-wrap items-center gap-3 justify-between;
     }

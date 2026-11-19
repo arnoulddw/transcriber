@@ -74,6 +74,8 @@ class BaseTranscriptionClient(ABC):
         self.progress_callback: ProgressCallback = None # Store callback per transcribe call
         self.cancel_event: Optional[threading.Event] = None # Store cancel event per transcribe call
         self.has_transcription_warning: bool = False
+        # Details behind the warning, e.g. {"empty_chunks": [5], "total_chunks": 5}
+        self.transcription_warning_detail: Optional[Dict[str, Any]] = None
         # Get MAX_CONCURRENT_CHUNKS from app config
         self.max_concurrent_chunks = self.config.get('TRANSCRIPTION_WORKERS', 4)
 
@@ -427,6 +429,7 @@ class BaseTranscriptionClient(ABC):
         self.progress_callback = progress_callback
         self.cancel_event = cancel_event or threading.Event() # Use provided or create new
         self.has_transcription_warning = False
+        self.transcription_warning_detail = None
 
         api_name = self._get_api_name()
         requested_language = language_code
@@ -794,6 +797,12 @@ class BaseTranscriptionClient(ABC):
 
                     if source_is_non_trivial:
                         self.has_transcription_warning = True
+                        if self.transcription_warning_detail is None:
+                            self.transcription_warning_detail = {
+                                "empty_chunks": [],
+                                "total_chunks": total_chunks,
+                            }
+                        self.transcription_warning_detail["empty_chunks"].append(chunk_num)
                         warning_message = (
                             f"WARNING: Chunk {chunk_num}/{total_chunks} returned no transcription text; "
                             "the transcript may be incomplete."

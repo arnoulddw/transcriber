@@ -368,6 +368,7 @@ def process_transcription(app: Flask, job_id: str, user_id: int, temp_filename: 
                     transcription_text,
                     final_language,
                     has_transcription_warning=True,
+                    transcription_warning_detail=getattr(api_client, "transcription_warning_detail", None),
                 )
             else:
                 finalization_result = transcription_model.finalize_job_success(
