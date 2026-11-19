@@ -141,4 +141,3 @@ All of these live in `tailwind_input.css`.
 7. **JS-rendered markup uses the same classes** as server-rendered markup: history items, workflow panels, key rows, saved workflows.
 8. **Admin tables keep their structure.** Only colours and the font may change.
 
-The mockups this language was built from are in `design-proposals/compass-lilac-screens.html`.
