@@ -110,18 +110,6 @@ def init_db_command() -> None:
                 "AFTER error_message"
             )
 
-        # Check and add the details behind the transcription warning
-        cursor.execute("SHOW COLUMNS FROM transcriptions LIKE 'transcription_warning_detail'")
-        transcription_warning_detail_col_exists = cursor.fetchone()
-        cursor.fetchall()
-        if not transcription_warning_detail_col_exists:
-            logger.info("Adding 'transcription_warning_detail' column (JSON).")
-            cursor.execute(
-                "ALTER TABLE transcriptions "
-                "ADD COLUMN transcription_warning_detail JSON DEFAULT NULL "
-                "AFTER has_transcription_warning"
-            )
-
         # Check and add downloaded column
         cursor.execute("SHOW COLUMNS FROM transcriptions LIKE 'downloaded'")
         downloaded_col_exists = cursor.fetchone()
