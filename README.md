@@ -12,7 +12,7 @@ Transcriber turns uploaded audio or a live microphone feed into searchable trans
 
 ## Why Transcriber?
 
-- **Batch and live transcription:** Upload audio files or transcribe a microphone in real time.
+- **File and live transcription:** Upload audio files or transcribe a microphone in real time.
 - **Bring your own models and keys:** Use OpenAI, AssemblyAI, Google Gemini, and OpenRouter without locking the app to a hard-coded model list.
 - **Turn transcripts into useful output:** Generate titles and run reusable prompts for summaries, action items, notes, or any custom workflow.
 - **Operate it for a team:** Add authentication, RBAC, per-user keys, quotas, retention policies, pricing, and admin analytics.
