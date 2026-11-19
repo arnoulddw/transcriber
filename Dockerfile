@@ -28,8 +28,10 @@ FROM mwader/static-ffmpeg:8.1.1 AS ffmpeg
 
 # ---------------------------------------------------------------------------
 # Stage 3: runtime image.
+# Alpine ships OpenSSL, zlib and krb5 security fixes faster than Debian, whose
+# trixie OpenSSL had several unfixed high-severity CVEs.
 # ---------------------------------------------------------------------------
-FROM python:3.11-slim-trixie
+FROM python:3.11-alpine
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -40,11 +42,9 @@ ENV BUILD_TIMESTAMP=${BUILD_TIMESTAMP}
 
 # Install system dependencies and pull in any pending security updates:
 # - tini: Minimal init system
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends tini && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# - bash: docker-entrypoint.sh uses bash features (arrays, wait -n)
+RUN apk upgrade --no-cache && \
+    apk add --no-cache tini bash
 
 # ffmpeg/ffprobe: duration inspection and streaming audio segmentation
 COPY --from=ffmpeg /ffmpeg /ffprobe /usr/local/bin/
@@ -58,7 +58,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Create a non-root user and group for security
 # Set home directory to /app
-RUN groupadd -r appuser && useradd --no-log-init -r -g appuser -d /app -s /sbin/nologin -c "App User" appuser
+RUN addgroup -S appuser && adduser -S -G appuser -h /app -H -s /sbin/nologin -g "App User" appuser
 
 # Create necessary directories and set base ownership
 # These directories are for runtime data and logs, which might be mounted as volumes.
@@ -75,6 +75,12 @@ COPY --chown=appuser:appuser ./requirements.txt ./
 RUN pip install --no-cache-dir --user -r requirements.txt
 # Prepend the user's local bin directory to PATH
 ENV PATH="/app/.local/bin:${PATH}"
+
+# pip is only needed to install the dependencies above. It vendors parts of
+# setuptools (flagged by scanners), so remove it from the shipped image.
+USER root
+RUN python -m pip uninstall -y pip
+USER appuser
 
 # Copy the application source code (see .dockerignore for what is excluded)
 COPY --chown=appuser:appuser . .
@@ -102,7 +108,7 @@ ENV FLASK_APP=app
 EXPOSE 5004
 
 # Use Tini as the entrypoint
-ENTRYPOINT ["/usr/bin/tini", "--"]
+ENTRYPOINT ["/sbin/tini", "--"]
 
 # Define the default command to run the bootstrap script, which will launch Gunicorn
 CMD ["/app/docker-entrypoint.sh"]
