@@ -84,3 +84,6 @@ test-database.*
 
 # Local planning documents
 docs/plans/
+
+# Local design mockups
+design-proposals/
