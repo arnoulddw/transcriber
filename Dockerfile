@@ -43,8 +43,11 @@ ENV BUILD_TIMESTAMP=${BUILD_TIMESTAMP}
 # Install system dependencies and pull in any pending security updates:
 # - tini: Minimal init system
 # - bash: docker-entrypoint.sh uses bash features (arrays, wait -n)
+# Alpine installs tini at /sbin/tini; link it to /usr/bin/tini (its path on
+# Debian) so existing containers that kept the old entrypoint still start.
 RUN apk upgrade --no-cache && \
-    apk add --no-cache tini bash
+    apk add --no-cache tini bash && \
+    ln -s /sbin/tini /usr/bin/tini
 
 # ffmpeg/ffprobe: duration inspection and streaming audio segmentation
 COPY --from=ffmpeg /ffmpeg /ffprobe /usr/local/bin/
@@ -58,7 +61,12 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Create a non-root user and group for security
 # Set home directory to /app
-RUN addgroup -S appuser && adduser -S -G appuser -h /app -H -s /sbin/nologin -g "App User" appuser
+# UID/GID 999 match the user from the earlier Debian-based image, so files
+# already on mounted volumes (uploads, logs, ...) stay writable. Alpine gives
+# GID 999 to an unused "ping" group, so remove that first.
+RUN delgroup ping && \
+    addgroup -S -g 999 appuser && \
+    adduser -S -u 999 -G appuser -h /app -H -s /sbin/nologin -g "App User" appuser
 
 # Create necessary directories and set base ownership
 # These directories are for runtime data and logs, which might be mounted as volumes.
@@ -108,7 +116,7 @@ ENV FLASK_APP=app
 EXPOSE 5004
 
 # Use Tini as the entrypoint
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Define the default command to run the bootstrap script, which will launch Gunicorn
 CMD ["/app/docker-entrypoint.sh"]
