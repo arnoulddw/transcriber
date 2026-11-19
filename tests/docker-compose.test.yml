@@ -1,4 +1,7 @@
 # docker-compose.test.yml
+# Own project name, so it never depends on the folder name or the main stack's project.
+name: transcriber-test
+
 services:
   mysql-test:
     image: mysql:8.0
@@ -23,7 +26,8 @@ services:
 
 networks:
   test_network:
-    name: transcriber-platform_default
+    # Created by the main docker-compose.yml (start it first).
+    name: transcriber_network
     external: true
 
 volumes:

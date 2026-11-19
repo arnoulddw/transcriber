@@ -182,3 +182,8 @@ services:
 
 volumes:
   mysql_data: # Persist MySQL data
+
+networks:
+  default:
+    # Fixed name so tests/docker-compose.test.yml can join it whatever the folder is called.
+    name: transcriber_network

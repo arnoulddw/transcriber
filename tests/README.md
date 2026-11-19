@@ -20,7 +20,7 @@ This method ensures a consistent, isolated environment with all necessary servic
 
 **1. Start the Test Database**
 
-This command starts the dedicated MySQL container for testing.
+This command starts the dedicated MySQL container for testing. It joins the `transcriber_network` Docker network, so start the main stack (`docker compose up -d`) first.
 
 ```bash
 docker compose -f tests/docker-compose.test.yml up -d
