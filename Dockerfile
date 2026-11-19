@@ -1,8 +1,35 @@
 # ./Dockerfile
 # Defines the Docker image build process
 
-# Use an official Python runtime as base image.
-FROM python:3.11-slim-bookworm
+# ---------------------------------------------------------------------------
+# Stage 1: build the Tailwind CSS bundle.
+# Node.js is only needed at build time, so it stays in this stage and never
+# ships in the final image.
+# ---------------------------------------------------------------------------
+FROM node:22-trixie-slim AS css-builder
+
+WORKDIR /build
+
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+COPY tailwind.config.js postcss.config.js ./
+COPY app/templates ./app/templates
+COPY app/static ./app/static
+RUN npm run build:css:prod
+
+# ---------------------------------------------------------------------------
+# Stage 2: static FFmpeg build.
+# Debian's ffmpeg package drags in ~100 shared libraries (codecs, X11, krb5,
+# libxml2, ...) that carry many unfixed CVEs. A static build of current FFmpeg
+# gives us just the two binaries the app calls: ffmpeg and ffprobe.
+# ---------------------------------------------------------------------------
+FROM mwader/static-ffmpeg:8.1.1 AS ffmpeg
+
+# ---------------------------------------------------------------------------
+# Stage 3: runtime image.
+# ---------------------------------------------------------------------------
+FROM python:3.11-slim-trixie
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -10,25 +37,24 @@ ENV PYTHONUNBUFFERED=1
 ENV TZ=UTC
 ARG BUILD_TIMESTAMP
 ENV BUILD_TIMESTAMP=${BUILD_TIMESTAMP}
-# Specify Node.js LTS version major
-ENV NODE_VERSION=18
 
-# Install system dependencies:
-# - ffmpeg: Required for ffprobe duration inspection and streaming audio segmentation
+# Install system dependencies and pull in any pending security updates:
 # - tini: Minimal init system
-# - default-mysql-client: MySQL CLI
-# - curl: To fetch Node.js setup script
-# - nodejs: Node.js runtime and npm
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        ffmpeg \
-        tini \
-        default-mysql-client \
-        curl \
-    && curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends tini && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# ffmpeg/ffprobe: duration inspection and streaming audio segmentation
+COPY --from=ffmpeg /ffmpeg /ffprobe /usr/local/bin/
+
+# The app does not need setuptools/wheel at runtime; removing them (and the
+# bundled ensurepip wheels) drops their vendored, vulnerable dependencies.
+# pip is upgraded to the latest release.
+RUN pip install --no-cache-dir --upgrade pip && \
+    (pip uninstall -y setuptools wheel || true) && \
+    rm -rf /usr/local/lib/python3.11/ensurepip/_bundled
 
 # Create a non-root user and group for security
 # Set home directory to /app
@@ -43,12 +69,6 @@ RUN mkdir -p /app/uploads /app/database /app/logs /app/runtime && \
 USER appuser
 WORKDIR /app
 
-# Copy package manager files first to leverage Docker layer caching for Node.js dependencies
-COPY --chown=appuser:appuser ./package.json ./
-COPY --chown=appuser:appuser ./package-lock.json* ./
-# Install Node.js dependencies. Use 'npm ci' if package-lock.json exists for reproducible builds.
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
-
 # Copy Python requirements file and install Python dependencies
 COPY --chown=appuser:appuser ./requirements.txt ./
 # Install Python packages for the appuser. This will install to /app/.local
@@ -56,14 +76,14 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 # Prepend the user's local bin directory to PATH
 ENV PATH="/app/.local/bin:${PATH}"
 
-# Copy the entire application source code (including Tailwind configs, input CSS)
+# Copy the application source code (see .dockerignore for what is excluded)
 COPY --chown=appuser:appuser . .
+
+# Bring in the compiled Tailwind CSS from the build stage
+COPY --from=css-builder --chown=appuser:appuser /build/app/static/css/tailwind_output.css ./app/static/css/tailwind_output.css
 
 # Ensure entrypoint script is executable
 RUN chmod +x /app/docker-entrypoint.sh
-
-# Build Tailwind CSS for production
-RUN npm run build:css:prod
 
 # Compile translation files
 RUN /app/.local/bin/pybabel compile -d app/translations
