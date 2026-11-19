@@ -120,6 +120,7 @@ def test_split_and_transcribe_warns_for_empty_text_from_non_trivial_chunk(tmp_pa
 
     assert result == ("First chunk", "en")
     assert client.has_transcription_warning is True
+    assert client.transcription_warning_detail == {"empty_chunks": [2], "total_chunks": 2}
     assert any("Chunk 2/2 returned no transcription text" in record.message for record in caplog.records)
     assert any(
         not is_error and "Chunk 2/2 returned no transcription text" in message

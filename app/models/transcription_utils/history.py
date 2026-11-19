@@ -362,7 +362,7 @@ def get_paginated_transcriptions(
         SELECT
             t.id, t.user_id, t.filename, t.generated_title, t.title_generation_status,
             t.file_size_mb, t.audio_length_minutes, t.detected_language, t.api_used, t.api_model,
-            t.created_at, t.status, t.context_prompt_used, t.has_transcription_warning, t.downloaded,
+            t.created_at, t.status, t.context_prompt_used, t.has_transcription_warning, t.transcription_warning_detail, t.downloaded,
             t.is_hidden_from_user, t.hidden_date, t.hidden_reason,
             t.pending_workflow_prompt_text,
             t.pending_workflow_prompt_title, t.pending_workflow_prompt_color,

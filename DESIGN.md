@@ -106,6 +106,7 @@ All of these live in `tailwind_input.css`.
 
   Sizes: default, `ui-btn--sm` and `ui-btn--hero`. In templates, use the `ui.button()` macro; it always puts the icon before the label. `--success` is an alias of primary.
 - **Icon buttons:** `icon-btn`, plus `icon-btn--danger` for destructive actions. For pins, add `pin-btn is-pinned` to get a filled purple pin.
+- **Switches:** `switch-control` on an `<input type="checkbox" role="switch">`, for on/off settings that apply immediately. Put it on the right of its label.
 - **Toggle chips:** `chip-toggle`. Add `is-active` (or `aria-pressed="true"`) for the selected state.
 - **Fields:** `input-control`, `input-select`, `input-textarea` and `checkbox-control`, with labels as `form-label`, hints as `form-hint` and errors as `form-error`.
 - **Segmented choice:** a `rounded-field bg-surface-muted p-1` track. The selected segment is white, `shadow-raised` and purple text (see "Use this model for").

@@ -377,7 +377,7 @@
                                         <div class="flex-grow min-w-0">
                                             <div class="title-wrapper">
                                                 <b id="title-{{ transcription.id }}" class="text-text-strong font-medium min-w-0 break-words leading-tight">
-                                                    {{ transcription.generated_title if show_generated_title_icon else transcription.filename | e }}<i class="material-icons tiny text-primary align-middle ml-1 {{ 'hidden' if not show_generated_title_icon }}" id="title-icon-{{ transcription.id }}">auto_awesome</i><i class="material-icons tiny text-red-600 align-middle ml-1 {{ 'hidden' if not show_transcription_warning_icon }}" id="title-warning-icon-{{ transcription.id }}" title="{{ _('Transcript may be incomplete') }}" aria-label="{{ _('Transcript may be incomplete') }}">error_outline</i>
+                                                    {{ transcription.generated_title if show_generated_title_icon else transcription.filename | e }}<i class="material-icons tiny text-primary align-middle ml-1 {{ 'hidden' if not show_generated_title_icon }}" id="title-icon-{{ transcription.id }}">auto_awesome</i><i class="material-icons tiny text-red-600 align-middle ml-1 {{ 'hidden' if not show_transcription_warning_icon }}" id="title-warning-icon-{{ transcription.id }}" title="{{ transcription.transcription_warning_message or _('Transcript may be incomplete') }}" aria-label="{{ transcription.transcription_warning_message or _('Transcript may be incomplete') }}">error_outline</i>
                                                 </b>
                                             </div>
                                             <p class="meta history-meta">

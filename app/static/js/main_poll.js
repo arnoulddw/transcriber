@@ -629,8 +629,11 @@ function pollProgress(jobId, initialJobData = null) {
                 && !['error', 'cancelled', 'interrupted'].includes(transcriptionStatus)
             ) {
                 activityIcon = 'error_outline';
+                const warningDetail = typeof jobData.transcription_warning_message === 'string'
+                    ? jobData.transcription_warning_message
+                    : '';
                 activityMessage = transcriptionStatus === 'finished'
-                    ? 'Transcription completed with warnings. The transcript may be incomplete.'
+                    ? `Transcription completed with warnings. ${warningDetail || 'The transcript may be incomplete.'}`
                     : 'Warning: The transcript may be incomplete.';
                 activityColor = 'text-red-600';
             }

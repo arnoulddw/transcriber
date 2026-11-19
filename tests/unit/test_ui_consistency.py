@@ -59,11 +59,11 @@ def test_history_renders_chunk_warning_after_title_icons():
     assert "title-warning-icon-{{ transcription.id }}" in index_template
     assert "text-red-600" in index_template
     assert ">error_outline</i>" in index_template
-    assert "title=\"{{ _('Transcript may be incomplete') }}\"" in index_template
-    assert "aria-label=\"{{ _('Transcript may be incomplete') }}\"" in index_template
+    assert "title=\"{{ transcription.transcription_warning_message or _('Transcript may be incomplete') }}\"" in index_template
     assert "transcriptionWarningIconHtml" in history_render
-    assert "title=\"Transcript may be incomplete\"" in history_render
-    assert "aria-label=\"Transcript may be incomplete\"" in history_render
+    assert "transcription.transcription_warning_message || 'Transcript may be incomplete'" in history_render
+    assert "title=\"${transcriptionWarningText}\"" in history_render
+    assert "transcription_warning_message" in progress_api
     assert "title-warning-icon-${transcription.id}" in history_render
     assert "warningIconHtml" in history_polling
     assert "has_transcription_warning" in progress_api

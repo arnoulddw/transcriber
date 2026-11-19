@@ -1,4 +1,5 @@
 import json
+from typing import Any, Dict, Optional
 
 from mysql.connector import Error as MySQLError
 
@@ -193,6 +194,7 @@ def finalize_job_success(
     transcription_text: str,
     detected_language: str,
     has_transcription_warning: bool = False,
+    transcription_warning_detail: Optional[Dict[str, Any]] = None,
 ) -> bool:
     """
     Updates a job record upon successful completion. Sets status to 'finished',
@@ -214,6 +216,7 @@ def finalize_job_success(
             transcription_text = %s,
             detected_language = %s,
             has_transcription_warning = %s,
+            transcription_warning_detail = %s,
             error_message = NULL
         WHERE id = %s
         """
@@ -225,6 +228,7 @@ def finalize_job_success(
                 transcription_text,
                 detected_language,
                 bool(has_transcription_warning),
+                json.dumps(transcription_warning_detail) if transcription_warning_detail else None,
                 job_id,
             ),
         )
