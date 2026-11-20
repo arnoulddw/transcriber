@@ -3,21 +3,13 @@
 # Works without a .env file: `docker compose up -d` starts a personal instance
 # with local-only database credentials and a SECRET_KEY generated on first start
 # (saved to ./runtime/secret_key). Put overrides in .env (see .env.example).
-
-x-env-file: &env-file
-  env_file:
-    - path: .env
-      required: false
-
-# Database settings shared by the app, worker, and cleanup services. The
-# defaults are fine for a local install because MySQL is only reachable on the
-# Compose network and on 127.0.0.1. Set your own values in .env for a server.
-x-db-env: &db-env
-  MYSQL_HOST: mysql # Service name defined below
-  MYSQL_PORT: 3306 # Internal port for MySQL service
-  MYSQL_USER: ${MYSQL_USER:-transcriber}
-  MYSQL_PASSWORD: ${MYSQL_PASSWORD:-transcriber}
-  MYSQL_DB: ${MYSQL_DB:-transcriber}
+#
+# Two containers: MySQL, and the app. The app container runs the web server,
+# the background job worker, and the retention cleanup loop together.
+#
+# The database defaults are fine for a local install because MySQL is only
+# reachable on the Compose network and on 127.0.0.1. Set your own values in
+# .env for a server.
 
 services:
   mysql:
@@ -55,9 +47,10 @@ services:
       - ./logs:/app/logs
       - ./uploads:/app/uploads
       - ./runtime:/app/runtime
-    <<: *env-file
+    env_file:
+      - path: .env
+        required: false
     environment:
-      <<: *db-env
       # --- Core App Settings ---
       # Optional. When unset, a key is generated once and kept in ./runtime/secret_key.
       SECRET_KEY: ${SECRET_KEY:-}
@@ -65,7 +58,6 @@ services:
       DEPLOYMENT_MODE: ${DEPLOYMENT_MODE:-}
       ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-}
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
-      START_EMBEDDED_WORKER: "0" # Compose runs the separate transcriber-worker service
       TZ: ${TZ:-UTC}
 
       # --- API Keys (Global Fallbacks / Single-User Mode) ---
@@ -84,7 +76,12 @@ services:
       DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE:-auto}
       SUPPORTED_LANGUAGE_CODES: ${SUPPORTED_LANGUAGE_CODES:-en,nl,fr,es}
 
-      # --- Database (pool size; connection settings come from *db-env) ---
+      # --- Database ---
+      MYSQL_HOST: mysql # Service name defined above
+      MYSQL_PORT: 3306 # Internal port for MySQL service
+      MYSQL_USER: ${MYSQL_USER:-transcriber}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-transcriber}
+      MYSQL_DB: ${MYSQL_DB:-transcriber}
       MYSQL_POOL_SIZE: ${MYSQL_POOL_SIZE:-10}
 
       # --- File Storage & Cleanup ---
@@ -145,53 +142,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 12
-    restart: unless-stopped
-
-  # Durable transcription, workflow, and title jobs run outside Gunicorn so
-  # web-worker restarts do not lose accepted work.
-  transcriber-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: transcriber-worker
-    command: ["/app/.local/bin/flask", "worker"]
-    <<: *env-file
-    environment:
-      <<: *db-env
-      FLASK_APP: app
-    volumes:
-      - ./app:/app/app
-      - ./logs:/app/logs
-      - ./uploads:/app/uploads
-      - ./runtime:/app/runtime
-    depends_on:
-      mysql:
-        condition: service_healthy
-      transcriber:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Retention runs as one visible process instead of being tied to a Gunicorn
-  # worker. It shares the upload, log, and runtime volumes with the web app.
-  transcriber-cleanup:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: transcriber-cleanup
-    command: ["/app/.local/bin/flask", "cleanup-loop"]
-    <<: *env-file
-    environment:
-      <<: *db-env
-      FLASK_APP: app
-    volumes:
-      - ./logs:/app/logs
-      - ./uploads:/app/uploads
-      - ./runtime:/app/runtime
-    depends_on:
-      mysql:
-        condition: service_healthy
-      transcriber:
-        condition: service_healthy
     restart: unless-stopped
 
 volumes:

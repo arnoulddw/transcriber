@@ -37,7 +37,7 @@ flask cleanup-once
 flask bootstrap
 ```
 
-`flask cleanup-loop` is the long-running command used by the Compose cleanup service. `flask worker` runs the background job worker. `flask reset-owner-password` sets a new owner password.
+`flask worker` runs the background job worker and `flask cleanup-loop` runs retention cleanup every six hours. The container starts both next to Gunicorn (see `docker-entrypoint.sh`). With `flask run` locally, start `flask worker` in another terminal to process jobs. `flask reset-owner-password` sets a new owner password.
 
 ## Running tests
 

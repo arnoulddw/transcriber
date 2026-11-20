@@ -45,12 +45,14 @@ Then recreate the containers with `docker compose up -d`. See the [configuration
 
 ### What Compose runs
 
+Two containers:
+
 | Service | Purpose |
 |---|---|
 | `mysql` | MySQL 8 database. Data lives in the `mysql_data` Docker volume |
-| `transcriber` | The web app (Gunicorn). On first start it creates the schema, runs migrations, and seeds roles, languages, and the owner account |
-| `transcriber-worker` | Durable background worker for transcription, workflow, and title jobs |
-| `transcriber-cleanup` | Runs retention cleanup every six hours |
+| `transcriber` | The whole app. On start it creates the schema, runs migrations, and seeds roles, languages, and the owner account. Then it runs three processes: the web app (Gunicorn), the background worker for transcription, workflow, and title jobs, and a retention cleanup loop that runs every six hours |
+
+The worker and cleanup run outside Gunicorn, so restarting web workers never loses accepted jobs. Jobs are queued in MySQL and picked up again after a container restart. If any of the three processes stops, the container exits and Docker restarts it.
 
 Uploaded temporary files, logs, and runtime state (including the generated `secret_key`) are mounted from the `uploads/`, `logs/`, and `runtime/` folders in the repository.
 
@@ -65,7 +67,7 @@ docker compose down
 Run retention cleanup once, for example when diagnosing retention behaviour:
 
 ```bash
-docker compose run --rm transcriber-cleanup flask cleanup-once
+docker compose exec transcriber flask cleanup-once
 ```
 
 ## Running on a server
@@ -82,7 +84,7 @@ If you already have a running install that relies on `runtime/secret_key`, movin
 
 ## Published Docker image
 
-The image is published as [`arnoulddw/transcriber`](https://hub.docker.com/r/arnoulddw/transcriber). It needs a MySQL 8 database you provide. Its default command starts both Gunicorn and a background worker in one container.
+The image is published as [`arnoulddw/transcriber`](https://hub.docker.com/r/arnoulddw/transcriber). It needs a MySQL 8 database you provide. Like the Compose setup, one container runs the web app, the background worker, and retention cleanup.
 
 ```bash
 docker run -d \
@@ -98,10 +100,11 @@ docker run -d \
 
 You can also pass `--env-file .env` instead of individual `-e` flags. Mount `/app/runtime` (as above) or set `SECRET_KEY`; otherwise a new key is generated each time the container is recreated.
 
-Notes for running outside Compose:
+Mount `/app/uploads` too if you want temporary uploads to survive the container being recreated.
 
-- The worker must share the application's database and uploads directory. Set `START_EMBEDDED_WORKER=0` only if a separately supervised worker runs `flask worker` against those same resources.
-- Retention cleanup is not started inside the web app. Run `flask cleanup-loop` as a separate supervised process, or schedule `flask cleanup-once`.
+### Running the worker or cleanup separately (advanced)
+
+You only need this to scale the worker out or to supervise processes yourself. Set `START_EMBEDDED_WORKER=0` or `START_EMBEDDED_CLEANUP=0` on the app container, then run `flask worker` or `flask cleanup-loop` (same image, same environment) in another container. It must share the app's database and uploads directory.
 
 ## Local development without Docker
 

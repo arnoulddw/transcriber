@@ -99,6 +99,7 @@ MySQL stores the user and passwords when its data volume is first created. Set y
 | `WORKFLOW_MAX_OUTPUT_TOKENS` | Maximum generated tokens for a workflow result | `1024` |
 | `WORKFLOW_RATE_LIMIT` | Per-user workflow endpoint limit | `10 per hour` |
 | `PHYSICAL_DELETION_DAYS` | Delay before soft-deleted records are purged | `120` |
+| `START_EMBEDDED_WORKER` / `START_EMBEDDED_CLEANUP` | Run the background worker / retention cleanup inside the app container. Set `0` only when you run them elsewhere | `1` |
 
 ### Sign-in, email, and bot protection (team mode)
 
