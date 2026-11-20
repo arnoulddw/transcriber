@@ -97,8 +97,6 @@ Then:
 
 That's it. Transcriber starts in personal mode on your machine, with sign-in off. No configuration file is needed. When you want more, everything is optional and documented below.
 
-> **Putting it on a server?** Set a sign-in password and your own database passwords first. See [Running on a server](docs/installation.md#running-on-a-server).
-
 ## Documentation
 
 | Guide | What's in it |
