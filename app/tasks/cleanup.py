@@ -1,7 +1,9 @@
 # app/tasks/cleanup.py
 # Defines the background task for cleaning up old files and purging user history.
 
-import time
+import logging
+import os
+import threading
 from typing import Optional
 from app.logging_config import get_logger
 
@@ -22,10 +24,12 @@ def run_cleanup_task(
     app: Flask,
     *,
     run_once: bool = False,
+    stop_event: Optional[threading.Event] = None,
 ) -> None:
     """
-    The cleanup task. In production this runs in a dedicated process rather
-    than inside a web worker.
+    The cleanup task. It never runs inside a web worker: the container runs it
+    as a thread of the background worker process (`flask worker --with-cleanup`),
+    or on its own with `flask cleanup-loop`.
     Periodically cleans old uploaded files and purges user transcription history based on role limits.
     The one-shot mode is used by cron and the explicit Flask CLI command.
 
@@ -33,17 +37,19 @@ def run_cleanup_task(
         app: The Flask application instance.
     """
     logger = get_logger(__name__, component="Task:Cleanup")
+    stop_event = stop_event or threading.Event()
     initial_wait_seconds = 0 if run_once else 20
     if initial_wait_seconds:
         logger.debug(
             f"Cleanup process started. Waiting {initial_wait_seconds}s for app startup..."
         )
-        time.sleep(initial_wait_seconds)
+        if stop_event.wait(initial_wait_seconds):
+            return
         logger.debug("Initial wait complete. Starting periodic cleanup loop.")
 
     sleep_interval_seconds = 6 * 60 * 60
 
-    while True:
+    while not stop_event.is_set():
         logger.debug("Starting cleanup cycle.")
 
         try:
@@ -225,7 +231,31 @@ def run_cleanup_task(
         except Exception:
             print("INFO [Task:Cleanup]: Cleanup cycle finished. Sleeping...", flush=True)
 
-        time.sleep(sleep_interval_seconds)
+        stop_event.wait(sleep_interval_seconds)
+
+
+def start_cleanup_thread(app: Flask, stop_event: threading.Event) -> threading.Thread:
+    """Run the cleanup loop in a daemon thread of the current process.
+
+    Used by the background worker so cleanup does not need its own Python
+    process (which would load the whole app for about a second of work every
+    six hours). Each cycle already catches its own errors; if the loop still
+    dies unexpectedly, the process exits so the container restarts, rather
+    than leaving retention cleanup silently stopped.
+    """
+    def _target() -> None:
+        try:
+            run_cleanup_task(app, stop_event=stop_event)
+        except BaseException:
+            logging.getLogger(__name__).critical(
+                "Embedded cleanup loop stopped unexpectedly; exiting so the process restarts.",
+                exc_info=True,
+            )
+            os._exit(1)
+
+    thread = threading.Thread(target=_target, name="cleanup-loop", daemon=True)
+    thread.start()
+    return thread
 
 
 def run_cleanup_once(app: Flask) -> None:

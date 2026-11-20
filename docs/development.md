@@ -37,7 +37,7 @@ flask cleanup-once
 flask bootstrap
 ```
 
-`flask worker` runs the background job worker and `flask cleanup-loop` runs retention cleanup every six hours. The container starts both next to Gunicorn (see `docker-entrypoint.sh`). With `flask run` locally, start `flask worker` in another terminal to process jobs. `flask reset-owner-password` sets a new owner password.
+`flask worker` runs the background job worker; `flask worker --with-cleanup` also runs retention cleanup every six hours in a thread of that process, which is what the container starts next to Gunicorn (see `docker-entrypoint.sh`). `flask cleanup-loop` runs cleanup on its own. With `flask run` locally, start `flask worker` in another terminal to process jobs. `flask reset-owner-password` sets a new owner password.
 
 ## Running tests
 

@@ -50,9 +50,9 @@ Two containers:
 | Service | Purpose |
 |---|---|
 | `mysql` | MySQL 8 database. Data lives in the `mysql_data` Docker volume |
-| `transcriber` | The whole app. On start it creates the schema, runs migrations, and seeds roles, languages, and the owner account. Then it runs three processes: the web app (Gunicorn), the background worker for transcription, workflow, and title jobs, and a retention cleanup loop that runs every six hours |
+| `transcriber` | The whole app. On start it creates the schema, runs migrations, and seeds roles, languages, and the owner account. Then it runs two processes: the web app (Gunicorn) and the background worker for transcription, workflow, and title jobs. Retention cleanup runs every six hours as a thread inside the worker |
 
-The worker and cleanup run outside Gunicorn, so restarting web workers never loses accepted jobs. Jobs are queued in MySQL and picked up again after a container restart. If any of the three processes stops, the container exits and Docker restarts it.
+The worker runs outside Gunicorn, so restarting web workers never loses accepted jobs. Jobs are queued in MySQL and picked up again after a container restart. If either process stops, or the cleanup thread dies, the container exits and Docker restarts it.
 
 Uploaded temporary files, logs, and runtime state (including the generated `secret_key`) are mounted from the `uploads/`, `logs/`, and `runtime/` folders in the repository.
 
@@ -104,7 +104,7 @@ Mount `/app/uploads` too if you want temporary uploads to survive the container 
 
 ### Running the worker or cleanup separately (advanced)
 
-You only need this to scale the worker out or to supervise processes yourself. Set `START_EMBEDDED_WORKER=0` or `START_EMBEDDED_CLEANUP=0` on the app container, then run `flask worker` or `flask cleanup-loop` (same image, same environment) in another container. It must share the app's database and uploads directory.
+You only need this to scale the worker out or to supervise processes yourself. Set `START_EMBEDDED_WORKER=0` or `START_EMBEDDED_CLEANUP=0` on the app container, then run `flask worker --with-cleanup`, `flask worker`, or `flask cleanup-loop` (same image, same environment) in another container. It must share the app's database and uploads directory.
 
 ## Local development without Docker
 

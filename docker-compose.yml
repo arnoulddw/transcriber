@@ -5,7 +5,7 @@
 # (saved to ./runtime/secret_key). Put overrides in .env (see .env.example).
 #
 # Two containers: MySQL, and the app. The app container runs the web server,
-# the background job worker, and the retention cleanup loop together.
+# the background job worker (which also runs retention cleanup) together.
 #
 # The database defaults are fine for a local install because MySQL is only
 # reachable on the Compose network and on 127.0.0.1. Set your own values in

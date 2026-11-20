@@ -2,8 +2,9 @@
 set -euo pipefail
 
 # One container runs the whole app: Gunicorn for the web app, plus the durable
-# background worker and the retention cleanup loop as separate processes
-# (outside Gunicorn, so a web-worker restart never loses accepted work).
+# background worker as a separate process (outside Gunicorn, so a web-worker
+# restart never loses accepted work). Retention cleanup runs as a thread
+# inside the worker process.
 # Set START_EMBEDDED_WORKER=0 or START_EMBEDDED_CLEANUP=0 only when that
 # process is supervised elsewhere against the same database and uploads.
 
@@ -29,14 +30,20 @@ gunicorn_command=(/app/.local/bin/gunicorn \
   "app:create_app()")
 
 pids=()
+start_worker="${START_EMBEDDED_WORKER:-1}"
+start_cleanup="${START_EMBEDDED_CLEANUP:-1}"
 
-if [[ "${START_EMBEDDED_WORKER:-1}" == "1" ]]; then
+if [[ "$start_worker" == "1" && "$start_cleanup" == "1" ]]; then
+  # Cleanup works for about a second every six hours, so it runs as a thread
+  # of the worker instead of costing a whole Python process.
+  echo ">>> Starting background worker with retention cleanup..."
+  /app/.local/bin/flask worker --with-cleanup &
+  pids+=("$!")
+elif [[ "$start_worker" == "1" ]]; then
   echo ">>> Starting background worker..."
   /app/.local/bin/flask worker &
   pids+=("$!")
-fi
-
-if [[ "${START_EMBEDDED_CLEANUP:-1}" == "1" ]]; then
+elif [[ "$start_cleanup" == "1" ]]; then
   echo ">>> Starting retention cleanup loop..."
   /app/.local/bin/flask cleanup-loop &
   pids+=("$!")
