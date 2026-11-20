@@ -1,22 +1,35 @@
 # ./docker-compose.yml
-# Defines Docker services, networks, and volumes for easy deployment
+# Defines Docker services, networks, and volumes for easy deployment.
+# Works without a .env file: `docker compose up -d` starts a personal instance
+# with local-only database credentials and a SECRET_KEY generated on first start
+# (saved to ./runtime/secret_key). Put overrides in .env (see .env.example).
+#
+# Two containers: MySQL, and the app. The app container runs the web server,
+# the background job worker, and the retention cleanup loop together.
+#
+# The database defaults are fine for a local install because MySQL is only
+# reachable on the Compose network and on 127.0.0.1. Set your own values in
+# .env for a server.
 
 services:
   mysql:
     image: mysql:8.0
     container_name: transcriber-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-transcriber-root}
+      MYSQL_DATABASE: ${MYSQL_DB:-transcriber}
+      MYSQL_USER: ${MYSQL_USER:-transcriber}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-transcriber}
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "${MYSQL_HOST_PORT:-3307}:3306" # Expose MySQL to host on MYSQL_HOST_PORT (default 3307)
+      # Reachable from this machine only, on MYSQL_HOST_PORT (default 3307).
+      # Set MYSQL_HOST_BIND=0.0.0.0 to expose it on the network.
+      - "${MYSQL_HOST_BIND:-127.0.0.1}:${MYSQL_HOST_PORT:-3307}:3306"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysql", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}", "-e", "SELECT 1"]
+      # $$ defers expansion to the container, which has the resolved values.
+      test: ["CMD-SHELL", "mysql -h localhost -u \"$$MYSQL_USER\" -p\"$$MYSQL_PASSWORD\" -e 'SELECT 1'"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -35,39 +48,40 @@ services:
       - ./uploads:/app/uploads
       - ./runtime:/app/runtime
     env_file:
-      - .env # Load variables from .env file
+      - path: .env
+        required: false
     environment:
       # --- Core App Settings ---
-      SECRET_KEY: ${SECRET_KEY} # CRITICAL: Must be set in .env
+      # Optional. When unset, a key is generated once and kept in ./runtime/secret_key.
+      SECRET_KEY: ${SECRET_KEY:-}
       # Unset = switch personal/team mode in the app. Set 'single' or 'multi' to lock it.
       DEPLOYMENT_MODE: ${DEPLOYMENT_MODE:-}
       ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-}
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
-      START_EMBEDDED_WORKER: "0" # Compose runs the separate transcriber-worker service
       TZ: ${TZ:-UTC}
 
       # --- API Keys (Global Fallbacks / Single-User Mode) ---
-      ASSEMBLYAI_API_KEY: ${ASSEMBLYAI_API_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      ASSEMBLYAI_API_KEY: ${ASSEMBLYAI_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
 
       # --- Provider Configuration ---
       TRANSCRIPTION_PROVIDERS: ${TRANSCRIPTION_PROVIDERS:-assemblyai,openai,gemini,openrouter}
-      DEFAULT_TRANSCRIPTION_PROVIDER: ${DEFAULT_TRANSCRIPTION_PROVIDER:-gpt-4o-transcribe}
+      DEFAULT_TRANSCRIPTION_PROVIDER: ${DEFAULT_TRANSCRIPTION_PROVIDER:-openai}
       DEFAULT_LLM_PROVIDER: ${DEFAULT_LLM_PROVIDER:-gemini}
 
       # --- Transcription Language Settings ---
       DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE:-auto}
       SUPPORTED_LANGUAGE_CODES: ${SUPPORTED_LANGUAGE_CODES:-en,nl,fr,es}
 
-      # --- Database (MySQL Configuration) ---
+      # --- Database ---
       MYSQL_HOST: mysql # Service name defined above
       MYSQL_PORT: 3306 # Internal port for MySQL service
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DB: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER:-transcriber}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-transcriber}
+      MYSQL_DB: ${MYSQL_DB:-transcriber}
       MYSQL_POOL_SIZE: ${MYSQL_POOL_SIZE:-10}
 
       # --- File Storage & Cleanup ---
@@ -86,20 +100,20 @@ services:
       # --- Admin User Credentials (for initial setup) ---
       ADMIN_USERNAME: ${ADMIN_USERNAME:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-} # Optional. When set, sign-in is required and cannot be turned off in the app.
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
 
       # --- Email Configuration ---
-      MAIL_SERVER: ${MAIL_SERVER}
+      MAIL_SERVER: ${MAIL_SERVER:-}
       MAIL_PORT: ${MAIL_PORT:-587}
       MAIL_USE_TLS: ${MAIL_USE_TLS:-true}
       MAIL_USE_SSL: ${MAIL_USE_SSL:-false}
-      MAIL_USERNAME: ${MAIL_USERNAME}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER:-}
       MAIL_DEBUG: ${MAIL_DEBUG:-false}
 
       # --- OAuth Configuration ---
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
 
       # --- Data Retention Configuration ---
       PHYSICAL_DELETION_DAYS: ${PHYSICAL_DELETION_DAYS:-120}
@@ -123,61 +137,11 @@ services:
       mysql:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:5004/ >/dev/null || exit 1"]
+      # The Alpine image has no curl; Python's urllib follows redirects (e.g. to /login).
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5004/', timeout=4)"]
       interval: 10s
       timeout: 5s
       retries: 12
-    restart: unless-stopped
-
-  # Durable transcription, workflow, and title jobs run outside Gunicorn so
-  # web-worker restarts do not lose accepted work.
-  transcriber-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: transcriber-worker
-    command: ["/app/.local/bin/flask", "worker"]
-    env_file:
-      - .env
-    environment:
-      FLASK_APP: app
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-    volumes:
-      - ./app:/app/app
-      - ./logs:/app/logs
-      - ./uploads:/app/uploads
-      - ./runtime:/app/runtime
-    depends_on:
-      mysql:
-        condition: service_healthy
-      transcriber:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Retention runs as one visible process instead of being tied to a Gunicorn
-  # worker. It shares the upload, log, and runtime volumes with the web app.
-  transcriber-cleanup:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: transcriber-cleanup
-    command: ["/app/.local/bin/flask", "cleanup-loop"]
-    env_file:
-      - .env
-    environment:
-      FLASK_APP: app
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-    volumes:
-      - ./logs:/app/logs
-      - ./uploads:/app/uploads
-      - ./runtime:/app/runtime
-    depends_on:
-      mysql:
-        condition: service_healthy
-      transcriber:
-        condition: service_healthy
     restart: unless-stopped
 
 volumes:

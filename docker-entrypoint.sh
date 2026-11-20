@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# One container runs the whole app: Gunicorn for the web app, plus the durable
+# background worker and the retention cleanup loop as separate processes
+# (outside Gunicorn, so a web-worker restart never loses accepted work).
+# Set START_EMBEDDED_WORKER=0 or START_EMBEDDED_CLEANUP=0 only when that
+# process is supervised elsewhere against the same database and uploads.
+
 export FLASK_APP="${FLASK_APP:-app}"
 export PATH="/app/.local/bin:${PATH}"
 
@@ -22,26 +28,38 @@ gunicorn_command=(/app/.local/bin/gunicorn \
   --log-level "${GUNICORN_LOG_LEVEL:-info}" \
   "app:create_app()")
 
-if [[ "${START_EMBEDDED_WORKER:-1}" != "1" ]]; then
+pids=()
+
+if [[ "${START_EMBEDDED_WORKER:-1}" == "1" ]]; then
+  echo ">>> Starting background worker..."
+  /app/.local/bin/flask worker &
+  pids+=("$!")
+fi
+
+if [[ "${START_EMBEDDED_CLEANUP:-1}" == "1" ]]; then
+  echo ">>> Starting retention cleanup loop..."
+  /app/.local/bin/flask cleanup-loop &
+  pids+=("$!")
+fi
+
+if [[ ${#pids[@]} -eq 0 ]]; then
   echo ">>> Starting Gunicorn..."
   exec "${gunicorn_command[@]}"
 fi
 
-echo ">>> Starting background worker..."
-/app/.local/bin/flask worker &
-worker_pid=$!
 echo ">>> Starting Gunicorn..."
 "${gunicorn_command[@]}" &
-web_pid=$!
+pids+=("$!")
 
 stop_children() {
   trap - TERM INT
-  kill -TERM "$web_pid" "$worker_pid" 2>/dev/null || true
-  wait "$web_pid" "$worker_pid" 2>/dev/null || true
+  kill -TERM "${pids[@]}" 2>/dev/null || true
+  wait "${pids[@]}" 2>/dev/null || true
 }
 
+# If any process exits, stop the others and exit so the container restarts.
 trap 'stop_children; exit 143' TERM INT
 status=0
-wait -n "$web_pid" "$worker_pid" || status=$?
+wait -n "${pids[@]}" || status=$?
 stop_children
 exit "$status"

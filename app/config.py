@@ -26,15 +26,68 @@ def _load_build_timestamp():
         return None
 
 
+SECRET_KEY_FILE = os.path.join(BASE_DIR, 'runtime', 'secret_key')
+
+
+def _resolve_secret_key(path=SECRET_KEY_FILE):
+    """Return SECRET_KEY from the environment, or a key generated once and kept on disk.
+
+    Without SECRET_KEY the first process generates a random key and saves it to
+    runtime/secret_key, which Docker Compose shares with the worker and cleanup
+    services. Later starts reuse it, so sessions and encrypted API keys survive
+    restarts as long as that file is kept.
+    """
+    env_value = (os.environ.get('SECRET_KEY') or '').strip()
+    if env_value:
+        return env_value
+
+    existing = _read_secret_key_file(path)
+    if existing:
+        return existing
+
+    import secrets
+    import tempfile
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(path), prefix='.secret_key.')
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as tmp_file:
+            tmp_file.write(secrets.token_hex(32))
+        os.chmod(tmp_path, 0o600)
+        try:
+            # link() fails if another process created the file first, so
+            # concurrent starts always settle on a single key.
+            os.link(tmp_path, path)
+            print(f"INFO: SECRET_KEY not set. Generated one and saved it to {path}. Keep this file (or set SECRET_KEY).")
+        except FileExistsError:
+            pass
+    finally:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+
+    key = _read_secret_key_file(path)
+    if not key:
+        raise ValueError(f"No SECRET_KEY set and could not create {path}. Set SECRET_KEY in .env.")
+    return key
+
+
+def _read_secret_key_file(path):
+    try:
+        with open(path, encoding='utf-8') as key_file:
+            return key_file.read().strip() or None
+    except FileNotFoundError:
+        return None
+
+
 class Config:
     """Base configuration class. Loads settings from environment variables."""
 
     BASE_DIR = BASE_DIR
 
     # --- Core App Settings ---
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    if not SECRET_KEY:
-        raise ValueError("No SECRET_KEY set for Flask application. Please set it in .env")
+    SECRET_KEY = _resolve_secret_key()
 
     # --- Deployment Mode ---
     # 'single' = personal mode, 'multi' = team mode. When unset, the mode is
