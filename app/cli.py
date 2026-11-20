@@ -2,6 +2,7 @@
 # Custom Flask CLI commands for database setup and migrations.
 
 import logging
+import threading
 
 import click
 from flask import current_app
@@ -14,7 +15,7 @@ from app.initialization import (
     create_initialization_marker,
 )
 from migrations.runner import run_migrations
-from app.tasks.cleanup import run_cleanup_once, run_cleanup_task
+from app.tasks.cleanup import run_cleanup_once, run_cleanup_task, start_cleanup_thread
 from app.tasks.transcription_queue import recover_abandoned_jobs
 from app.tasks.worker import run_worker
 
@@ -119,17 +120,29 @@ def cleanup_loop_command_cli():
 
 
 @click.command("worker")
+@click.option(
+    "--with-cleanup",
+    is_flag=True,
+    help="Also run the retention cleanup loop in this process (saves a separate process).",
+)
 @with_appcontext
-def worker_command_cli():
+def worker_command_cli(with_cleanup):
     """Run the durable background-job worker in the foreground."""
     log_prefix = "[CLI:worker]"
     logging.info(f"{log_prefix} Starting dedicated background worker.")
+    app = current_app._get_current_object()
+    cleanup_stop = threading.Event()
+    if with_cleanup:
+        logging.info(f"{log_prefix} Running retention cleanup in this process.")
+        start_cleanup_thread(app, cleanup_stop)
     try:
-        run_worker(current_app._get_current_object())
+        run_worker(app)
     except Exception as exc:
         click.echo(click.style(f"Background worker error: {exc}", fg="red"), err=True)
         logging.error(f"{log_prefix} Failed: {exc}", exc_info=True)
         raise SystemExit(1) from exc
+    finally:
+        cleanup_stop.set()
 
 
 @click.command("reset-owner-password")
